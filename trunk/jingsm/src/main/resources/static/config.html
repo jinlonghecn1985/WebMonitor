@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<title>网站健康检测工具-流程信息部</title>
+	<meta charset="utf-8">
+  	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<!-- ZUI 标准版压缩后的 CSS 文件 -->
+	<link rel="stylesheet" href="./css/zui.min.css" />
+	<!-- ZUI Javascript 依赖 jQuery -->
+	<script src="./lib/jquery/jquery.js"></script>
+	<!-- ZUI 标准版压缩后的 JavaScript 文件 -->
+	<script src="./js/zui.min.js"></script>	
+	<!-- 自定义业务 JavaScript 文件 -->
+	<script src="avril.js"></script>
+<style type="text/css"> 
+.elehidden{display: none;}
+</style> 	
+	<script type="text/javascript">	
+$(document).ready(function(){ 	
+	AVRIL.queryConfig();
+});
+
+function initAdd(){		
+	var dicid = $("#configTable").find('input.dicId:first').val();
+	
+	if(dicid!=undefined && dicid.length>0){
+		var ihtml=("<tr>"
+				+"<td><i onclick=\"doModify(this)\" class=\"icon icon-cog modify\"  data-toggle=\"tooltip\" data-placement=\"left\" title=\"修改\"></i>" 
+					+"<i onclick=\"doCannel(this)\" class=\"icon icon-circle-arrow-left saves elehidden\"  data-toggle=\"tooltip\" data-placement=\"left\" title=\"取消\"></i>&nbsp;&nbsp;"
+					+"<input type=\"hidden\" class=\"dicId\" value=\"\">"
+// 					+"<input type=\"hidden\" class=\"dicGroup\" value=\"config_ele_group\">"
+					+"<i onclick=\"doSave(this)\" class=\"icon icon-save saves elehidden\" data-toggle=\"tooltip\" data-placement=\"left\" title=\"保存\"></i>"
+					+"<i class=\"icon icon-remove-sign modify\" onclick=\"doDrop(this)\" data-toggle=\"tooltip\" data-placement=\"left\" title=\"删除\"></i>"
+				+"</td>"
+				+"<td></td>"
+				+"<td></td>"
+				+"<td></td>"	
+				+"<td></td>"
+				+"<td></td>"
+				+"<td></td>"
+				+"<td></td>"
+				+"</tr>");
+		$("#configTable").prepend(ihtml);
+	}	
+	$("#configTable").find('i:first').click();	
+}
+
+
+function doModify(th){
+	doBack();
+	$this = $(th).parent();
+	$this.children("i.modify").hide();
+	$this.children("i.saves").show();
+	$tname = $this.next().next();
+	$('#cdicName').val($tname.html());
+	$tname.html("<input type=\"text\" width=\"100%\" class=\"form-control form-cdicValue\" value=\""+$tname.html()+"\" placeholder=\"请输入值\">");
+	$("input").focus(function(){
+		  this.select();
+	});	
+	$tname.children('input').focus();
+// 	if('config_ele_group'==$this.children('input.dicGroup').val()){
+		$tvalue = $this.next();
+		$tflag = $tname.next();
+		$tnote = $tname.next().next().next();
+		$tgroup = $tname.next().next();
+		$('#cdicValue').val($tvalue.html());
+		$('#cdicFlag').val($tflag.html());
+		$('#cdicNote').val($tnote.html());
+		$('#cdicGroup').val($tgroup.html());
+		$tvalue.html("<input type=\"text\" width=\"100%\" class=\"form-control form-cdicName\" value=\""+$('#cdicValue').val()+"\" placeholder=\"请输入名称\">");
+		$tflag.html("<input type=\"text\" width=\"100%\" class=\"form-control form-cdicFlag\" value=\""+$('#cdicFlag').val()+"\" placeholder=\"请输入排序\">");
+		$tnote.html("<input type=\"text\" width=\"100%\" class=\"form-control form-cdicNote\" value=\""+$('#cdicNote').val()+"\" placeholder=\"请输入备注\">");
+		$tgroup.html("<input type=\"text\" width=\"100%\" class=\"form-control form-cdicGroup\" value=\""+$('#cdicGroup').val()+"\" placeholder=\"请输入统计分类\">");
+		$("input").focus(function(){
+			  this.select();
+		});	
+		$tvalue.children('input').focus();
+// 	}
+}
+
+function doCannel(th){
+	$this = $(th).parent();	
+	$this.children("i.modify").show();
+	$this.children("i.saves").hide();
+	$tvalue0 = $this.next();
+	$tvalue0.html($tvalue0.children('input').val());
+	$tvalue = $this.next().next();
+	$tvalue.html($tvalue.children('input').val());
+	$tvalue2 = $this.next().next().next();
+	$tvalue2.html($tvalue2.children('input').val());
+	$tvalue3 = $this.next().next().next().next();
+	$tvalue3.html($tvalue3.children('input').val());
+	$tvalue4 = $this.next().next().next().next().next();
+	$tvalue4.html($tvalue4.children('input').val());
+// 	if($this.children('input')!=undefined){
+// 		console.log($tname.html());
+// 	}
+}
+
+function doBack(){
+	$("#configTable").find("i.modify").show();
+	$("#configTable").find("i.saves").hide();
+	$("#configTable").find('input.form-cdicName').each(function(i){
+		$(this).parent().html($('#cdicName').val());
+	});
+	$("#configTable").find('input.form-cdicValue').each(function(i){
+		$(this).parent().html($('#cdicValue').val());
+	});
+	$("#configTable").find('input.form-cdicFlag').each(function(i){
+		$(this).parent().html($('#cdicFlag').val());
+	});
+	$("#configTable").find('input.form-cdicNote').each(function(i){
+		$(this).parent().html($('#cdicNote').val());
+	});
+	$("#configTable").find('input.form-cdicGroup').each(function(i){
+		$(this).parent().html($('#cdicGroup').val());
+	});
+}
+
+function doSave(th){
+	$this = $(th).parent();	
+	var params = {};
+	var dicId = $this.children('input.dicId').val();
+	if(dicId!=undefined && dicId.length!=0){
+		params.dicId =  dicId;
+	}
+	
+	var dicValue = $this.next().next().children('input.form-cdicValue').val();	
+	if(dicValue==undefined || dicValue.length==0){
+		showError('必须填写值');
+		$this.next().next().children('input.form-cdicValue').focus();
+		return;
+	}
+	params.dicValue = dicValue;
+	
+	//if(params.dicId==undefined || params.dicId.length==0){
+		var dicName = $this.next().children('input.form-cdicName').val();	
+		if(dicName!=undefined && dicName.length==0){
+			showError('必须填写名称');
+			$this.next().children('input.form-cdicName').focus();
+			return;
+		}else if(dicName!=undefined){
+			params.dicCode = dicName;
+		}
+		
+		
+		var dicFlag = $this.next().next().next().children('input.form-cdicFlag').val();	
+		if(dicFlag!=undefined && dicFlag.length==0){
+			showError('必须填写排序');
+			$this.next().next().next().children('input.form-cdicFlag').focus();
+			return;
+		}else if(dicFlag!=undefined){
+			params.dicFlag = dicFlag;
+		}
+		var dicGroup = $this.next().next().next().next().children('input.form-cdicGroup').val();	
+		if(dicGroup!=undefined && dicGroup.length==0){
+			showError('必须填写统计分类');
+			$this.next().next().next().next().children('input.form-cdicGroup').focus();
+			return;
+		}else if(dicGroup!=undefined){
+			params.dicGroup = dicGroup;	
+		}
+		
+		var dicNote = $this.next().next().next().next().next().children('input.form-cdicNote').val();	
+		if(dicNote!=undefined && dicNote.length==0){
+			showError('必须填写备注');
+			$this.next().next().next().next().children('input.form-cdicNote').focus();
+			return;
+		}else if(dicNote!=undefined){
+			params.dicNote = dicNote;	
+		}
+	//}
+	
+	AVRIL.bindConfig(params, doAfterSave);
+}
+
+function doAfterSave(data){
+	new $.zui.Messager('操作配置成功!', {
+		type: 'success',
+		placement: 'top-right',
+	    close: false // 禁用关闭按钮
+	}).show();
+	console.log(data);
+	$this = $("#configTable").find("input.form-cdicValue").parent();
+	$dicId = $this.prev().prev().children('input.dicId');
+	$this.html($this.children('input').val());
+	if($this.prev().children('input').val()!=undefined && $this.prev().children('input').val().length>0){
+		$dicId.val(data.dicId);
+		$this.prev().html($this.prev().children('input').val());
+		$this.next().html($this.next().children('input').val());
+		$this.next().next().html($this.next().next().children('input').val());
+		$this.next().next().next().html($this.next().next().next().children('input').val());
+	}
+	$dicId.parent().children("i.modify").show();
+	$dicId.parent().children("i.saves").hide();
+}
+
+function showError(mes){
+	new $.zui.Messager(mes, {
+		type: 'warning',
+		placement: 'top-right',
+	    close: false // 禁用关闭按钮
+	}).show();
+}
+
+function doDrop(th){
+	doBack();
+	$this = $(th).parent();
+	var dicId = $this.children('input.dicId').val();
+	if(dicId==undefined || dicId.length==0){
+		$this.parent().remove();
+		return;
+	}
+	if('config_ele_group'==$this.children('input.dicGroup').val()){
+		console.log("remove config:"+$this.children('input.dicId').val());
+		AVRIL.deleteConfig($this.children('input.dicId').val(), $this.parent());
+	}else{
+		new $.zui.Messager('基础配置,不允许删除! ', {
+			type: 'warning',
+			placement: 'top-right',
+		    close: false // 禁用关闭按钮
+		}).show();
+	}
+}
+
+function showCheck(){
+	$('#doCheckModel').modal({
+	    keyboard : true,
+	    show     : true
+	});	
+}
+
+function doSecBack(){
+	new $.zui.Messager('初始化成功! ', {
+		type: 'success',
+		placement: 'top-right',
+	    close: false // 禁用关闭按钮
+	}).show();
+	AVRIL.queryConfig();
+}
+
+function doInitSystem(){
+	AVRIL.initConfig(doSecBack);
+	$('#doCheckModel').modal('hide');
+}
+</script>
+
+</head>
+
+<body >
+<!-- 头部信息 -->
+<div class="header">
+<ul class="nav nav-secondary">
+	<li><a href="control.html">*系统控制</a></li>	
+	<li><a href="fullweb.html">*全站检测记录</a></li>
+	<li><a href="history.html">*检测历史</a></li>
+	<li><a href="mail.html">邮件历史</a></li>
+	<li><a href="site.html">站点管理</a></li>
+	<li><a href="ip.html">我司IP管理</a></li>	
+	<li class="active"><a href="javascript:void(0);">系统配置</a></li>
+</ul>
+</div>
+<br/>
+
+<div >
+  <button class="btn btn-info" type="button" onclick="AVRIL.queryConfig();"><i class="icon icon-refresh"></i> 刷新</button>&nbsp;&nbsp;
+  <button class="btn btn-primary" type="button" onclick="initAdd();"><i class="icon icon-plus-sign"></i> 新增</button>&nbsp;&nbsp;
+</div>
+
+<table class="table table-hover">
+		  <thead>
+		    <tr>
+		      <th></th>
+		      <th>识别标识</th>
+		      <th>值</th>
+		      <th>排序</th>		      
+		      <th>配置分组</th>
+		      <th>备注</th>
+		      <th>创建时间</th>
+		      <th>修订时间</th>
+		    </tr>
+		  </thead>
+	  	<tbody id="configTable">    
+	  	</tbody>  
+</table>
+<input type="hidden" id="cdicName" value="">
+<input type="hidden" id="cdicValue" value="">
+<input type="hidden" id="cdicFlag" value="">
+<input type="hidden" id="cdicGroup" value="">
+<input type="hidden" id="cdicNote" value="">
+
+
+<!-- 提示 --> 
+<div id="doCheckModel" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">关闭</span></button>
+        <h4 class="modal-title">警告</h4>
+      </div>
+      <div class="modal-body">
+        <p>执行初始化会清空除配置信息外其它所有数据，请慎重考虑！</p>
+      </div>
+      <div class="modal-footer">
+      	<input type="hidden" id="stageIdForDel"></input>
+        <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>
+        <button type="button" class="btn btn-primary" onclick="doInitSystem();">继续初始化</button>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

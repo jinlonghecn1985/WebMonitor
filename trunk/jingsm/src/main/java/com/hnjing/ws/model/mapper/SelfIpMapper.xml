@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hnjing.ws.model.dao.SelfIpMapper">
+
+<!-- Result Map-->
+<resultMap id="SelfIpResultMap" type="com.hnjing.ws.model.entity.SelfIp">
+	<id column="id" property="id"/>
+	<result column="ip" property="ip"/>
+	<result column="count" property="count"/>
+	<result column="gmt_created" property="gmtCreated"/>
+	<result column="gmt_modify" property="gmtModify"/>
+</resultMap>
+
+<sql id="sql_selfIp_item">
+	id, ip, count, gmt_created, gmt_modify
+</sql>
+       
+<!-- 查询条件 无WHERE -->
+<sql id="sql_selfIp_query_nowhere">
+	<trim prefix=" " prefixOverrides="AND|OR">
+		<if test="selfIp.id != null">AND id = #{selfIp.id} </if>
+		<if test="selfIp.ip != null">AND ip like concat(#{selfIp.ip}, '%') </if>
+		<if test="selfIp.count != null">AND count = #{selfIp.count} </if>
+	</trim>
+</sql>
+   
+<!-- 插入 我司IP信息 -->
+<insert id="addSelfIp" parameterType="com.hnjing.ws.model.entity.SelfIp" >
+	<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+		SELECT LAST_INSERT_ID()
+	</selectKey>
+ 	INSERT INTO tb_self_ip 
+	<trim prefix=" (" suffix=")" suffixOverrides=",">
+		<if test="id != null"> id,</if>
+		<if test="ip != null"> ip,</if>
+		<if test="count != null"> count,</if>
+		gmt_created, gmt_modify
+	</trim>	 	
+	<trim prefix="values (" suffix=")" suffixOverrides=",">
+		<if test="id != null"> #{id},</if>
+		<if test="ip != null"> #{ip},</if>
+		<if test="count != null"> #{count},</if>
+		now(), now()
+	</trim>
+</insert>
+
+<!-- 根据标识，修改 我司IP信息 -->  
+<update id="modifySelfIp" parameterType="com.hnjing.ws.model.entity.SelfIp" >
+  	UPDATE tb_self_ip SET
+	<trim suffixOverrides=",">
+		<if test="ip != null"> ip = #{ip},</if>
+		<if test="count != null"> count = #{count},</if>
+		gmt_modify = now()
+	</trim>
+	WHERE id = #{id}
+</update>
+ 
+<!-- 删除 我司IP信息 -->
+<delete id="dropSelfIpById" parameterType="java.lang.Integer">
+	DELETE FROM tb_self_ip WHERE id = #{id}
+</delete> 
+
+<!-- 根据标识查询 我司IP信息 -->
+<select id="querySelfIpById"  resultMap="SelfIpResultMap" parameterType="java.lang.Integer">
+	SELECT 
+	<include refid="sql_selfIp_item"/>
+	FROM tb_self_ip WHERE id = #{id}
+</select>
+
+<!-- 根据属性查询我司IP信息 -->
+<select id="querySelfIpByProperty"  resultMap="SelfIpResultMap" parameterType="java.util.Map">
+	SELECT 
+	<include refid="sql_selfIp_item"/>
+	FROM tb_self_ip 
+	<where>
+		<include refid="sql_selfIp_query_nowhere"/>
+	</where>
+</select>
+
+<!-- 根据我司IP信息属性与分页信息分页查询我司IP信息信息 -->
+<select id="querySelfIpForPage"  resultMap="SelfIpResultMap" > 
+	SELECT 
+	<include refid="sql_selfIp_item"/>
+	FROM tb_self_ip 
+	<where>
+		<include refid="sql_selfIp_query_nowhere"/>
+	</where>
+</select>
+
+<update id="initIPCountZero">
+ update tb_self_ip set count=0
+</update>
+
+<update id="initIPCount">
+update tb_self_ip i inner join (select ip, count(1) ct from tb_site_url where source=1 and ip is not null group by ip) c set i.gmt_modify=now(),  i.count = c.ct where i.ip = c.ip
+</update>
+
+</mapper>   

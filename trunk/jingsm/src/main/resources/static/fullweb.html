@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<title>网站健康检测工具-流程信息部</title>
+	<meta charset="utf-8">
+  	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<!-- ZUI 标准版压缩后的 CSS 文件 -->
+	<link rel="stylesheet" href="./css/zui.min.css" />
+	<!-- ZUI Javascript 依赖 jQuery -->
+	<script src="./lib/jquery/jquery.js"></script>
+	<!-- ZUI 标准版压缩后的 JavaScript 文件 -->
+	<script src="./js/zui.min.js"></script>	
+	<!-- 自定义业务 JavaScript 文件 -->
+	<script src="avril.js"></script>
+<style type="text/css"> 
+.elehidden{display: none;}
+</style> 	
+	<script type="text/javascript">	
+	var searchWord = '';
+	var siteId='';
+	var orderBy = 'gmtCreated';
+	var pagenum = 1;
+	var pagesize = 15;
+$(document).ready(function(){ 
+	siteId = getQueryStringByName('id');	
+	$('#searchKeyWord').bind('keypress', function(event) {
+		if (event.keyCode == 13) {
+			doSearchAction();
+		}
+	});	
+	reloadData();	
+});
+
+function showDetail(fid){
+	window.location.href="fulldetail.html?id="+fid;
+}
+
+
+
+function loadPersionListBack(data){	
+	if(data!=undefined && data.page!=undefined){
+		if(data.data!=undefined && data.data.length>0){
+			var ihtml = "";
+			for(var i=0; i<data.data.length; i++){
+				ihtml+=("<tr data-toggle=\"tooltip\" title=\"双击查看内页详情\" ondblclick=\"showDetail("+data.data[i].id+");\">"
+						+"<td>"+(data.page.startRow+i)+"<input type=\"hidden\" value=\""+data.data[i].id+"\"></td>"
+						+"<td>"+(data.data[i].selfSite==1?'<font color=\"00ff00\">是</font>':'否')+"</td>"	
+						+"<td>"+(data.data[i].ip)+"</td>"
+						+"<td>"+(data.data[i].acceptMail==undefined?'':data.data[i].acceptMail)+"</td>"						
+						+"<td>"+"<a data-toggle=\"tooltip\" title=\"点击打开相应页面\" target=\"_blank\" href=\""+data.data[i].page+"\">"+data.data[i].page+"</td>"						
+						+"<td>"+(data.data[i].checkLevel)+"</td>"
+						+"<td>"+"<a data-toggle=\"tooltip\" title=\"点击查看内页详情\" href=\"fulldetail.html?id="+data.data[i].id+"\">"+(data.data[i].siteId==undefined?'':data.data[i].siteId)+"</a></td>"
+						+"<td>"+"<a data-toggle=\"tooltip\" title=\"点击查看异常子链详情\" href=\"fulldetail.html?id="+data.data[i].id+"\">"+(data.data[i].errorPage)+"</a></td>"
+						+"<td>"+(data.data[i].innerPage)+"</td>"							
+						+"<td>"+"<a data-toggle=\"tooltip\" title=\"点击查看外链详情\" href=\"fulloutlink.html?id="+data.data[i].id+"\">"+(data.data[i].outerPage)+"</a></td>"
+						+"<td>"+data.data[i].keyWord+"</td>"
+						+"<td>"+"<a data-toggle=\"tooltip\" title=\"点击查看敏感词详情\" href=\"fullkeyword.html?id="+data.data[i].id+"\">"+(data.data[i].illegalWord)+"</a></td>"
+						+"<td>"+data.data[i].gmtCreated+"</td>"
+						+"</tr>");
+			}	 		
+			$("#persionTable").html(ihtml);
+			AVRIL.initPageBar(data.page);
+			return;
+		}		
+	}
+	AVRIL.initPageBar(null);
+	$("#persionTable").html('<tr><td colspan=\"12\"><font color=\"red\">没有查询到数据。</font></td></tr>');
+	
+}
+
+function doSearchAction(){
+	pagenum = 1;
+	searchWord = $('#searchKeyWord').val();	
+	reloadData();
+}
+function reloadData(){	
+	AVRIL.loadFullWebList(loadPersionListBack, pagenum, pagesize, searchWord, orderBy, siteId);	
+}
+function goPage(pn){
+	pagenum = pn;
+	reloadData();
+}
+
+function doOrderType(o){
+	orderBy = o;
+	reloadData();
+}
+
+
+function exportFunction(){
+	window.open('/monitoroutlines/export', '_blank');
+}
+
+</script>
+
+</head>
+
+<body >
+<!-- 头部信息 -->
+<div class="header">
+<ul class="nav nav-secondary">
+	<li><a href="control.html">*系统控制</a></li>	
+	<li class="active"><a href="javascript:void(0);">*全站检测列表</a></li>
+	<li><a href="history.html">*检测历史</a></li>	
+	<li><a href="fullsite.html">全站检测</a></li>
+	<li><a href="fulldetail.html">内页详情</a></li>
+	<li><a href="fullkeyword.html">敏感词</a></li>
+	<li><a href="fulloutlink.html">外链清单</a></li>
+</ul>
+</div>
+<br/>
+
+	<div class="row">
+		<div class="col-xs-0 col-sm-1 col-md-2 col-lg-3"></div>
+	  	<div class="input-group col-xs-12 col-sm-10 col-md-8 col-lg-6">
+			<input type="text" id="searchKeyWord" class="form-control" placeholder="站点名称或落地页">
+			<span class="input-group-addon" onclick="doSearchAction();"><i class="icon icon-cloud">查询</i></span>
+		</div>
+	</div>
+	<br/>
+	<div class="btn-toolbar">
+		<div class="btn-group" data-toggle="buttons">
+			<label class="btn"> <input type="radio"
+				name="options" id="option2" checked>提醒：双击行查看详情检测详情
+			</label> 
+			<label class="btn btn-primary" onclick="doOrderType('checkLevel');"> <input type="radio"
+				name="options" id="option1" checked> 深度优先
+			</label> 
+			<label class="btn btn-info" onclick="doOrderType('siteId');"> <input type="radio"
+				name="options" id="option2"> 检测量优先
+			</label> 
+			<label class="btn btn-warning" onclick="doOrderType('outerPage');"> <input type="radio"
+				name="options" id="option3"> 外链优先
+			</label> 
+			<label class="btn btn-danger" onclick="doOrderType('illegalWord');"> <input type="radio"
+				name="options" id="option3"> 敏感词优先
+			</label> 
+			<label class="btn btn-success active" onclick="doOrderType('gmtCreated');"> <input type="radio"
+				name="options" id="option3"> 检测时间优先
+			</label>
+		</div>
+		<div class="btn-group" data-toggle="buttons">			
+			<label class="btn btn-primary" onclick="exportFunction();"> <input type="radio"
+				name="options" id="option2"> <i class="icon icon-file-excel"></i>导出全部
+			</label> 
+		</div>
+	</div>
+<table class="table table-hover">
+		  <thead>
+		    <tr>
+		      <th></th>
+		      <th>是否我司托管</th>
+		      <th>站点IP</th>
+		      <th>接收邮箱</th>
+		      <th>检测站\页</th>
+		      <th>循检深度</th>
+		      <th>检测网页量</th>
+		      <th>异常子链总量</th>		      
+		      <th>检测到子链总量</th>
+		      <th>检测到外链总量</th>
+		      <th>白名单敏感词量</th>
+		      <th>疑似敏感词总量</th>
+		      <th>检测时间</th>
+		    </tr>
+		  </thead>
+	  	<tbody id="persionTable">    
+	  	</tbody>  
+</table>
+<footer style="float:right; ">
+	<ul class="pager"></ul>	
+</footer>
+
+</body>
+</html>

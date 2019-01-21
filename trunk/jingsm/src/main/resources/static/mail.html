@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<title>网站健康检测工具-流程信息部</title>
+	<meta charset="utf-8">
+  	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<!-- ZUI 标准版压缩后的 CSS 文件 -->
+	<link rel="stylesheet" href="./css/zui.min.css" />
+	<!-- ZUI Javascript 依赖 jQuery -->
+	<script src="./lib/jquery/jquery.js"></script>
+	<!-- ZUI 标准版压缩后的 JavaScript 文件 -->
+	<script src="./js/zui.min.js"></script>	
+	<!-- 自定义业务 JavaScript 文件 -->
+	<script src="avril.js"></script>
+<style type="text/css"> 
+.elehidden{display: none;}
+</style> 	
+	<script type="text/javascript">		
+	var pagenum = 1;
+	var pagesize = 15;
+$(document).ready(function(){ 
+	reloadData();	
+});
+
+function loadPersionListBack(data){	
+	if(data!=undefined && data.page!=undefined){
+		if(data.data!=undefined && data.data.length>0){
+			var ihtml = "";
+			for(var i=0; i<data.data.length; i++){
+
+				ihtml+=("<div class=\"item\">"
+						+"    <div class=\"item-heading\">"
+						+"<dd class=\"pull-right\"><span class=\"label label-info\">安全+</span>&nbsp;"				
+						+"</dd>"											
+						+"      <h4>"+(data.page.startRow+i)+"&nbsp;&nbsp;"+(data.data[i].titile)+"</h4>"
+						+"      "+data.data[i].sendTo+"</a>"
+						+"    </div>"
+						+"    <div class=\"item-content\">"+data.data[i].content+"</div>"
+						+"    <div class=\"item-footer\">"
+						+"     <span class=\"text-muted\">"+data.data[i].gmtCreate+"</span>"
+						+"    </div>"
+						+" </div>");
+						
+			}	 		
+			$("#persionTable").html(ihtml);
+			AVRIL.initPageBar(data.page);
+			return;		
+	}}
+	AVRIL.initPageBar(null);
+	$("#persionTable").html('<div class=\"item\"><font color=\"red\">没有查询到数据。</font></div>');
+	
+}
+
+
+function reloadData(){	
+	AVRIL.loadMailList(loadPersionListBack, pagenum, pagesize);	
+}
+function goPage(pn){
+	pagenum = pn;
+	reloadData();
+}
+
+</script>
+
+</head>
+
+<body >
+<!-- 头部信息 -->
+<div class="header">
+<ul class="nav nav-secondary">
+	<li><a href="control.html">*系统控制</a></li>	
+	<li><a href="fullweb.html">*全站检测记录</a></li>
+	<li><a href="history.html">*检测历史</a></li>
+	<li  class="active"><a href="javascript:void(0);">邮件历史</a></li>
+	<li><a href="site.html">站点管理</a></li>
+	<li><a href="ip.html">我司IP管理</a></li>	
+	<li><a href="config.html">系统配置</a></li>
+		
+</ul>
+</div>
+<br/>
+	<footer style="float:right; ">
+	<ul class="pager"></ul>	
+</footer>
+
+<div class="items col-xs-12 col-sm-12 col-md-12 col-lg-12" id="persionTable">
+  
+</div>	
+<br/>
+
+<footer style="float:right; ">
+	<ul class="pager"></ul>	
+</footer>
+</body>
+</html>

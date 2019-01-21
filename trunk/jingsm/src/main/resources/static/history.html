@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<title>网站健康检测工具-流程信息部</title>
+	<meta charset="utf-8">
+  	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<!-- ZUI 标准版压缩后的 CSS 文件 -->
+	<link rel="stylesheet" href="./css/zui.min.css" />
+	<!-- ZUI Javascript 依赖 jQuery -->
+	<script src="./lib/jquery/jquery.js"></script>
+	<!-- ZUI 标准版压缩后的 JavaScript 文件 -->
+	<script src="./js/zui.min.js"></script>	
+	<!-- 自定义业务 JavaScript 文件 -->
+	<script src="avril.js"></script>
+<style type="text/css"> 
+.elehidden{display: none;}
+</style> 	
+	<script type="text/javascript">	
+	var searchWord = '';
+	var pagenum = 1;
+	var pagesize = 15;
+$(document).ready(function(){ 
+// 	$('#searchKeyWord').bind('keypress', function(event) {
+// 		if (event.keyCode == 13) {
+// 			doSearchAction();
+// 		}
+// 	});	
+	reloadData();	
+});
+
+function getSourceName(so){
+	if(so==null || so == undefined ){
+		return "--";
+	}else if(so ==1){
+		return "平台";
+	}else if(so ==2){
+		return "SSG";
+	}else if(so ==3){
+		return "农业";
+	}else if(so ==4){
+		return "小仙子";
+	}else{
+		return "未定义";
+	}
+}
+
+function loadPersionListBack(data){
+	if(data!=undefined && data.page!=undefined){
+		if(data.data!=undefined && data.data.length>0){
+			var ihtml = "";
+			for(var i=0; i<data.data.length; i++){
+				ihtml+=("<tr ondblclick=\"modifyPersion(this);\">"
+						+"<td>"+(data.page.startRow+i)+"<input type=\"hidden\" value=\""+data.data[i].id+"\"></td>"
+						+"<td>"+(getSourceName(data.data[i].source))+"</td>"	
+						+"<td>"+data.data[i].siteTotal+"</td>"
+						+"<td>"+(data.data[i].siteCheck)+"</td>"
+						+"<td>"+(data.data[i].siteError==undefined?'0':("<a href=\"records.html?id="+data.data[i].id+"\">"+data.data[i].siteError)+"</a>")+"</td>"
+						+"<td>"+(data.data[i].siteWarn==undefined?'0':data.data[i].siteWarn)+"</td>"
+						+"<td>"+(data.data[i].siteSlow==undefined?'0':data.data[i].siteSlow)+"</td>"						
+						+"<td>"+data.data[i].beginTime+"</td>"
+						+"<td>"+(data.data[i].endTime==undefined?'未结束':data.data[i].endTime)+"</td>"
+						+"</tr>");
+			}	 		
+			$("#persionTable").html(ihtml);
+			AVRIL.initPageBar(data.page);
+		}
+		return;
+	}
+	AVRIL.initPageBar(null);
+	$("#persionTable").html('<tr><td colspan=\"9\"><font color=\"red\">没有查询到数据。</font></td></tr>');
+	
+}
+
+function doSearchAction(source){
+	pagenum = 1;
+	searchWord = source;	
+	reloadData();
+}
+function reloadData(){	
+	AVRIL.queryCheckStastics(loadPersionListBack, pagenum, pagesize, searchWord);	
+}
+function goPage(pn){
+	pagenum = pn;
+	reloadData();
+}
+
+
+</script>
+
+</head>
+
+<body >
+<!-- 头部信息 -->
+<div class="header">
+<ul class="nav nav-secondary">
+	<li><a href="control.html">*系统控制</a></li>	
+	<li><a href="fullweb.html">*全站检测记录</a></li>
+	<li  class="active"><a href="javascript:void(0);">*检测历史</a></li>
+	<li><a href="keyword.html">最新极限词</a></li>
+	<li><a href="demin.html">单站检测</a></li>
+	<li><a href="deminmuti.html">多站检测</a></li>
+	<li><a href="record.html">最新检测详情</a></li>
+</ul>
+</div>
+<br/>
+
+<div class="row">
+		<div class="btn-group" data-toggle="buttons">
+			<label class="btn btn-info active" onclick="doSearchAction('');"> <input type="radio"
+				name="options" id="option1" checked> 全部
+			</label> 
+			<label class="btn btn-success" onclick="doSearchAction('1');"> <input type="radio"
+				name="options" id="option2"> 平台
+			</label> 
+			<label class="btn btn-warning" onclick="doSearchAction('2');"> <input type="radio"
+				name="options" id="option3"> 大搜
+			</label> 
+			<label class="btn btn-info" onclick="doSearchAction('3');"> <input type="radio"
+				name="options" id="option4"> 农业
+			</label> 
+			<label class="btn btn-danger" onclick="doSearchAction('4');"> <input type="radio"
+				name="options" id="option5"> 小仙子
+			</label> 
+		</div>
+</div>
+
+<table class="table table-hover">
+		  <thead>
+		    <tr>
+		      <th></th>
+		      <th>检测来源<br/>&nbsp;</th>
+		      <th>待检测网站总量<br/>(来源下域名、页面总量)</th>
+		      <th>检测网站总量<br/>(参与本次检测的域名、页面总量)</th>
+		      <th>疑似异常网站总量<br/>(检测疑似异常的网站)</th>
+		      <th>待核实网站总量<br/>(平台限待处理网站，大搜限我司托管网站)</th>
+		      <th>加载速度慢网站总量<br/>(加载页面超过3秒)</th>
+		      <th>检测开始时间<br/>&nbsp;</th>
+		      <th>检测结束时间<br/>&nbsp;</th>
+		    </tr>
+		  </thead>
+	  	<tbody id="persionTable">    
+	  	</tbody>  
+</table>
+<footer style="float:right; ">
+	<ul class="pager"></ul>	
+</footer>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hnjing.cw.model.dao.SensitiveWordMapper">
+
+<!-- Result Map-->
+<resultMap id="SensitiveWordResultMap" type="com.hnjing.cw.model.entity.SensitiveWord">
+	<id column="id" property="id"/>
+	<result column="key_word" property="keyWord"/>
+	<result column="white_words" property="whiteWords"/>
+	<result column="status" property="status"/>
+	<result column="gmt_created" property="gmtCreated"/>
+	<result column="gmt_modify" property="gmtModify"/>
+</resultMap>
+
+<sql id="sql_sensitiveWord_item">
+	id, key_word, white_words, status, gmt_created, gmt_modify
+</sql>
+       
+<!-- 查询条件 无WHERE -->
+<sql id="sql_sensitiveWord_query_nowhere">
+	<trim prefix=" " prefixOverrides="AND|OR">
+		<if test="sensitiveWord.id != null">AND id = #{sensitiveWord.id} </if>
+		<if test="sensitiveWord.keyWord != null">AND key_word like concat(#{sensitiveWord.keyWord}, '%') </if>
+		<if test="sensitiveWord.whiteWords != null">AND white_words like concat(#{sensitiveWord.whiteWords}, '%') </if>
+		<if test="sensitiveWord.status != null">AND status = #{sensitiveWord.status} </if>
+	</trim>
+</sql>
+   
+<!-- 插入 敏感词 -->
+<insert id="addSensitiveWord" parameterType="com.hnjing.cw.model.entity.SensitiveWord" >
+	<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+		SELECT LAST_INSERT_ID()
+	</selectKey>
+ 	INSERT INTO tb_sensitive_word 
+	<trim prefix=" (" suffix=")" suffixOverrides=",">
+		<if test="id != null"> id,</if>
+		<if test="keyWord != null"> key_word,</if>
+		<if test="whiteWords != null"> white_words,</if>
+		<if test="status != null"> status,</if>
+		gmt_created, gmt_modify
+	</trim>	 	
+	<trim prefix="values (" suffix=")" suffixOverrides=",">
+		<if test="id != null"> #{id},</if>
+		<if test="keyWord != null"> #{keyWord},</if>
+		<if test="whiteWords != null"> #{whiteWords},</if>
+		<if test="status != null"> #{status},</if>
+		now(), now()
+	</trim>
+</insert>
+
+<!-- 根据标识，修改 敏感词 -->  
+<update id="modifySensitiveWord" parameterType="com.hnjing.cw.model.entity.SensitiveWord" >
+  	UPDATE tb_sensitive_word SET
+	<trim suffixOverrides=",">
+		<if test="keyWord != null"> key_word = #{keyWord},</if>
+		<if test="whiteWords != null"> white_words = #{whiteWords},</if>
+		<if test="status != null"> status = #{status},</if>
+		gmt_modify = now()
+	</trim>
+	WHERE id = #{id}
+</update>
+ 
+<!-- 删除 敏感词 -->
+<delete id="dropSensitiveWordById" parameterType="java.lang.Integer">
+	DELETE FROM tb_sensitive_word WHERE id = #{id}
+</delete> 
+
+<!-- 根据标识查询 敏感词 -->
+<select id="querySensitiveWordById"  resultMap="SensitiveWordResultMap" parameterType="java.lang.Integer">
+	SELECT 
+	<include refid="sql_sensitiveWord_item"/>
+	FROM tb_sensitive_word WHERE id = #{id}
+</select>
+
+<!-- 根据属性查询敏感词 -->
+<select id="querySensitiveWordByProperty"  resultMap="SensitiveWordResultMap" parameterType="java.util.Map">
+	SELECT 
+	<include refid="sql_sensitiveWord_item"/>
+	FROM tb_sensitive_word 
+	<where>
+		<include refid="sql_sensitiveWord_query_nowhere"/>
+	</where>
+</select>
+
+<!-- 根据敏感词属性与分页信息分页查询敏感词信息 -->
+<select id="querySensitiveWordForPage"  resultMap="SensitiveWordResultMap" > 
+	SELECT 
+	<include refid="sql_sensitiveWord_item"/>
+	FROM tb_sensitive_word 
+	<where>
+		<include refid="sql_sensitiveWord_query_nowhere"/>
+	</where>
+</select>
+
+</mapper>   

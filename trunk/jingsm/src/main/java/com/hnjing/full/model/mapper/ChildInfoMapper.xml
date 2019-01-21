@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hnjing.full.model.dao.ChildInfoMapper">
+
+<!-- Result Map-->
+<resultMap id="ChildInfoResultMap" type="com.hnjing.full.model.entity.ChildInfo">
+	<id column="id" property="id"/>
+	<result column="page" property="page"/>
+	<result column="check_cycle" property="checkCycle"/>
+	<result column="check_order" property="checkOrder"/>
+	<result column="code" property="code"/>
+	<result column="content" property="content" typeHandler="com.hnjing.utils.MyBlobTypeHandler"/>
+	<result column="inner_link" property="innerLink"/>
+	<result column="out_link" property="outLink"/>
+	<result column="white_word" property="whiteWord"/>
+	<result column="illegal_word" property="illegalWord"/>
+	<result column="gmt_created" property="gmtCreated"/>
+</resultMap>
+
+<sql id="sql_childInfo_item">
+	id, page, check_cycle, check_order, code, content, inner_link, out_link, white_word, illegal_word, gmt_created
+</sql>
+       
+<!-- 查询条件 无WHERE -->
+<sql id="sql_childInfo_query_nowhere">
+	<trim prefix=" " prefixOverrides="AND|OR">
+		<if test="childInfo.id != null">AND id = #{childInfo.id} </if>
+		<if test="childInfo.page != null">AND page like concat(#{childInfo.page}, '%') </if>
+		<if test="childInfo.checkCycle != null">AND check_cycle = #{childInfo.checkCycle} </if>
+		<if test="childInfo.checkOrder != null">AND check_order = #{childInfo.checkOrder} </if>
+		<if test="childInfo.code != null">AND code = #{childInfo.code} </if>
+<!-- 		<if test="childInfo.innerLink != null">AND inner_link = #{childInfo.innerLink} </if> -->
+<!-- 		<if test="childInfo.outLink != null">AND out_link = #{childInfo.outLink} </if> -->
+<!-- 		<if test="childInfo.whiteWord != null">AND white_word = #{childInfo.whiteWord} </if> -->
+<!-- 		<if test="childInfo.illegalWord != null">AND illegal_word = #{childInfo.illegalWord} </if> -->
+	</trim>
+</sql>
+   
+<!-- 插入 表tf_child_info -->
+<insert id="addChildInfo" parameterType="com.hnjing.full.model.entity.ChildInfo" >
+ 	INSERT INTO tf_child_info 
+	<trim prefix=" (" suffix=")" suffixOverrides=",">
+		<if test="id != null"> id,</if>
+		<if test="page != null"> page,</if>
+		<if test="checkCycle != null"> check_cycle,</if>
+		<if test="checkOrder != null"> check_order,</if>
+		<if test="code != null"> code,</if>
+		<if test="innerLink != null"> inner_link,</if>
+		<if test="outLink != null"> out_link,</if>
+		<if test="whiteWord != null"> white_word,</if>
+		<if test="illegalWord != null"> illegal_word,</if>
+		gmt_created
+	</trim>	 	
+	<trim prefix="values (" suffix=")" suffixOverrides=",">
+		<if test="id != null"> #{id},</if>
+		<if test="page != null"> #{page},</if>
+		<if test="checkCycle != null"> #{checkCycle},</if>
+		<if test="checkOrder != null"> #{checkOrder},</if>
+		<if test="code != null"> #{code},</if>
+		<if test="innerLink != null"> #{innerLink},</if>
+		<if test="outLink != null"> #{outLink},</if>
+		<if test="whiteWord != null"> #{whiteWord},</if>
+		<if test="illegalWord != null"> #{illegalWord},</if>
+		now()
+	</trim>
+</insert>
+
+<insert id="addChildInfoBatch" parameterType="java.util.List">
+    INSERT INTO tf_child_info (id, page, check_cycle, check_order, code, inner_link, out_link, white_word, illegal_word, gmt_created) VALUES 
+    <foreach collection ="list" item="result" separator =",">
+         (#{result.id},#{result.page}, #{result.checkCycle},#{result.checkOrder}, #{result.code}, #{result.innerLink}, #{result.outLink}, #{result.whiteWord},#{result.illegalWord}, now()) 
+    </foreach >
+</insert>
+
+<!-- 根据标识，修改 表tf_child_info -->  
+<update id="modifyChildInfo" parameterType="com.hnjing.full.model.entity.ChildInfo" >
+  	UPDATE tf_child_info SET
+	<trim suffixOverrides=",">
+		<if test="page != null"> page = #{page},</if>
+		<if test="checkCycle != null"> check_cycle = #{checkCycle},</if>
+		<if test="checkOrder != null"> check_order = #{checkOrder},</if>
+		<if test="code != null"> code = #{code},</if>
+		<if test="innerLink != null"> inner_link = #{innerLink},</if>
+		<if test="outLink != null"> out_link = #{outLink},</if>
+		<if test="whiteWord != null"> white_word = #{whiteWord},</if>
+		<if test="illegalWord != null"> illegal_word = #{illegalWord},</if>
+		<if test="gmtCreated != null"> gmt_created = #{gmtCreated},</if>
+	</trim>
+	WHERE id = #{id}
+</update>
+ 
+<!-- 删除 表tf_child_info -->
+<delete id="dropChildInfoById" parameterType="java.lang.Integer">
+	DELETE FROM tf_child_info WHERE id = #{id}
+</delete> 
+
+<!-- 根据标识查询 表tf_child_info -->
+<select id="queryChildInfoById"  resultMap="ChildInfoResultMap" parameterType="java.lang.Integer">
+	SELECT 
+	<include refid="sql_childInfo_item"/>
+	FROM tf_child_info WHERE id = #{id}
+</select>
+
+<!-- 根据属性查询表tf_child_info -->
+<select id="queryChildInfoByProperty"  resultMap="ChildInfoResultMap" parameterType="java.util.Map">
+	SELECT 
+	<include refid="sql_childInfo_item"/>
+	FROM tf_child_info 
+	<where>
+		<include refid="sql_childInfo_query_nowhere"/>
+	</where>
+</select>
+
+<!-- 根据表tf_child_info属性与分页信息分页查询表tf_child_info信息 -->
+<select id="queryChildInfoForPage"  resultMap="ChildInfoResultMap" > 
+	SELECT 
+	<include refid="sql_childInfo_item"/>
+	FROM tf_child_info 
+	<where>
+		<include refid="sql_childInfo_query_nowhere"/>
+	</where>
+</select>
+
+</mapper>

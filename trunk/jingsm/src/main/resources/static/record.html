@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<title>网站健康检测工具-流程信息部</title>
+	<meta charset="utf-8">
+  	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<!-- ZUI 标准版压缩后的 CSS 文件 -->
+	<link rel="stylesheet" href="./css/zui.min.css" />
+	<!-- ZUI Javascript 依赖 jQuery -->
+	<script src="./lib/jquery/jquery.js"></script>
+	<!-- ZUI 标准版压缩后的 JavaScript 文件 -->
+	<script src="./js/zui.min.js"></script>	
+	<!-- 自定义业务 JavaScript 文件 -->
+	<script src="avril.js"></script>
+<style type="text/css"> 
+.elehidden{display: none;}
+</style> 	
+	<script type="text/javascript">	
+	var searchWord = '';
+	var searchStatus = '';
+	var searchCommit='';
+	var pagenum = 1;
+	var pagesize = 15;
+$(document).ready(function(){ 
+	$('#searchKeyWord').bind('keypress', function(event) {
+		if (event.keyCode == 13) {
+			doSearchAction();
+		}
+	});	
+	reloadData();	
+});
+
+function loadPersionListBack(data){	
+	if(data!=undefined && data.page!=undefined){
+		if(data.data!=undefined && data.data.length>0){
+			var ihtml = "<div class=\"item\"></div>";
+			for(var i=0; i<data.data.length; i++){
+				var ipss = "【";
+				if(data.data[i].siteUrl.selfSite==1){
+					ipss +="托管";
+				}
+				if(data.data[i].siteUrl.ip!=null){
+					ipss +=("<a href=\"./siteip.html?ip="+data.data[i].siteUrl.ip+"\">"+data.data[i].siteUrl.ip+"</a>");
+				}else{
+					ipss +=("<a href=\"./siteip.html\">null</a>");
+				}
+				ipss+="】";
+				ihtml+=("<div class=\"item\">"
+						+"    <div class=\"item-heading\">"
+						+"<dd class=\"pull-right\">"
+						+(data.data[i].siteResult.comment==6?'<span class=\"label label-info\">安全+</span>&nbsp;':'')
+						+(data.data[i].siteResult.comment==3?'<span class=\"label label-warning\">加载慢</span>&nbsp;':'')
+						+(data.data[i].siteResult.comment==9?'<span class=\"label label-danger\">警报</span>&nbsp;':'')
+						+(data.data[i].siteResult.status==200?'<span class=\"label label-success\">正常</span>':'<span class=\"label label-warning\">异常</span>')						
+						+"</dd>"											
+						+"      <h4>"+(data.page.startRow+i)+"&nbsp;&nbsp;"+(data.data[i].siteResult.title==''?'<font color=\"red\">NULL</font>':data.data[i].siteResult.title)+"</h4>"
+						+"      "+ipss+"<a target=\"_blank\" href=\""+data.data[i].siteResult.page+"\">"+(data.data[i].siteResult.page==undefined?'':data.data[i].siteResult.page)+"</a>"
+						+"    </div>"
+						+"    <div class=\"item-content\">"+data.data[i].siteResult.content+"</div>"
+						+"    <div class=\"item-footer\">"
+						+"     <span class=\"text-muted\">"+data.data[i].siteResult.gmtCreated+"</span>"
+						+"    </div>"
+						+" </div>");
+						
+			}	 		
+			$("#persionTable").html(ihtml);
+			AVRIL.initPageBar(data.page);
+			return;		
+	}}
+	AVRIL.initPageBar(null);
+	$("#persionTable").html('<div class=\"item\"><font color=\"red\">没有查询到数据。</font></div>');
+	
+}
+
+function doSearchType(ss, sc){
+	$('#searchKeyWord').val('');
+	pagenum = 1;
+	searchStatus = ss;
+	searchCommit = sc;
+	reloadData();
+}
+
+function doSearchAction(){
+	pagenum = 1;
+	searchWord = $('#searchKeyWord').val();	
+	reloadData();
+}
+
+function doErrorAction(){
+	 $('#searchKeyWord').val('');
+	pagenum = 1;
+	searchWord = '';
+	reloadData();
+}
+function reloadData(){	
+	AVRIL.loadResultList(loadPersionListBack, pagenum, pagesize, searchWord, searchStatus, searchCommit);	
+}
+function goPage(pn){
+	pagenum = pn;
+	reloadData();
+}
+
+</script>
+
+</head>
+
+<body >
+<!-- 头部信息 -->
+<div class="header">
+<ul class="nav nav-secondary">
+	<li><a href="control.html">*系统控制</a></li>	
+	<li><a href="fullweb.html">*全站检测记录</a></li>
+	<li><a href="history.html">*检测历史</a></li>
+	<li><a href="keyword.html">最新极限词</a></li>
+	<li><a href="demin.html">单站检测</a></li>
+	<li><a href="deminmuti.html">多站检测</a></li>
+	<li  class="active"><a href="javascript:void(0);">最新检测详情</a></li>
+	
+</ul>
+</div>
+<br/>
+	<div class="row">
+		<div class="col-xs-0 col-sm-1 col-md-2 col-lg-3"></div>
+	  	<div class="input-group col-xs-12 col-sm-10 col-md-8 col-lg-6">	  	
+			<input type="text" id="searchKeyWord" class="form-control" placeholder="站点名称或落地页">
+			<span class="input-group-addon" onclick="doSearchAction();"><i class="icon icon-cloud">查询</i></span>			
+		</div>
+	</div>
+	<div class="row">
+		<div class="btn-group" data-toggle="buttons">
+			<label class="btn btn-info active" onclick="doSearchType(null, null);"> <input type="radio"
+				name="options" id="option1" checked> 全部
+			</label> 
+			<label class="btn btn-danger" onclick="doSearchType(null, 9);"> <input type="radio"
+				name="options" id="option2"> 告警
+			</label> 
+			<label class="btn btn-warning" onclick="doSearchType(100, null);"> <input type="radio"
+				name="options" id="option3"> 异常
+			</label> 
+			<label class="btn btn-info" onclick="doSearchType(null, 3);"> <input type="radio"
+				name="options" id="option3"> 加载慢
+			</label> 
+			<label class="btn btn-success" onclick="doSearchType(null, 6);"> <input type="radio"
+				name="options" id="option3"> 安全+
+			</label>
+		</div>
+	</div>
+
+	<footer style="float:right; ">
+	<ul class="pager"></ul>	
+</footer>
+
+<div class="items col-xs-12 col-sm-12 col-md-12 col-lg-12" id="persionTable">
+  
+</div>	
+<br/>
+
+<footer style="float:right; ">
+	<ul class="pager"></ul>	
+</footer>
+</body>
+</html>

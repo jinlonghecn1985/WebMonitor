@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<title>网站健康检测工具-流程信息部</title>
+	<meta charset="utf-8">
+  	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<!-- ZUI 标准版压缩后的 CSS 文件 -->
+	<link rel="stylesheet" href="./css/zui.min.css" />
+	<!-- ZUI Javascript 依赖 jQuery -->
+	<script src="./lib/jquery/jquery.js"></script>
+	<!-- ZUI 标准版压缩后的 JavaScript 文件 -->
+	<script src="./js/zui.min.js"></script>	
+	<!-- 自定义业务 JavaScript 文件 -->
+	<script src="avril.js"></script>
+<style type="text/css"> 
+.elehidden{display: none;}
+</style>
+	<script type="text/javascript">	
+$(document).ready(function(){ 
+	$("#row2").hide();
+	$('#searchKeyWord').bind('keypress', function(event) {
+		if (event.keyCode == 13) {
+			doSearchAction();
+		}
+	});	
+});
+
+function showDetail(fid){
+	window.location.href="fulldetail.html?id="+fid;
+}
+
+function doSearchAction(){	
+	var page = $("#searchKeyWord").val();
+	if(page==undefined || page.length==0){
+		showJLWarning('检测目标站点或页面必须填写!');
+		return ;
+	}
+	AVRIL.doAllSiteCrawler(doAllSiteCrawlerBack, page, '');	
+}
+function doAllSiteCrawlerBack(data){
+	if(data!=undefined && data.siteId!=undefined){
+		var ihtml=("<tr data-toggle=\"tooltip\" title=\"双击查看内页详情\" ondblclick=\"showDetail("+data.id+");\">"
+				+"<td>"+data.id+"</td>"
+				+"<td>"+(data.selfSite==1?'<font color=\"00ff00\">是</font>':'否')+"</td>"	
+				+"<td>"+(data.ip)+"</td>"
+				+"<td>"+(data.acceptMail==undefined?'':data.acceptMail)+"</td>"						
+				+"<td>"+"<a data-toggle=\"tooltip\" title=\"点击打开相应页面\" target=\"_blank\" href=\""+data.page+"\">"+data.page+"</td>"						
+				+"<td>"+(data.checkLevel)+"</td>"
+				+"<td>"+"<a data-toggle=\"tooltip\" title=\"点击查看内页详情\" href=\"fulldetail.html?id="+data.id+"\">"+(data.siteId==undefined?'':data.siteId)+"</a></td>"
+				+"<td>"+(data.innerPage)+"</td>"							
+				+"<td>"+"<a data-toggle=\"tooltip\" title=\"点击查看外链详情\" href=\"fulloutlink.html?id="+data.id+"\">"+(data.outerPage)+"</a></td>"
+				+"<td>"+data.keyWord+"</td>"
+				+"<td>"+"<a data-toggle=\"tooltip\" title=\"点击查看敏感词详情\" href=\"fullkeyword.html?id="+data.id+"\">"+(data.illegalWord)+"</a></td>"
+				+"<td>"+data.gmtCreated+"</td>"
+				+"</tr>");
+			$("#persionTable").html(ihtml);		
+			$("#row2").hide();
+			return;
+	}else if(data!=undefined && data.id!=undefined){
+		$("#persionTable").html("<tr><td colspan=\"12\"><font color=\"red\">复制并保存以下链接，大约5-10分钟后查询结果：http://192.168.50.175:8090/fullweb.html?id="+data.id+"</font></td></tr>");
+		$("#row2").hide();
+	}else{
+		$("#persionTable").html("<tr><td colspan=\"12\"><font color=\"red\">没有找到相应的检测记录。</font></td></tr>");
+		$("#row2").show();
+	}
+		
+}
+
+function doSearchAction2(){
+	var page = $("#searchKeyWord").val();
+	if(page==undefined || page.length==0){
+		showJLWarning('检测目标站点或页面必须填写!');
+		return ;
+	}
+	var mail = $("#searchMail").val();
+	if(mail==undefined || mail.length<6){
+		mail = "6666666666";
+// 		showJLWarning('接收邮箱必须填写,且长度大于6!');
+// 		return ;
+	}	
+	AVRIL.doAllSiteCrawler(doAllSiteCrawlerBack, page, mail);	
+}
+
+
+</script>
+
+</head>
+
+<body >
+<!-- 头部信息 -->
+<div class="header">
+<ul class="nav nav-secondary">	
+	<li><a href="control.html">*系统控制</a></li>	
+	<li><a href="fullweb.html">*全站检测记录</a></li>
+	<li><a href="history.html">*检测历史</a></li>
+	<li class="active"><a href="javascript:void(0);">全站检测</a></li>
+	<li><a href="fulldetail.html">内页详情</a></li>
+	<li><a href="fullkeyword.html">敏感词</a></li>
+	<li><a href="fulloutlink.html">外链清单</a></li>
+	
+</ul>
+</div>
+<br/>
+	<div class="row">
+		<div class="col-xs-0 col-sm-1 col-md-2 col-lg-3"></div>
+	  	<div class="input-group col-xs-12 col-sm-10 col-md-8 col-lg-6">
+			<input type="text" id="searchKeyWord" class="form-control" placeholder="站点名称或落地页">
+			<span class="input-group-addon" onclick="doSearchAction();"><i class="icon icon-cloud">查询</i></span>
+		</div>			
+	</div>
+	<div class="row" id="row2">
+		<div class="col-xs-0 col-sm-1 col-md-2 col-lg-3"></div>
+	  	<div class="input-group col-xs-12 col-sm-10 col-md-8 col-lg-6">
+			<input type="text" id="searchMail" class="form-control" placeholder="因全站检测可能耗时较长，建议留下您联系邮箱以便检测结束后发送邮件通知您！">
+<!-- 			<span class="input-group-addon">@hnjing.com</span> -->
+			<span class="input-group-addon" onclick="doSearchAction2();"><i class="icon search">进行检测</i></span>
+		</div>			
+	</div>
+
+<br/>
+<div> 
+<table class="table table-hover" id="pageTable">
+		  <thead>
+		    <tr>
+		      <th></th>
+		      <th>是否我司托管</th>
+		      <th>站点IP</th>
+		      <th>接收邮箱</th>
+		      <th>检测站\页</th>
+		      <th>循检深度</th>
+		      <th>检测网页量</th>		      
+		      <th>检测到子链总量</th>
+		      <th>检测到外链总量</th>
+		      <th>白名单敏感词量</th>
+		      <th>疑似敏感词总量</th>
+		      <th>检测时间</th>
+		    </tr>
+		  </thead>
+	  	<tbody id="persionTable">    
+	  	</tbody>  
+</table>
+ </div>
+</body>
+</html>

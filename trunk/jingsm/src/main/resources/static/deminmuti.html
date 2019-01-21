@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<title>网站健康检测工具-流程信息部</title>
+	<meta charset="utf-8">
+  	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<!-- ZUI 标准版压缩后的 CSS 文件 -->
+	<link rel="stylesheet" href="./css/zui.min.css" />
+	<!-- ZUI Javascript 依赖 jQuery -->
+	<script src="./lib/jquery/jquery.js"></script>
+	<!-- ZUI 标准版压缩后的 JavaScript 文件 -->
+	<script src="./js/zui.min.js"></script>	
+	<!-- 自定义业务 JavaScript 文件 -->
+	<script src="avril.js"></script>
+	<script src="./js/clipboard.min.js"></script>
+<style type="text/css"> 
+.elehidden{display: none;}
+</style> 	
+	<script type="text/javascript">	
+	var searchWord = '';
+	var siteList = new Array();
+$(document).ready(function(){	
+	$("#btcopy").hide();
+	$('#searchKeyWord').bind('keypress', function(event) {
+		if (event.keyCode == 13) {
+			doSearchAction();
+		}
+	});	
+		
+});
+
+function doSearchAction(){
+	showJLWarning("提交检测中，请稍候...");
+	searchWord = $('#searchKeyWord').val();	
+	reloadData();
+}
+
+function reloadData(){
+	if($("#errorSite").val().length>0){
+		$("#btcopy").hide();
+	}
+	$("#errorSite").val('');	
+	AVRIL.checkMutiSite(checkMutiSiteBack, searchWord);	
+}
+
+function checkMutiSiteBack(data){
+	if(data!=undefined){	
+		siteList = data;
+		$("#siteCount").html("输入解析到待检测网址总量为"+data.length);
+		var ihtml = "";
+		for(var i=0; i<data.length; i++){
+			ihtml+=("<tr >"
+					+"<td>"+(i+1)+"</td>"
+					+"<td>"+("<a target=\"_blank\" href=\""+data[i]+"\">"+data[i])+"</a></td>"
+					+"<td>待检测</td>"
+					+"<td></td>"
+					+"<td></td>"
+					+"<td></td>"
+					+"<td></td>"
+// 					+"<td>"+(data[i].selfSite?"<font color=\"00ff00\">是</font>":"否")+"</td>"
+// 					+"<td>"+(data[i].ip==undefined?'':("<a href=\"./siteip.html?ip="+data[i].ip+"\">"+data[i].ip+"</a>"))+"</td>"
+// 					+"<td>"+(data[i].status==200?"<font color=\"00ff00\">正常</font>":"<font color=\"ff0000\">异常</font>")+"</td>"
+// 					+"<td>"+(data[i].comment==null?"&nbsp;":data[i].comment)+"</td>"
+// 					+"<td>"+data[i].page+"</td>"
+// 					+"<td>"+data[i].title+"</td>"					
+			);
+		}	 		
+		$("#persionTable").html(ihtml);	
+		doSiteCheck(0);
+		return;
+	}
+	$("#siteCount").html("输入解析到待检测网址总量为0,请确认后重试！");
+	$("#persionTable").html('<tr><td colspan=\"7\"><font color=\"red\">没有查询到数据。</font></td></tr>');
+}
+
+function doSearchAction2(){
+	showJLWarning("提交检测中，请稍候...");
+	$('#searchKeyWord').val("http://www.csbaofu.com,http://www.hnykfs.com,http://www.csjbmx.com,http://www.brother-audio.com/,http://cdfening.com,http://www.hnshuoyu.com,http://www.jiakea.com,http://www.symbol-zz.com,http://www.hndzgf.com,http://www.zzxymbj.com,http://www.fhnan.com,http://www.hnhfdwl.com,http://www.hnhongcai168.com,http://www.hhfybl.com/,http://www.52ygmm.com,http://www.hntongbang.com,http://www.fxsysc.com,http://www.hn-gg.com,http://xy9ku.com,http://www.systsp.com,http://www.hnhdgy.com,http://www.0745dn.com,http://www.hhjfbj.com,http://www.maisansan.com,http://www.csrysl.com,http://www.msjjt.com,http://www.mingyangbs.com,http://www.gweidao.com,http://www.yulianit.net,http://www.shixundjj.com,http://www.huanyi520.com,http://www.czwenyi.com,http://www.hnherlion.com,http://www.hysgys.com,http://www.caiyouad.com,http://www.kuangzhen.com.cn,http://mingri.ai,http://www.0734af.com,http://www.tongtiandiguo.com,http://www.yymima.com,http://www.ydjsjjc.com/,http://www.essxx.com");	
+	searchWord = $('#searchKeyWord').val();	
+	reloadData();
+}
+
+function doSiteCheck(f){
+// 	cfalg = f;
+	if(f==siteList.length){
+		return ; //检测结束
+	}
+	$("#persionTable").find("tr:eq("+f+")").find("td:eq(2)").html('检测中，请稍候...');
+	AVRIL.checkMutiByOneSite(checkMutiByOneSiteBack, siteList[f], f);	
+}
+
+function checkMutiByOneSiteBack(data, f){
+	if(data==null){
+		$("#persionTable").find("tr:eq("+f+")").find("td:eq(2)").html('检测错误，请重试!');
+	}else{
+		$("#persionTable").find("tr:eq("+f+")").find("td:eq(2)").html(data.selfSite==1?"<font color=\"00ff00\">是</font>":"否");
+		$("#persionTable").find("tr:eq("+f+")").find("td:eq(3)").html(data.ip==undefined?'':("<a href=\"./siteip.html?ip="+data.ip+"\">"+data.ip+"</a>"));
+		$("#persionTable").find("tr:eq("+f+")").find("td:eq(4)").html(data.status==200?"<font color=\"00ff00\">正常</font>":"<font color=\"ff0000\">异常</font>");
+		if(data.status!=200){
+			if($("#errorSite").val().length==0){
+				$("#btcopy").show();
+			}
+			$("#errorSite").val($("#errorSite").val()+","+data.page);
+		}
+		$("#persionTable").find("tr:eq("+f+")").find("td:eq(5)").html(data.comment==null?"&nbsp;":data.comment);
+		$("#persionTable").find("tr:eq("+f+")").find("td:eq(6)").html(data.title);
+	}
+	doSiteCheck(f+1);	
+}
+
+</script>
+
+</head>
+
+<body >
+<!-- 头部信息 -->
+<div class="header">
+<ul class="nav nav-secondary">
+	<li><a href="control.html">*系统控制</a></li>	
+	<li><a href="fullweb.html">*全站检测记录</a></li>
+	<li><a href="history.html">*检测历史</a></li>
+	<li><a href="keyword.html">最新极限词</a></li>
+	<li><a href="demin.html">单站检测</a></li>
+	<li class="active"><a href="javascript:void(0);">多站检测</a></li>
+	<li><a href="record.html">最新检测详情</a></li>
+</ul>
+</div>
+<br/>
+
+	<div class="row">
+		<div class="col-xs-0 col-sm-1 col-md-2 col-lg-3"></div>
+	  	<div class="input-group col-xs-12 col-sm-10 col-md-8 col-lg-6">
+			<input type="text" id="searchKeyWord" class="form-control" value="" placeholder="站点名称或落地页，多个网址间以逗号分隔。">
+			<span class="input-group-addon" onclick="doSearchAction();"><i class="icon icon-cloud">检测</i></span>
+			<span class="input-group-addon" onclick="doSearchAction2();"><i class="icon icon-cloud">小仙子检测</i></span>
+		</div>
+	</div>
+	<h4><input  type="text" id="errorSite" style="width:0px;" value=""/> <span class="label label-badge label-primary" id="siteCount">请先输入网址，多个网址间以逗号分隔。</span><button class="btn btn-link" id="btcopy" data-clipboard-action="copy" data-clipboard-target="#errorSite" >复制异常网站</button></h4>
+	
+<table class="table table-hover">
+		  <thead>
+		    <tr>
+		      <th></th>
+		      <th>检测网站</th>
+		      <th>是否我司托管</th>
+		      <th>IP</th>
+		      <th>状态</th>
+		      <th>评价</th>		      		      
+		      <th>标题</th>
+		    </tr>
+		  </thead>
+	  	<tbody id="persionTable">    
+	  	</tbody>  
+</table>
+
+</body>
+
+<script>
+	var clipboard = new ClipboardJS('.btn');
+	clipboard.on('success', function(e) {
+		showJLSuccess('复制成功'); 
+    });
+
+    clipboard.on('error', function(e) {
+    	showJLWarning('复制失败');
+    });
+</script>
+</html>

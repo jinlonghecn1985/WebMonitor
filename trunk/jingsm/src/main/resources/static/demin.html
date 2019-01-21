@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<title>网站健康检测工具-流程信息部</title>
+	<meta charset="utf-8">
+  	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<!-- ZUI 标准版压缩后的 CSS 文件 -->
+	<link rel="stylesheet" href="./css/zui.min.css" />
+	<!-- ZUI Javascript 依赖 jQuery -->
+	<script src="./lib/jquery/jquery.js"></script>
+	<!-- ZUI 标准版压缩后的 JavaScript 文件 -->
+	<script src="./js/zui.min.js"></script>	
+	<!-- 自定义业务 JavaScript 文件 -->
+	<script src="avril.js"></script>
+<style type="text/css"> 
+.elehidden{display: none;}
+</style> 	
+	<script type="text/javascript">	
+	var searchWord = '';
+	var pagenum = 1;
+	var pagesize = 15;
+$(document).ready(function(){ 
+	$('#searchKeyWord').bind('keypress', function(event) {
+		if (event.keyCode == 13) {
+			doSearchAction();
+		}
+	});	
+	//reloadData();	
+});
+
+function loadHistoryUrlListBack(data){	
+	if(data!=undefined && data.page!=undefined){
+		if(data.data!=undefined && data.data.length>0){
+			var ihtml = "<div class=\"item\"></div>";
+			for(var i=0; i<data.data.length; i++){
+				var ipss = "【";
+				if(data.data[i].siteUrl.selfSite==1){
+					ipss +="托管";
+				}
+				if(data.data[i].siteUrl.ip!=null){
+					ipss +=("<a href=\"./siteip.html?ip="+data.data[i].siteUrl.ip+"\">"+data.data[i].siteUrl.ip+"</a>");
+				}else{
+					ipss +=("<a href=\"./siteip.html\">null</a>");
+				}
+				ipss+="】";
+				ihtml+=("<div class=\"item\">"
+						+"    <div class=\"item-heading\">"
+						+"<dd class=\"pull-right\">"
+						+(data.data[i].siteHistory.comment==6?'<span class=\"label label-info\">安全+</span>&nbsp;':'')
+						+(data.data[i].siteHistory.comment==3?'<span class=\"label label-warning\">加载慢</span>&nbsp;':'')
+						+(data.data[i].siteHistory.comment==4?'<span class=\"label label-danger\">警报</span>&nbsp;':'')
+						+(data.data[i].siteHistory.status==200?'<span class=\"label label-success\">正常</span>':'<span class=\"label label-warning\">异常</span>')						
+						+"</dd>"											
+						+"      <h4>"+(data.page.startRow+i)+"&nbsp;&nbsp;"+(data.data[i].siteHistory.title==''?'<font color=\"red\">NULL</font>':data.data[i].siteHistory.title)+"</h4>"
+						+"      "+ipss+"<a target=\"_blank\" href=\""+data.data[i].siteHistory.page+"\">"+(data.data[i].siteHistory.page==undefined?'':data.data[i].siteHistory.page)+"</a>"
+						+"    </div>"
+						+"    <div class=\"item-content\">"+data.data[i].siteHistory.content+"</div>"
+						+"    <div class=\"item-footer\">"
+						+"     <span class=\"text-muted\">"+data.data[i].siteHistory.gmtCreated+"</span>"
+						+"    </div>"
+						+" </div>");
+						
+			}	 		
+			$("#persionTable").html(ihtml);
+			AVRIL.initPageBar(data.page);
+			return;		
+	}}
+	AVRIL.initPageBar(null);
+	$("#persionTable").html('<div class=\"item\"><font color=\"red\">没有查询到数据。</font></div>');
+}
+function doSearchAction(){
+	pagenum = 1;
+	showJLWarning("提交检测中，请稍候...");
+	searchWord = $('#searchKeyWord').val();	
+	reloadAllData();
+}
+
+function reloadAllData(){
+	if(searchWord.length==0){
+		AVRIL.initPageBar(null);
+		//清空面板
+		$("#siteTitle").html('');
+		$("#siteContent").html('');
+		$("#siteDemin").html('网站域名&nbsp;&nbsp;');
+		$("#siteIp").html('IP地址&nbsp;&nbsp;');
+		$("#siteSelf").html('我司托管&nbsp;&nbsp;');
+		$("#siteStatus").html('访问状态&nbsp;&nbsp;');
+		$("#persionTable").html('<div class=\"item\"><font color=\"red\">没有查询到数据。</font></div>');	
+		return ;
+	}
+	reloadData();
+	AVRIL.checkOneSite(checkOneSiteBack, searchWord);	
+}
+function checkOneSiteBack(data){
+	$("#siteTitle").html(data.title);
+	$("#siteContent").html(data.content);
+	$("#siteDemin").html(data.demin);
+	if(data.selfSite!=null && data.selfSite){
+		$("#siteSelf").html("我司托管&nbsp;&nbsp;<span class=\"label label-success\" >是</span>");	
+	}else{
+		$("#siteSelf").html("我司托管&nbsp;&nbsp;<span class=\"label label-primary\" >否</span>");	
+	}
+	if(data.ip!=null && data.ip.length>0){
+		$("#siteIp").html("IP地址&nbsp;&nbsp;<span class=\"label label-success\" >"+data.ip+"</span>");	
+	}else{
+		$("#siteIp").html("IP地址&nbsp;&nbsp;");	
+	}
+	if(data.status==200){
+		$("#siteStatus").html("访问状态&nbsp;&nbsp; <span class=\"label label-success\" >正常</span>");		
+		checkText(data.content);
+	}else{
+		$("#siteStatus").html("访问状态 &nbsp;&nbsp;<span class=\"label label-danger\" >异常</span>");
+		checkTextBack(null);
+	}
+	
+}
+function checkText(c){
+	AVRIL.loadSensitive(checkTextBack, c);
+}
+
+function checkTextBack(data){
+	if(data==null || data==undefined || data.length==0){
+		$("#siteSenti").html('');
+	}else{
+		var ihtmls = "";
+		for(var i=0; i<data.data.length; i++){
+			ihtmls += (data.data[i].status+"-"+data.data[i].keyWord+"-"+data.data[i].keyWords+"<br/>");
+		}
+		$("#siteSenti").html(ihtmls);
+	}
+}
+function reloadData(){		
+	AVRIL.loadHistoryUrlList(loadHistoryUrlListBack, pagenum, pagesize, searchWord);	
+}
+function goPage(pn){
+	pagenum = pn;
+	reloadData();
+}
+
+
+</script>
+
+</head>
+
+<body >
+<!-- 头部信息 -->
+<div class="header">
+<ul class="nav nav-secondary">
+	<li><a href="control.html">*系统控制</a></li>	
+	<li><a href="fullweb.html">*全站检测记录</a></li>
+	<li><a href="history.html">*检测历史</a></li>
+	<li><a href="keyword.html">最新极限词</a></li>
+	<li  class="active"><a href="javascript:void(0);">单站检测</a></li>
+	<li><a href="deminmuti.html">多站检测</a></li>
+	<li><a href="record.html">最新检测详情</a></li>
+</ul>
+</div>
+<br/>
+
+	<div class="row">
+		<div class="col-xs-0 col-sm-1 col-md-2 col-lg-3"></div>
+	  	<div class="input-group col-xs-12 col-sm-10 col-md-8 col-lg-6">
+			<input type="text" id="searchKeyWord" class="form-control" placeholder="站点名称或落地页">
+			<span class="input-group-addon" onclick="doSearchAction();"><i class="icon icon-cloud">检测</i></span>
+			
+		</div>
+	</div>
+	
+	
+	<br/>
+	<div class="panel">
+  <div class="panel-heading">
+    域名基本信息
+  </div>
+  <div class="panel-body">
+ 	 <div class="list-group">
+ 	 <a href="#" class="list-group-item">网站域名 <span class="label label-success" id="siteDemin"></span></a>
+ 	 <a href="#" class="list-group-item" id="siteIp">IP地址&nbsp;&nbsp;</a>
+ 	 <a href="#" class="list-group-item" id="siteSelf">我司托管&nbsp;&nbsp;</a>
+ 	 <a href="#" class="list-group-item" id="siteStatus">访问状态</a>
+ 	 <a href="#" class="list-group-item">正常运行天数&nbsp;&nbsp; 开发中...</a>
+    </div>
+  </div>
+</div>
+
+
+<div class="panel">
+  <div class="panel-heading" id="siteTitle">
+   
+  </div>
+  <div class="panel-body" id="siteContent">
+ 	 
+  </div>
+  
+  <div class="panel-body" id="siteSenti">
+ 	 
+  </div>
+</div>
+
+
+	<div class="panel">
+		<div class="panel-heading">历史异常检测记录</div>
+		<div class="panel-body">
+			<div class="items col-xs-12 col-sm-12 col-md-12 col-lg-12"
+				id="persionTable"></div>
+			<br />
+			<footer style="float: right;">
+				<ul class="pager"></ul>
+			</footer>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hnjing.full.model.dao.SensitiveItemMapper">
+
+<!-- Result Map-->
+<resultMap id="SensitiveItemResultMap" type="com.hnjing.full.model.entity.SensitiveItem">
+	<id column="id" property="id"/>
+	<result column="page" property="page"/>
+	<result column="status" property="status"/>
+	<result column="key_word" property="keyWord"/>
+	<result column="context" property="context"/>
+</resultMap>
+
+<sql id="sql_sensitiveItem_item">
+	id, page, status, key_word, context
+</sql>
+       
+<!-- 查询条件 无WHERE -->
+<sql id="sql_sensitiveItem_query_nowhere">
+	<trim prefix=" " prefixOverrides="AND|OR">
+		<if test="sensitiveItem.id != null">AND id = #{sensitiveItem.id} </if>
+		<if test="sensitiveItem.page != null">AND page =#{sensitiveItem.page}</if>
+		<if test="sensitiveItem.status != null">AND status = #{sensitiveItem.status} </if>
+		<if test="sensitiveItem.keyWord != null">AND key_word like concat('%', #{sensitiveItem.keyWord}, '%') </if>
+		<if test="sensitiveItem.context != null">AND context like concat(#{sensitiveItem.context}, '%') </if>
+	</trim>
+</sql>
+   
+<!-- 插入 网页敏感词 -->
+<insert id="addSensitiveItem" parameterType="com.hnjing.full.model.entity.SensitiveItem" >
+	<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+		SELECT LAST_INSERT_ID()
+	</selectKey>
+ 	INSERT INTO tf_sensitive_item 
+	<trim prefix=" (" suffix=")" suffixOverrides=",">
+		<if test="id != null"> id,</if>
+		<if test="page != null"> page,</if>
+		<if test="status != null"> status,</if>
+		<if test="keyWord != null"> key_word,</if>
+		<if test="context != null"> context,</if>
+	</trim>	 	
+	<trim prefix="values (" suffix=")" suffixOverrides=",">
+		<if test="id != null"> #{id},</if>
+		<if test="page != null"> #{page},</if>
+		<if test="status != null"> #{status},</if>
+		<if test="keyWord != null"> #{keyWord},</if>
+		<if test="context != null"> #{context},</if>
+	</trim>
+</insert>
+
+<!-- 根据标识，修改 网页敏感词 -->  
+<update id="modifySensitiveItem" parameterType="com.hnjing.full.model.entity.SensitiveItem" >
+  	UPDATE tf_sensitive_item SET
+	<trim suffixOverrides=",">
+		<if test="page != null"> page = #{page},</if>
+		<if test="status != null"> status = #{status},</if>
+		<if test="keyWord != null"> key_word = #{keyWord},</if>
+		<if test="context != null"> context = #{context},</if>
+	</trim>
+	WHERE id = #{id}
+</update>
+ 
+<!-- 删除 网页敏感词 -->
+<delete id="dropSensitiveItemById" parameterType="java.lang.Integer">
+	DELETE FROM tf_sensitive_item WHERE id = #{id}
+</delete> 
+
+<!-- 根据标识查询 网页敏感词 -->
+<select id="querySensitiveItemById"  resultMap="SensitiveItemResultMap" parameterType="java.lang.Integer">
+	SELECT 
+	<include refid="sql_sensitiveItem_item"/>
+	FROM tf_sensitive_item WHERE id = #{id}
+</select>
+
+<!-- 根据属性查询网页敏感词 -->
+<select id="querySensitiveItemByProperty"  resultMap="SensitiveItemResultMap" parameterType="java.util.Map">
+	SELECT 
+	<include refid="sql_sensitiveItem_item"/>
+	FROM tf_sensitive_item 
+	<where>
+		<include refid="sql_sensitiveItem_query_nowhere"/>
+	</where>
+</select>
+
+<!-- 根据网页敏感词属性与分页信息分页查询网页敏感词信息 -->
+<select id="querySensitiveItemForPage"  resultMap="SensitiveItemResultMap" > 
+	SELECT 
+	<include refid="sql_sensitiveItem_item"/>
+	FROM tf_sensitive_item 
+	<where>
+		<include refid="sql_sensitiveItem_query_nowhere"/>
+	</where>
+</select>
+
+</mapper>   

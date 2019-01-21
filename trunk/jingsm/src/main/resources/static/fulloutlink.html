@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<title>网站健康检测工具-流程信息部</title>
+	<meta charset="utf-8">
+  	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<!-- ZUI 标准版压缩后的 CSS 文件 -->
+	<link rel="stylesheet" href="./css/zui.min.css" />
+	<!-- ZUI Javascript 依赖 jQuery -->
+	<script src="./lib/jquery/jquery.js"></script>
+	<!-- ZUI 标准版压缩后的 JavaScript 文件 -->
+	<script src="./js/zui.min.js"></script>	
+	<!-- 自定义业务 JavaScript 文件 -->
+	<script src="avril.js"></script>
+<style type="text/css"> 
+.elehidden{display: none;}
+</style> 	
+	<script type="text/javascript">	
+	var searchWord = '';
+	var siteId = '';
+	var types = '';
+	var pagenum = 1;
+	var sour = '';
+	var pagesize = 15;
+$(document).ready(function(){ 
+	siteId = getQueryStringByName('id');	
+	sour = getQueryStringByName('page');	
+	if(siteId!=undefined && siteId.length>0){
+		$('#akeyword').attr('href','fullkeyword.html?id='+siteId); 
+		$('#adetail').attr('href','fulldetail.html?id='+siteId); 
+	}
+	reloadData();	
+});
+
+function loadPersionListBack(data){	
+	if(data!=undefined && data.page!=undefined){
+		if(data.data!=undefined && data.data.length>0){
+			var ihtml = "";	
+			for(var i=0; i<data.data.length; i++){
+				ihtml+=("<tr>"
+						+"<td>"+(data.page.startRow+i)+"</td>"						
+						+"<td>"+(data.data[i].status==1?'<font color=\"greed\">普通</font>':'<font color=\"red\">黑名单</font>')+"</td>"						
+						+"<td>"+(data.data[i].anchor)+"</td>"
+						+"<td>"+"<a target=\"_blank\" href=\""+data.data[i].link+"\">"+data.data[i].link+"</td>"
+						+"<td>"+"<a target=\"_blank\" href=\""+data.data[i].page+"\">"+data.data[i].page+"</td>"
+						+"</tr>"
+				);			
+			}				
+			$("#persionTable2").html(ihtml);
+			AVRIL.initPageBar(data.page);
+			return;
+		}
+	}
+	AVRIL.initPageBar(null);
+	$("#persionTable2").html('<tr><td colspan=\"5\"><font color=\"red\">没有查询到数据。</font></td></tr>');	
+}
+
+
+function reloadData(){
+	AVRIL.loadLinkList(loadPersionListBack, pagenum, pagesize, searchWord, siteId, types, sour);	
+}
+
+function goPage(pn){
+	pagenum = pn;
+	reloadData();
+}
+
+function doSearchAction(o){
+	pagenum = 1;
+	types = '';
+	searchWord = $("#searchKeyWord").val();
+	reloadData();
+}
+
+function doSearchType(o){
+	pagenum = 1;
+	types = o;	
+	reloadData();
+}
+
+
+
+</script>
+
+</head>
+
+<body >
+<!-- 头部信息 -->
+<div class="header">
+<ul class="nav nav-secondary">
+	<li><a href="control.html">*系统控制</a></li>	
+	<li><a href="fullweb.html">*全站检测记录</a></li>
+	<li><a href="history.html">*检测历史</a></li>
+	<li><a href="fullsite.html">全站检测</a></li>
+	<li><a href="fulldetail.html">内页详情</a></li>
+	<li><a href="fullkeyword.html">敏感词</a></li>
+	<li class="active"><a href="javascript:void(0);">外链清单</a></li>
+</ul>
+</div>
+<br/>
+
+	<div class="row">
+		<div class="col-xs-0 col-sm-1 col-md-2 col-lg-3"></div>
+	  	<div class="input-group col-xs-12 col-sm-10 col-md-8 col-lg-6">
+			<input type="text" id="searchKeyWord" class="form-control" placeholder="外链站点名称或落地页">
+			<span class="input-group-addon" onclick="doSearchAction();"><i class="icon icon-cloud">查询</i></span>
+		</div>
+	</div>
+	<br/>
+	<div class="row">
+		<div class="btn-group" data-toggle="buttons">
+			<label class="btn btn-info active" onclick="doSearchType('');"> <input type="radio"
+				name="options" id="option1" checked> 全部
+			</label> 			
+			<label class="btn btn-success" onclick="doSearchType('1');"> <input type="radio"
+				name="options" id="option3"> 普通
+			</label>
+			<label class="btn btn-warning" onclick="doSearchType('2');"> <input type="radio"
+				name="options" id="option3"> 黑名单
+			</label> 
+		</div>
+	</div>
+
+
+  	<table class="table table-hover">
+		  <thead>
+		    <tr>
+		      <th>&nbsp;</th>
+		      <th>类型</th>
+		      <th>锚点</th>
+		      <th>链接</th>
+		      <th>页面</th>
+		    </tr>
+		  </thead>
+	  		<tbody id="persionTable2">    
+	  		</tbody>  
+	</table> 
+<footer style="float:right; ">
+	<ul class="pager"></ul>	
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hnjing.cw.model.dao.SensitiveRecordMapper">
+
+<!-- Result Map-->
+<resultMap id="SensitiveRecordResultMap" type="com.hnjing.cw.model.entity.SensitiveRecord">
+	<id column="id" property="id"/>
+	<result column="site_id" property="siteId"/>
+	<result column="page" property="page"/>
+	<result column="kw_id" property="kwId"/>
+	<result column="key_word" property="keyWord"/>
+	<result column="key_words" property="keyWords"/>
+	<result column="start" property="start"/>
+	<result column="end" property="end"/>
+	<result column="status" property="status"/>
+	<result column="gmt_created" property="gmtCreated"/>
+</resultMap>
+
+<sql id="sql_sensitiveRecord_item">
+	id, site_id, page, kw_id, key_word, key_words, start, end, status, gmt_created
+</sql>
+       
+<!-- 查询条件 无WHERE -->
+<sql id="sql_sensitiveRecord_query_nowhere">
+	<trim prefix=" " prefixOverrides="AND|OR">
+		<if test="sensitiveRecord.id != null">AND id = #{sensitiveRecord.id} </if>
+		<if test="sensitiveRecord.siteId != null">AND site_id = #{sensitiveRecord.siteId} </if>
+		<if test="sensitiveRecord.page != null">AND page like concat(#{sensitiveRecord.page}, '%') </if>
+		<if test="sensitiveRecord.kwId != null">AND kw_id = #{sensitiveRecord.kwId} </if>
+		<if test="sensitiveRecord.keyWord != null">AND key_word like concat(#{sensitiveRecord.keyWord}, '%') </if>
+		<if test="sensitiveRecord.keyWords != null">AND key_words like concat(#{sensitiveRecord.keyWords}, '%') </if>
+		<if test="sensitiveRecord.start != null">AND start = #{sensitiveRecord.start} </if>
+		<if test="sensitiveRecord.end != null">AND end = #{sensitiveRecord.end} </if>
+		<if test="sensitiveRecord.status != null">AND status = #{sensitiveRecord.status} </if>
+	</trim>
+</sql>
+   
+<!-- 插入 敏感词记录 -->
+<insert id="addSensitiveRecord" parameterType="com.hnjing.cw.model.entity.SensitiveRecord" >
+	<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+		SELECT LAST_INSERT_ID()
+	</selectKey>
+ 	INSERT INTO tb_sensitive_record 
+	<trim prefix=" (" suffix=")" suffixOverrides=",">
+		<if test="id != null"> id,</if>
+		<if test="siteId != null"> site_id,</if>
+		<if test="page != null"> page,</if>
+		<if test="kwId != null"> kw_id,</if>
+		<if test="keyWord != null"> key_word,</if>
+		<if test="keyWords != null"> key_words,</if>
+		<if test="start != null"> start,</if>
+		<if test="end != null"> end,</if>
+		<if test="status != null"> status,</if>
+		gmt_created
+	</trim>	 	
+	<trim prefix="values (" suffix=")" suffixOverrides=",">
+		<if test="id != null"> #{id},</if>
+		<if test="siteId != null"> #{siteId},</if>
+		<if test="page != null"> #{page},</if>
+		<if test="kwId != null"> #{kwId},</if>
+		<if test="keyWord != null"> #{keyWord},</if>
+		<if test="keyWords != null"> #{keyWords},</if>
+		<if test="start != null"> #{start},</if>
+		<if test="end != null"> #{end},</if>
+		<if test="status != null"> #{status},</if>
+		now()
+	</trim>
+</insert>
+
+<!-- 根据标识，修改 敏感词记录 -->  
+<update id="modifySensitiveRecord" parameterType="com.hnjing.cw.model.entity.SensitiveRecord" >
+  	UPDATE tb_sensitive_record SET
+	<trim suffixOverrides=",">
+		<if test="siteId != null"> site_id = #{siteId},</if>
+		<if test="page != null"> page = #{page},</if>
+		<if test="kwId != null"> kw_id = #{kwId},</if>
+		<if test="keyWord != null"> key_word = #{keyWord},</if>
+		<if test="keyWords != null"> key_words = #{keyWords},</if>
+		<if test="start != null"> start = #{start},</if>
+		<if test="end != null"> end = #{end},</if>
+		<if test="status != null"> status = #{status},</if>
+		<if test="gmtCreated != null"> gmt_created = #{gmtCreated},</if>
+	</trim>
+	WHERE id = #{id}
+</update>
+ 
+<!-- 删除 敏感词记录 -->
+<delete id="dropSensitiveRecordById" parameterType="java.lang.Integer">
+	DELETE FROM tb_sensitive_record WHERE id = #{id}
+</delete> 
+
+<!-- 根据标识查询 敏感词记录 -->
+<select id="querySensitiveRecordById"  resultMap="SensitiveRecordResultMap" parameterType="java.lang.Integer">
+	SELECT 
+	<include refid="sql_sensitiveRecord_item"/>
+	FROM tb_sensitive_record WHERE id = #{id}
+</select>
+
+<!-- 根据属性查询敏感词记录 -->
+<select id="querySensitiveRecordByProperty"  resultMap="SensitiveRecordResultMap" parameterType="java.util.Map">
+	SELECT 
+	<include refid="sql_sensitiveRecord_item"/>
+	FROM tb_sensitive_record 
+	<where>
+		<include refid="sql_sensitiveRecord_query_nowhere"/>
+	</where>
+</select>
+
+<!-- 根据敏感词记录属性与分页信息分页查询敏感词记录信息 -->
+<select id="querySensitiveRecordForPage"  resultMap="SensitiveRecordResultMap" > 
+	SELECT 
+	<include refid="sql_sensitiveRecord_item"/>
+	FROM tb_sensitive_record 
+	<where>
+		<include refid="sql_sensitiveRecord_query_nowhere"/>
+	</where>
+</select>
+
+<delete id="clearTable">
+delete from tb_sensitive_record
+</delete>
+
+
+</mapper>   

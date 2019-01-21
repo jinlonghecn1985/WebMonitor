@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<title>网站健康检测工具-流程信息部</title>
+	<meta charset="utf-8">
+  	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<!-- ZUI 标准版压缩后的 CSS 文件 -->
+	<link rel="stylesheet" href="./css/zui.min.css" />
+	<!-- ZUI Javascript 依赖 jQuery -->
+	<script src="./lib/jquery/jquery.js"></script>
+	<!-- ZUI 标准版压缩后的 JavaScript 文件 -->
+	<script src="./js/zui.min.js"></script>	
+	<!-- 自定义业务 JavaScript 文件 -->
+	<script src="avril.js"></script>
+<style type="text/css"> 
+.elehidden{display: none;}
+</style> 	
+	<script type="text/javascript">	
+$(document).ready(function(){ 	
+	reloadData();	
+});
+var moddelHtml = "&nbsp;&nbsp;&nbsp;&nbsp;<i onclick=\"deletePersion(this);\" class=\"icon icon-minus-sign\"></i>";
+
+var deleteUrl = '';
+function deletePersion(th){
+	data = $(th).parent().parent()[0];
+	deleteUrl = '';
+	deleteUrl =  $(th).parent().find("input").val();
+	$('#checkModel').modal({
+	    keyboard : true,
+	    show     : true
+	});	
+}
+
+function doDeletePersion(){
+	AVRIL.delIPS(deletePersionBack, deleteUrl);
+// 	$('#checkModel').modal('hide');
+// 	reloadData();
+}
+
+function deletePersionBack(th){
+	$('#checkModel').modal('hide');
+	reloadData();
+}
+
+function addPersion(){	
+	showInfoWindow();
+}
+
+function loadIPSBack(data){	
+	if(data!=undefined){		
+		var ihtml = "";
+		for(var i=0; i<data.data.length; i++){
+			ihtml+=("<tr >"
+					+"<td>"+(i+1)+"<input type=\"hidden\" value=\""+data.data[i].id+"\">"+moddelHtml+"</td>"
+				//	+"<td>"+"<a target=\"_blank\" href=\""+data.data[i].ip+"\">"+data.data[i].ip+"</td>"
+					+"<td>"+(data.data[i].ip==undefined?'':("<a href=\"./siteip.html?ip="+data.data[i].ip+"\">"+data.data[i].ip+"</a>"))+"</td>"
+					+"<td>"+data.data[i].count+"</td>"
+					+"<td>"+data.data[i].gmtCreated+"</td>"
+					+"<td>"+data.data[i].gmtModify+"</td>"
+					+"</tr>");
+		}	 		
+		$("#persionTable").html(ihtml);		
+		return;
+	}
+	$("#persionTable").html('<tr><td colspan=\"4\"><font color=\"red\">没有查询到数据。</font></td></tr>');
+	
+}
+
+function reloadData(){	
+	AVRIL.queryIPS(loadIPSBack);	
+}
+
+function showInfoWindow(){
+	$('#fromIPS').val('');
+	$('#infoWindow').modal({
+	    keyboard : true,
+	    show     : true
+	});	
+}
+
+function doDataCheck(){
+	$fromIPS = $('#fromIPS');
+	if($fromIPS.val().length==0){
+		showJLWarning('请填写我司IP地址');
+		$fromIPS.focus().parent().addClass('has-error');		
+		return;
+	}
+	$fromIPS.parent().removeClass('has-error');
+	
+	AVRIL.addIPS(savePersionInfoBack, $fromIPS.val());
+}
+
+function savePersionInfoBack(data){
+	$('#infoWindow').modal('hide');
+	reloadData();
+}
+</script>
+
+</head>
+
+<body >
+<!-- 头部信息 -->
+<div class="header">
+<ul class="nav nav-secondary">  	
+  		<li><a href="control.html">*系统控制</a></li>	
+		<li><a href="fullweb.html">*全站检测记录</a></li>
+		<li><a href="history.html">*检测历史</a></li>
+		<li><a href="mail.html">邮件历史</a></li>
+		<li><a href="site.html">站点管理</a></li>
+		<li class="active"><a href="javascript:void(0);">我司IP管理</a></li>	
+		<li><a href="config.html">系统配置</a></li>
+</ul>
+</div>
+<br/>
+<div class="row">
+	<button class="btn btn-primary" onclick="addPersion();" type="button">新增</button>
+</div>
+
+<table class="table table-hover ">
+		  <thead>
+		    <tr>
+		      <th></th>
+		      <th>我司IP</th>
+		      <th>域名总量</th>
+		      <th>加入时间</th>
+		      <th>最新变更时间</th>
+		    </tr>
+		  </thead>
+	  	<tbody id="persionTable">    
+	  	</tbody>  
+</table>
+
+<!-- 提示 --> 
+<div id="infoWindow" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">关闭</span></button>
+        <h4 class="modal-title">我司IP操作窗口</h4>
+      </div>
+      <div class="modal-body">
+      <form class="form-horizontal">		  
+        <div class="form-group">
+		    <label for="fromPN" class="col-sm-2">我司IP</label>
+		    <div class="col-sm-10">
+		      <input type="text" class="form-control " id="fromIPS" placeholder="IP地址">
+		    </div>		   
+		  </div>
+		 
+	  </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>
+        <button type="button" class="btn btn-primary" onclick="doDataCheck();">保存</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="checkModel" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">关闭</span></button>
+        <h4 class="modal-title" id="checkTitle">温馨提示</h4>
+      </div>
+      <div id="checkContent" class="modal-body">
+        <p>删除操作将删除此ip且不可恢复,请慎重!</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        <button onclick="doDeletePersion()" type="button" class="btn btn-primary">确定</button>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

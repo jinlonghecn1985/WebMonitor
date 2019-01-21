@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<title>网站健康检测工具-流程信息部</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!-- ZUI 标准版压缩后的 CSS 文件 -->
+<link rel="stylesheet" href="./css/zui.min.css" />
+<!-- ZUI Javascript 依赖 jQuery -->
+<script src="./lib/jquery/jquery.js"></script>
+<!-- ZUI 标准版压缩后的 JavaScript 文件 -->
+<script src="./js/zui.min.js"></script>
+<!-- 自定义业务 JavaScript 文件 -->
+<script src="avril.js"></script>
+<style type="text/css">
+.elehidden {
+	display: none;
+}
+</style>
+<script type="text/javascript">
+	function doAction(codes, param){
+		AVRIL.doControlFunction(doActionBack, codes, param);
+	}
+	
+	function doActionBack(data){
+		    new $.zui.Messager('提示：'+data, {
+		    	fade: false,
+		    	type: 'success',
+		    	placement: 'center',
+		        icon: 'bell' // 定义消息图标
+		    }).show();
+// 		showJLSuccess(data);
+	}
+</script>
+
+</head>
+
+<body>
+	<!-- 头部信息 -->
+	<div class="header">
+		<ul class="nav nav-secondary">
+		<li class="active"><a href="javascript:void(0);">*系统控制</a></li>
+		<li><a href="fullweb.html">*全站检测记录</a></li>
+		<li><a href="history.html">*检测历史</a></li>
+		<li><a href="mail.html">邮件历史</a></li>
+		<li><a href="site.html">站点管理</a></li>
+		<li><a href="ip.html">我司IP管理</a></li>	
+		<li><a href="config.html">系统配置</a></li>
+		</ul>
+	</div>
+
+	<div class="cards">
+		
+		<div class="col-xs-6 col-md-3 col-sm-4 col-lg-2">
+			<a class="card" href="javascript:void(0);" onclick="doAction('pt', null)"> <img
+				src="./images/checkpt.png" alt="">
+				<div class="caption">系统自动每日检测，不建议手工检测</div>
+				<div class="card-heading">
+					<strong>平台网站检测</strong>
+				</div>
+				<div class="card-content text-muted">预期检测时长1.5小时</div>
+			</a>
+		</div>
+		<div class="col-xs-6 col-md-3 col-sm-4 col-lg-2">
+			<a class="card" href="javascript:void(0);"  onclick="doAction('mail', 1)"> <img src="./images/mailpt.png" alt="" />
+				<div class="caption">检测结果发送邮件</div>
+				<div class="card-heading">
+					<strong>平台检测结果邮件发送</strong>
+				</div>
+				<div class="card-content text-muted">通知前复检异常站点</div>
+			</a>
+		</div>
+		
+		
+		<div class="col-xs-6 col-md-3 col-sm-4 col-lg-2">
+			<a class="card" href="javascript:void(0);" onclick="doAction('ssg', null)"> <img
+				src="./images/checkssg.png" alt="">
+				<div class="caption">系统自动检测，不建议手工检测</div>
+				<div class="card-heading">
+					<strong>大搜网站检测</strong>
+				</div>
+				<div class="card-content text-muted">预期检测时长1小时</div>
+			</a>
+		</div>
+		<div class="col-xs-6 col-md-3 col-sm-4 col-lg-2">
+			<a class="card" href="javascript:void(0);"  onclick="doAction('mail', 2)"> <img src="./images/mailssg.png" alt="" />
+				<div class="caption">检测结果发送邮件</div>
+				<div class="card-heading">
+					<strong>SSG检测结果邮件发送</strong>
+				</div>
+				<div class="card-content text-muted">通知前复检异常站点</div>
+			</a>
+		</div>
+		
+		<div class="col-xs-6 col-md-3 col-sm-4 col-lg-2">
+			<a class="card" href="javascript:void(0);" onclick="doAction('source', 4)"> <img
+				src="./images/checkxxz.png" alt="">
+				<div class="caption">系统自动检测，不建议手工检测</div>
+				<div class="card-heading">
+					<strong>小仙子网站检测</strong>
+				</div>
+				<div class="card-content text-muted">预期检测时长5分钟</div>
+			</a>
+		</div>
+		<div class="col-xs-6 col-md-3 col-sm-4 col-lg-2">
+			<a class="card" href="javascript:void(0);"  onclick="doAction('mail', 4)"> <img src="./images/mailxxz.png" alt="" />
+				<div class="caption">检测结果发送邮件</div>
+				<div class="card-heading">
+					<strong>小仙子检测结果邮件发送</strong>
+				</div>
+				<div class="card-content text-muted">通知前复检异常站点</div>
+			</a>
+		</div>
+		<div class="col-xs-6 col-md-3 col-sm-4 col-lg-2">
+			<a class="card" href="javascript:void(0);" onclick="doAction('source', 3)"> <img
+				src="./images/checkly.png" alt="">
+				<div class="caption">系统自动检测，不建议手工检测</div>
+				<div class="card-heading">
+					<strong>农业网站检测</strong>
+				</div>
+				<div class="card-content text-muted">预期检测时长10分钟</div>
+			</a>
+		</div>
+		<div class="col-xs-6 col-md-3 col-sm-4 col-lg-2">
+			<a class="card" href="javascript:void(0);"  onclick="doAction('mail', 3)"> <img src="./images/mailly.png" alt="" />
+				<div class="caption">检测结果发送邮件</div>
+				<div class="card-heading">
+					<strong>农业检测结果邮件发送</strong>
+				</div>
+				<div class="card-content text-muted">通知前复检异常站点</div>
+			</a>
+		</div>
+		<div class="col-xs-6 col-md-3 col-sm-4 col-lg-2">
+			<a class="card" href="javascript:void(0);" onclick="doAction('ips', null)"> <img
+				src="./images/PING.png" alt="">
+				<div class="caption">系统自动检测，不建议手工检测</div>
+				<div class="card-heading">
+					<strong>IP检测</strong>
+				</div>
+				<div class="card-content text-muted" id="pingBack">对域名的IP进行核查。</div>
+			</a>
+		</div>
+		<div class="col-xs-6 col-md-3 col-sm-4 col-lg-2">
+			<a class="card" href="javascript:void(0);" onclick="doAction('word', null)"> <img src="./images/keyword.png" alt="">
+				<div class="caption">敏感词检测</div>
+				<div class="card-heading">
+					<strong>对最新的检测结果内容进行敏感词检测</strong>
+				</div>
+				<div class="card-content text-muted">检测预计时长30分钟</div>
+			</a>
+		</div>
+		<div class="col-xs-6 col-md-3 col-sm-4 col-lg-2">
+			<a class="card" href="javascript:void(0);"> <img src="./images/ERROR.png" alt="">
+				<div class="caption">开发中...</div>
+				<div class="card-heading">
+					<strong>占位</strong>
+				</div>
+				<div class="card-content text-muted">更多功能开发中，请稍候...</div>
+			</a>
+		</div>
+
+	</div>
+
+</body>
+</html>

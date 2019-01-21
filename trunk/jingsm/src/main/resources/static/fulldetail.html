@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<title>网站健康检测工具-流程信息部</title>
+	<meta charset="utf-8">
+  	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<!-- ZUI 标准版压缩后的 CSS 文件 -->
+	<link rel="stylesheet" href="./css/zui.min.css" />
+	<!-- ZUI Javascript 依赖 jQuery -->
+	<script src="./lib/jquery/jquery.js"></script>
+	<!-- ZUI 标准版压缩后的 JavaScript 文件 -->
+	<script src="./js/zui.min.js"></script>	
+	<!-- 自定义业务 JavaScript 文件 -->
+	<script src="avril.js"></script>
+<style type="text/css"> 
+.elehidden{display: none;}
+</style>
+	<script type="text/javascript">	
+	var searchWord = '';
+	var orderBy = 'code';
+	var pagenum = 1;
+	var pagesize = 15;
+$(document).ready(function(){ 
+	searchWord = getQueryStringByName('id');	
+	if(searchWord!=undefined && searchWord.length>0){
+		$('#akeyword').attr('href','fullkeyword.html?id='+searchWord); 
+		$('#alink').attr('href','fulloutlink.html?id='+searchWord); 
+	}
+	reloadData();	
+});
+
+function loadPersionListBack(data){	
+	if(data!=undefined && data.page!=undefined){
+		if(data.data!=undefined && data.data.length>0){
+			var ihtml = "";
+			for(var i=0; i<data.data.length; i++){
+				ihtml+=("<tr>"
+						+"<td>"+(data.page.startRow+i)+"</td>"
+						+"<td>"+(data.data[i].checkCycle)+"</td>"
+						+"<td>"+(data.data[i].checkOrder)+"</td>"
+						+"<td>"+(data.data[i].code==200?'<font color=\"greed\">正常</font>':'<font color=\"red\">异常</font>')+"</td>"
+						+"<td>"+"<a data-toggle=\"tooltip\" title=\"点击打开相应页面\" target=\"_blank\" href=\""+data.data[i].page+"\">"+data.data[i].page+"</td>"
+						+"<td>"+(data.data[i].innerLink)+"</td>"
+						+"<td>"+(data.data[i].outLink>0?("<a data-toggle=\"tooltip\" title=\"点击查看相应页面外链详情\" href=\"fulloutlink.html?id="+data.data[i].id+"&page="+data.data[i].page+"\">"+data.data[i].outLink+"</a>"):0)+"</td>"
+						+"<td>"+(data.data[i].whiteWord)+"</td>"
+						+"<td>"+("<a data-toggle=\"tooltip\" title=\"点击查看相应页面敏感词详情\" href=\"fullkeyword.html?id="+data.data[i].id+"&page="+data.data[i].page+"\">"+data.data[i].illegalWord+"</a>")+"</td>"
+						+"<td>"+data.data[i].gmtCreated+"</td>"
+						+"</tr>"
+				);
+			}	
+
+			
+			$("#persionTable1").html(ihtml);
+			AVRIL.initPageBar(data.page);
+			return;
+		}		
+	}
+	AVRIL.initPageBar(null);
+	$("#persionTable1").html('<tr><td colspan=\"10\"><font color=\"red\">没有查询到数据。</font></td></tr>');	
+}
+
+
+function reloadData(){	
+// 	if(searchWord==undefined){
+// 		window.location.href="fullweb.html";
+// 	}
+	AVRIL.loadFullDetailList(loadPersionListBack, pagenum, pagesize, searchWord, orderBy);	
+}
+function goPage(pn){
+	pagenum = pn;
+	reloadData();
+}
+
+function doOrderType(o){
+	orderBy = o;
+	reloadData();
+}
+
+</script>
+
+</head>
+
+<body >
+<!-- 头部信息 -->
+<div class="header">
+<ul class="nav nav-secondary">
+	<li><a href="control.html">*系统控制</a></li>	
+	<li><a href="fullweb.html">*全站检测记录</a></li>
+	<li><a href="history.html">*检测历史</a></li>
+	<li><a href="fullsite.html">全站检测</a></li>
+	<li class="active"><a href="javascript:void(0);">内页详情</a></li>
+	<li><a id="akeyword" href="fullkeyword.html">敏感词</a></li>
+	<li><a id="alink" href="fulloutlink.html">外链清单</a></li>
+</ul>
+</div>
+<br/>
+
+	<div class="row">
+		<div class="col-xs-0 col-sm-1 col-md-2 col-lg-3"></div>
+	  	<div class="input-group col-xs-12 col-sm-10 col-md-8 col-lg-6">
+			<input type="text" id="searchKeyWord" class="form-control" placeholder="站点名称或落地页">
+			<span class="input-group-addon" onclick="doSearchAction();"><i class="icon icon-cloud">查询</i></span>
+		</div>
+	</div>
+	<br/>
+	<div class="row">
+		<div class="btn-group" data-toggle="buttons">
+			<label class="btn" onclick="doOrderType('checkOrder');"> <input type="radio" 
+				name="options" id="option0" checked>检测顺序倒序
+			</label> 
+			<label class="btn btn-primary" onclick="doOrderType('code');"> <input type="radio"
+				name="options" id="option1" checked>异常优先
+			</label> 
+			<label class="btn btn-info" onclick="doOrderType('innerLink');"> <input type="radio"
+				name="options" id="option2"> 内链优先
+			</label> 
+			<label class="btn btn-warning" onclick="doOrderType('outLink');"> <input type="radio"
+				name="options" id="option3"> 外链优先
+			</label> 
+			<label class="btn btn-danger" onclick="doOrderType('illegalWord');"> <input type="radio"
+				name="options" id="option3"> 敏感词优先
+			</label> 
+			<label class="btn btn-success active" onclick="doOrderType('gmtCreated');"> <input type="radio"
+				name="options" id="option3"> 检测时间优先
+			</label>
+		</div>
+	</div>
+
+
+  	<table class="table table-hover">
+		  <thead>
+		    <tr>
+		      <th>&nbsp;</th>
+		      <th>检测深度</th>
+		      <th>检测顺序</th>
+		      <th>检测状态</th>
+		      <th>页面地址</th>		      
+		      <th>链接总量</th>	
+		      <th>外链数量</th>	      		      
+		      <th>白名单敏感词</th>
+		      <th>疑似敏感词量</th>
+		      <th>检测时间</th>
+		    </tr>
+		  </thead>
+	  		<tbody id="persionTable1">    
+	  		</tbody>  
+	</table> 
+<footer style="float:right; ">
+	<ul class="pager"></ul>	
+</footer>
+
+</body>
+</html>

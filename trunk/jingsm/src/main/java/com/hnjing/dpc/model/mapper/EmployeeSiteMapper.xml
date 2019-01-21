@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hnjing.dpc.model.dao.EmployeeSiteMapper">
+
+<!-- Result Map-->
+<resultMap id="EmployeeSiteResultMap" type="com.hnjing.dpc.model.entity.EmployeeSite">
+	<id column="id" property="id"/>
+	<result column="emp_id" property="empId"/>
+	<result column="site_id" property="siteId"/>	
+	<result column="SF_Name" property="sfName"/>
+	<result column="other" property="other"/>
+	<result column="GMT_CREATE" property="gmtCreate"/>
+	<result column="GMT_MODIFIED" property="gmtModified"/>
+</resultMap>
+
+<sql id="sql_employeeSite_item">
+	id, emp_id, site_id, SF_Name, other, GMT_CREATE, GMT_MODIFIED
+</sql>
+       
+<!-- 查询条件 无WHERE -->
+<sql id="sql_employeeSite_query_nowhere">
+	<trim prefix=" " prefixOverrides="AND|OR">
+		<if test="employeeSite.id != null">AND id = #{employeeSite.id} </if>
+		<if test="employeeSite.empId != null">AND emp_id = #{employeeSite.empId} </if>
+		<if test="employeeSite.siteId != null">AND site_id = #{employeeSite.siteId} </if>
+		<if test="employeeSite.sfName != null">AND SF_Name = #{employeeSite.sfName} </if>
+		<if test="employeeSite.other != null">AND other like concat(#{employeeSite.other}, '%') </if>
+	</trim>
+</sql>
+   
+<!-- 插入 员工十分信息 -->
+<insert id="addEmployeeSite" parameterType="com.hnjing.dpc.model.entity.EmployeeSite" >
+	<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+		SELECT LAST_INSERT_ID()
+	</selectKey>
+ 	INSERT INTO tb_employee_site 
+	<trim prefix=" (" suffix=")" suffixOverrides=",">
+		<if test="id != null"> id,</if>
+		<if test="empId != null"> emp_id,</if>
+		<if test="siteId != null"> site_id,</if>
+		<if test="sfName != null"> SF_Name,</if>
+		<if test="other != null"> other,</if>
+		GMT_CREATE, GMT_MODIFIED
+	</trim>	 	
+	<trim prefix="values (" suffix=")" suffixOverrides=",">
+		<if test="id != null"> #{id},</if>
+		<if test="empId != null"> #{empId},</if>
+		<if test="siteId != null"> #{siteId},</if>
+		<if test="sfName != null"> #{sfName},</if>
+		<if test="other != null"> #{other},</if>
+		now(), now()
+	</trim>
+</insert>
+
+<!-- 根据标识，修改 员工十分信息 -->  
+<update id="modifyEmployeeSite" parameterType="com.hnjing.dpc.model.entity.EmployeeSite" >
+  	UPDATE tb_employee_site SET
+	<trim suffixOverrides=",">
+		<if test="empId != null"> emp_id = #{empId},</if>
+		<if test="siteId != null"> site_id = #{siteId},</if>
+		<if test="sfName != null"> SF_Name = #{sfName},</if>
+		<if test="other != null"> other = #{other},</if>
+		GMT_MODIFIED = now()
+	</trim>
+	WHERE id = #{id}
+</update>
+ 
+<!-- 删除 员工十分信息 -->
+<delete id="dropEmployeeSiteById" parameterType="java.lang.Integer">
+	DELETE FROM tb_employee_site WHERE id = #{id}
+</delete> 
+
+<!-- 根据标识查询 员工十分信息 -->
+<select id="queryEmployeeSiteById"  resultMap="EmployeeSiteResultMap" parameterType="java.lang.Integer">
+	SELECT 
+	<include refid="sql_employeeSite_item"/>
+	FROM tb_employee_site WHERE id = #{id}
+</select>
+
+<select id="queryEmployeeSiteBySiteId"  resultMap="EmployeeSiteResultMap" parameterType="java.lang.Integer">
+	SELECT 
+	<include refid="sql_employeeSite_item"/>
+	FROM tb_employee_site WHERE site_id = #{siteId}
+</select>
+
+
+
+<!-- 根据属性查询员工十分信息 -->
+<select id="queryEmployeeSiteByProperty"  resultMap="EmployeeSiteResultMap" parameterType="java.util.Map">
+	SELECT 
+	<include refid="sql_employeeSite_item"/>
+	FROM tb_employee_site 
+	<where>
+		<include refid="sql_employeeSite_query_nowhere"/>
+	</where>
+</select>
+
+<!-- 根据员工十分信息属性与分页信息分页查询员工十分信息信息 -->
+<select id="queryEmployeeSiteForPage"  resultMap="EmployeeSiteResultMap" > 
+	SELECT 
+	<include refid="sql_employeeSite_item"/>
+	FROM tb_employee_site 
+	<where>
+		<include refid="sql_employeeSite_query_nowhere"/>
+	</where>
+</select>
+
+</mapper>   

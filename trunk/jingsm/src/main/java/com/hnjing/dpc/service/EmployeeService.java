@@ -1,0 +1,78 @@
+package com.hnjing.dpc.service;
+
+import java.util.List;
+import java.util.Map;
+
+
+import com.hnjing.dpc.model.entity.Employee;
+
+/**
+ * @ClassName: Employee
+ * @Description: 员工信息服务接口
+ * @author: Jinlong He
+ * @email: mailto:jinlong_he@126.com
+ * @date: 2018年12月03日 10时54分
+ */
+public interface EmployeeService {
+
+    /**
+	 * @Title: addEmployee
+	 * @Description:添加员工信息
+	 * @param employee 实体
+	 * @return Integer
+	 */
+	Employee addEmployee(Employee employee);
+	
+	/**
+	 * @Title modifyEmployee
+	 * @Description:修改员工信息
+	 * @param employee 实体
+	 * @return Integer
+	 */
+	Integer modifyEmployee(Employee employee);
+	
+	/**
+	 * @Title: dropEmployeeById
+	 * @Description:删除员工信息
+	 * @param id 实体标识
+	 * @return Integer
+	 */
+	Integer dropEmployeeById(Integer id);
+	
+	/**
+	 * @Title: queryEmployeeById
+	 * @Description:根据实体标识查询员工信息
+	 * @param id 实体标识
+	 * @return Employee
+	 */
+	Employee queryEmployeeById(Integer id);
+	 
+	/**
+	 * @Title: queryEmployeeForPage
+	 * @Description: 根据员工信息属性与分页信息分页查询员工信息信息
+	 * @param pagenum 页 
+	 * @param pagesize 页大小 
+	 * @param sort 排序
+	 * @param employee 实体
+	 * @return List<Employee>
+	 */
+	Map<String, Object> queryEmployeeForPage(Integer pagenum, Integer pagesize, String sort, Employee employee);
+	 
+	 /**
+	 * @Title: queryEmployeeByProperty
+	 * @Description:根据属性查询员工信息
+	 * @return List<Employee>
+	 */
+	 List<Employee> queryEmployeeByProperty(Map<String, Object> map);	 
+	 
+	 
+	/** 
+	* @Title: bindEmployeeByNO 
+	* @Description: 根据员工工号绑定员工信息
+	* @param emp
+	* @return  
+	* Employee    返回类型 
+	* @throws 
+	*/
+	Employee bindEmployeeByNO(Employee emp);
+}

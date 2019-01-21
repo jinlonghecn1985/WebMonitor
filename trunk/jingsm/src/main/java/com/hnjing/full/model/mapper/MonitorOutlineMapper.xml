@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hnjing.full.model.dao.MonitorOutlineMapper">
+
+<!-- Result Map-->
+<resultMap id="MonitorOutlineResultMap" type="com.hnjing.full.model.entity.MonitorOutline">
+	<id column="id" property="id"/>
+	<result column="site_id" property="siteId"/>
+	<result column="page" property="page"/>
+	<result column="ip" property="ip"/>
+	<result column="self_site" property="selfSite"/>	
+	<result column="accept_mail" property="acceptMail"/>
+	<result column="check_level" property="checkLevel"/>
+	<result column="error_page" property="errorPage"/>
+	<result column="inner_page" property="innerPage"/>
+	<result column="outer_page" property="outerPage"/>
+	<result column="key_word" property="keyWord"/>
+	<result column="illegal_word" property="illegalWord"/>
+	<result column="gmt_created" property="gmtCreated"/>
+	<result column="gmt_modify" property="gmtModify"/>
+</resultMap>
+
+<resultMap id="WaitCheckSiteBoResultMap" type="com.hnjing.full.service.impl.bo.WaitCheckSiteBo">
+	<result column="id" property="id"/>
+	<result column="page" property="page"/>
+	<result column="charset" property="charset"/>
+	<result column="gmt_modify" property="gmtModify"/>
+</resultMap>
+ 
+
+<sql id="sql_monitorOutline_item">
+	id, site_id, ip, self_site, page, accept_mail, check_level, error_page, inner_page, outer_page, key_word, illegal_word, gmt_created, gmt_modify
+</sql>
+       
+<!-- 查询条件 无WHERE -->
+<sql id="sql_monitorOutline_query_nowhere">
+	<trim prefix=" " prefixOverrides="AND|OR">
+		<if test="monitorOutline.id != null">AND id = #{monitorOutline.id} </if>
+		<if test="monitorOutline.siteId != null">AND site_id = #{monitorOutline.siteId} </if>
+		<if test="monitorOutline.page != null">AND page like concat('%', #{monitorOutline.page}, '%') </if>
+		<if test="monitorOutline.selfSite != null">AND self_site = #{monitorOutline.selfSite} </if>
+		<if test="monitorOutline.ip != null">AND ip like concat(#{monitorOutline.ip}, '%') </if>
+		<if test="monitorOutline.acceptMail != null">AND accept_mail like concat(#{monitorOutline.acceptMail}, '%') </if>
+		<if test="monitorOutline.checkLevel != null">AND check_level = #{monitorOutline.checkLevel} </if>
+		<if test="monitorOutline.errorPage != null">AND error_page = #{monitorOutline.errorPage} </if>
+		<if test="monitorOutline.innerPage != null">AND inner_page = #{monitorOutline.innerPage} </if>
+		<if test="monitorOutline.outerPage != null">AND outer_page = #{monitorOutline.outerPage} </if>
+		<if test="monitorOutline.keyWord != null">AND key_word = #{monitorOutline.keyWord} </if>
+		<if test="monitorOutline.illegalWord != null">AND illegal_word = #{monitorOutline.illegalWord} </if>
+	</trim>
+</sql>
+   
+<!-- 插入 全站检测概要 -->
+<insert id="addMonitorOutline" parameterType="com.hnjing.full.model.entity.MonitorOutline" >
+	<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+		SELECT LAST_INSERT_ID()
+	</selectKey>
+ 	INSERT INTO tf_monitor_outline 
+	<trim prefix=" (" suffix=")" suffixOverrides=",">
+		<if test="id != null"> id,</if>
+		<if test="siteId != null"> site_id,</if>
+		<if test="selfSite != null"> self_site,</if>
+		<if test="ip != null"> ip,</if>
+		<if test="page != null"> page,</if>
+		<if test="acceptMail != null"> accept_mail,</if>
+		<if test="checkLevel != null"> check_level,</if>
+		<if test="errorPage != null"> error_page,</if>
+		<if test="innerPage != null"> inner_page,</if>
+		<if test="outerPage != null"> outer_page,</if>
+		<if test="keyWord != null"> key_word,</if>
+		<if test="illegalWord != null"> illegal_word,</if>
+		gmt_created, gmt_modify
+	</trim>	 	
+	<trim prefix="values (" suffix=")" suffixOverrides=",">
+		<if test="id != null"> #{id},</if>
+		<if test="siteId != null"> #{siteId},</if>
+		<if test="selfSite != null"> #{selfSite},</if>
+		<if test="ip != null"> #{ip},</if>
+		<if test="page != null"> #{page},</if>
+		<if test="acceptMail != null"> #{acceptMail},</if>
+		<if test="checkLevel != null"> #{checkLevel},</if>
+		<if test="errorPage != null"> #{errorPage},</if>
+		<if test="innerPage != null"> #{innerPage},</if>
+		<if test="outerPage != null"> #{outerPage},</if>
+		<if test="keyWord != null"> #{keyWord},</if>
+		<if test="illegalWord != null"> #{illegalWord},</if>
+		now(), now()
+	</trim>
+</insert>
+
+<!-- 根据标识，修改 全站检测概要 -->  
+<update id="modifyMonitorOutline" parameterType="com.hnjing.full.model.entity.MonitorOutline" >
+  	UPDATE tf_monitor_outline SET
+	<trim suffixOverrides=",">
+		<if test="siteId != null"> site_id = #{siteId},</if>
+		<if test="page != null"> page = #{page},</if>
+		<if test="selfSite != null"> self_site = #{selfSite},</if>
+		<if test="ip != null"> ip = #{ip},</if>
+		<if test="acceptMail != null"> accept_mail = #{acceptMail},</if>
+		<if test="checkLevel != null"> check_level = #{checkLevel},</if>
+		<if test="errorPage != null"> error_page = #{errorPage},</if>
+		<if test="innerPage != null"> inner_page = #{innerPage},</if>
+		<if test="outerPage != null"> outer_page = #{outerPage},</if>
+		<if test="keyWord != null"> key_word = #{keyWord},</if>
+		<if test="illegalWord != null"> illegal_word = #{illegalWord},</if>
+		gmt_modify = now()
+	</trim>
+	WHERE id = #{id}
+</update>
+ 
+<!-- 删除 全站检测概要 -->
+<delete id="dropMonitorOutlineById" parameterType="java.lang.Integer">
+	DELETE FROM tf_monitor_outline WHERE id = #{id}
+</delete> 
+
+<!-- 根据标识查询 全站检测概要 -->
+<select id="queryMonitorOutlineById"  resultMap="MonitorOutlineResultMap" parameterType="java.lang.Integer">
+	SELECT 
+	<include refid="sql_monitorOutline_item"/>
+	FROM tf_monitor_outline WHERE id = #{id}
+</select>
+<select id="queryMonitorOutlineByPage"  resultMap="MonitorOutlineResultMap" parameterType="java.lang.String">
+	SELECT 
+	<include refid="sql_monitorOutline_item"/>
+	FROM tf_monitor_outline WHERE page = #{page} limit 1
+</select>
+
+
+<!-- 根据属性查询全站检测概要 -->
+<select id="queryMonitorOutlineByProperty"  resultMap="MonitorOutlineResultMap" parameterType="java.util.Map">
+	SELECT 
+	<include refid="sql_monitorOutline_item"/>
+	FROM tf_monitor_outline 
+	<where>
+		<include refid="sql_monitorOutline_query_nowhere"/>
+	</where>
+</select>
+
+<!-- 根据全站检测概要属性与分页信息分页查询全站检测概要信息 -->
+<select id="queryMonitorOutlineForPage"  resultMap="MonitorOutlineResultMap" > 
+	SELECT 
+	<include refid="sql_monitorOutline_item"/>
+	FROM tf_monitor_outline 
+	<where>
+		<include refid="sql_monitorOutline_query_nowhere"/>
+	</where>
+</select>
+
+<select id="queryOneNeedCheckPage" resultType="java.util.Map">
+select * from (
+select u.*, m.id, m.gmt_modify from ( 
+select page, charset from tb_site_url where source=1 and need_check=0 
+) u LEFT OUTER JOIN tf_monitor_outline m on u.page=m.page ) t where gmt_modify is null or gmt_modify &lt; DATE_ADD(now(),INTERVAL -1 MONTH) order by gmt_modify desc limit 1
+</select>
+
+
+<select id="queryDataBeforeDay"  resultMap="MonitorOutlineResultMap"  parameterType="java.lang.Integer">
+SELECT * FROM tf_monitor_outline where DATE_SUB(CURDATE(), INTERVAL #{days} DAY) > date(gmt_created)
+</select>
+
+</mapper>   

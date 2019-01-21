@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hnjing.ws.model.dao.SiteUrlMapper">
+
+<!-- Result Map-->
+<resultMap id="SiteUrlResultMap" type="com.hnjing.ws.model.entity.SiteUrl">
+	<id column="id" property="id"/>
+	<result column="page" property="page"/>
+	<result column="demin" property="demin"/>
+	<result column="source" property="source"/>
+	<result column="need_check" property="needCheck"/>
+	<result column="charset" property="charset"/>
+	<result column="ip" property="ip"/>
+	<result column="old_ip" property="oldIp"/>
+	<result column="ip_checked" property="ipChecked"/>
+	<result column="self_site" property="selfSite"/>
+	<result column="dt" property="dt"/>
+	<result column="customer" property="customer"/>
+	<result column="error_time" property="errorTime"/>
+	<result column="gmt_created" property="gmtCreated"/>
+	<result column="gmt_modify" property="gmtModify"/>
+</resultMap>
+
+<sql id="sql_siteUrl_item">
+	id, page, demin, source, need_check, charset, ip, old_ip, ip_checked, self_site, dt, customer, error_time, gmt_created, gmt_modify
+</sql>
+       
+<!-- 查询条件 无WHERE -->
+<sql id="sql_siteUrl_query_nowhere">
+	<trim prefix=" " prefixOverrides="AND|OR">
+		<if test="siteUrl.id != null">AND id = #{siteUrl.id} </if>
+		<if test="siteUrl.page != null">AND page like concat(#{siteUrl.page}, '%') </if>
+		<if test="siteUrl.demin != null">AND demin like concat(#{siteUrl.demin}, '%') </if>
+		<if test="siteUrl.source != null">AND source = #{siteUrl.source} </if>
+		<if test="siteUrl.needCheck != null">AND need_check = #{siteUrl.needCheck} </if>
+		<if test="siteUrl.charset != null">AND charset like concat(#{siteUrl.charset}, '%') </if>
+		<if test="siteUrl.ip != null">AND ip = #{siteUrl.ip} </if>
+		<if test="siteUrl.oldIp != null">AND old_ip = #{siteUrl.oldIp} </if>
+		<if test="siteUrl.ipChecked != null">AND ip_checked = #{siteUrl.ipChecked} </if>
+		<if test="siteUrl.selfSite != null">AND self_site = #{siteUrl.selfSite} </if>
+		<if test="siteUrl.customer != null">AND customer like concat(#{siteUrl.customer}, '%') </if>
+	</trim>
+</sql>
+   
+<!-- 插入 待检测网站信息 -->
+<insert id="addSiteUrl" parameterType="com.hnjing.ws.model.entity.SiteUrl" >
+	<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+		SELECT LAST_INSERT_ID()
+	</selectKey>
+ 	INSERT INTO tb_site_url 
+	<trim prefix=" (" suffix=")" suffixOverrides=",">
+		<if test="id != null"> id,</if>
+		<if test="page != null"> page,</if>
+		<if test="demin != null"> demin,</if>
+		<if test="source != null"> source,</if>
+		<if test="needCheck != null"> need_check,</if>
+		<if test="charset != null"> charset,</if>
+		<if test="ip != null"> ip,</if>
+		<if test="oldIp != null"> old_ip,</if>
+		<if test="ipChecked != null"> ip_checked,</if>
+		<if test="selfSite != null"> self_site,</if>
+		dt,
+		<if test="customer != null"> customer,</if>
+		<if test="errorTime != null"> error_time,</if>
+		gmt_created, gmt_modify
+	</trim>	 	
+	<trim prefix="values (" suffix=")" suffixOverrides=",">
+		<if test="id != null"> #{id},</if>
+		<if test="page != null"> #{page},</if>
+		<if test="demin != null"> #{demin},</if>
+		<if test="source != null"> #{source},</if>
+		<if test="needCheck != null"> #{needCheck},</if>
+		<if test="charset != null"> #{charset},</if>
+		<if test="ip != null"> #{ip},</if>
+		<if test="oldIp != null"> #{oldIp},</if>
+		<if test="ipChecked != null"> #{ipChecked},</if>
+		<if test="selfSite != null"> #{selfSite},</if>
+		now(),
+		<if test="customer != null"> #{customer},</if>
+		<if test="errorTime != null"> #{errorTime},</if>
+		now(), now()
+	</trim>
+</insert>
+
+<!-- 根据标识，修改 待检测网站信息 -->  
+<update id="modifySiteUrl" parameterType="com.hnjing.ws.model.entity.SiteUrl" >
+  	UPDATE tb_site_url SET
+	<trim suffixOverrides=",">
+		<if test="page != null"> page = #{page},</if>
+		<if test="demin != null"> demin = #{demin},</if>
+		<if test="source != null"> source = #{source},</if>
+		<if test="needCheck != null"> need_check = #{needCheck},</if>
+		<if test="charset != null"> charset = #{charset},</if>
+		<if test="ip != null"> ip = #{ip},</if>
+		<if test="oldIp != null"> old_ip = #{oldIp},</if>
+		<if test="ipChecked != null"> ip_checked = #{ipChecked},</if>
+		<if test="selfSite != null"> self_site = #{selfSite},</if>
+		<if test="dt != null"> dt = now(),</if>
+		<if test="customer != null"> customer = #{customer},</if>
+		<if test="errorTime != null"> error_time = #{errorTime},</if>
+		gmt_modify = now()
+	</trim>
+	WHERE id = #{id}
+</update>
+
+<update id="modifySiteUrlIP" parameterType="com.hnjing.ws.model.entity.SiteUrl" >
+  	UPDATE tb_site_url SET
+  	dt = now(), ip_checked=0,  ip= #{ip}, old_ip= #{oldIp}, self_site=#{selfSite}
+	WHERE id = #{id}
+</update>
+ 
+<!-- 删除 待检测网站信息 -->
+<delete id="dropSiteUrlById" parameterType="java.lang.Integer">
+	DELETE FROM tb_site_url WHERE id = #{id}
+</delete> 
+
+<!-- 根据标识查询 待检测网站信息 -->
+<select id="querySiteUrlById"  resultMap="SiteUrlResultMap" parameterType="java.lang.Integer">
+	SELECT 
+	<include refid="sql_siteUrl_item"/>
+	FROM tb_site_url WHERE id = #{id}
+</select>
+
+<!-- 根据属性查询待检测网站信息 -->
+<select id="querySiteUrlByProperty"  resultMap="SiteUrlResultMap" parameterType="java.util.Map">
+	SELECT 
+	<include refid="sql_siteUrl_item"/>
+	FROM tb_site_url 
+	<where>
+		<include refid="sql_siteUrl_query_nowhere"/>
+		<if test="siteUrl.pageonly != null">AND page = #{siteUrl.pageonly} </if>
+		<if test="siteUrl.ipnull != null">AND ip is null </if>
+	</where>
+</select>
+
+<!-- 根据属性查询待检测网站信息 -->
+<select id="queryWaitCheckSiteUrlByProperty"  resultMap="SiteUrlResultMap" parameterType="java.util.Map">
+select <include refid="sql_siteUrl_item"/> from (
+select u.*, r.site_id from (
+select * from tb_site_url 
+	<where>
+		<include refid="sql_siteUrl_query_nowhere"/>
+	</where>
+) u 
+LEFT OUTER JOIN tb_site_result r on u.id = r.site_id
+) t where site_id is null
+</select>
+
+
+
+<!-- 根据待检测网站信息属性与分页信息分页查询待检测网站信息信息 -->
+<select id="querySiteUrlForPage"  resultMap="SiteUrlResultMap" > 
+	SELECT 
+	<include refid="sql_siteUrl_item"/>
+	FROM tb_site_url 
+	<where>
+		<include refid="sql_siteUrl_query_nowhere"/>
+		<if test="siteUrl.noip != null">AND ip is null </if>		
+	</where>
+</select>
+
+<!-- 更新IP待检测状态 -->
+<update id="initSiteUrlSelfSite" >
+		update tb_site_url set self_site=0
+</update>
+<update id="initSiteUrlIPStatus" parameterType="java.lang.Integer">
+		update tb_site_url set ip_checked=#{val}
+</update>
+
+<!-- 更新IP\时间\IP待检测状态 -->
+<update id="modifySiteUrlIPSOnBatch" parameterType="java.util.List">
+	<foreach close="" collection="list" index="index" item="item" open="" separator=";">
+		update tb_site_url
+		<set>
+			dt = now(), ip_checked=0,  ip= #{item.ip}, old_ip= #{item.oldIp}
+			<if test="item.selfSite != null">, self_site=#{item.selfSite}</if>
+		</set>
+		where id = #{item.id}
+	</foreach>
+</update>
+
+<select id="querySiteUrlCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+select count(1) ct from tb_site_url 
+<where>
+	<include refid="sql_siteUrl_query_nowhere"/>
+</where>
+</select>
+
+<select id="queryReCheckIPSite" resultMap="SiteUrlResultMap">
+select <include refid="sql_siteUrl_item"/> from (
+select u.*, r.site_id from tb_site_url u 
+RIGHT OUTER JOIN (
+select site_id from tb_site_result where status!=200
+) r on u.id=r.site_id  ) t 
+</select>
+
+<!-- 以下两方法处理IP是否我司 -->
+<update id="initNeedCheckZero" parameterType="java.lang.Integer">
+update tb_site_url set need_check=1 where source=#{source}
+</update>
+<update id="initNeedCheckPt">
+update tb_site_url set need_check=0 where source=1 and self_site=1
+</update>
+<update id="initSelfSite">
+update tb_site_url INNER JOIN tb_self_ip set tb_site_url.self_site=1 where tb_site_url.ip = tb_self_ip.ip 
+</update>
+
+</mapper>   

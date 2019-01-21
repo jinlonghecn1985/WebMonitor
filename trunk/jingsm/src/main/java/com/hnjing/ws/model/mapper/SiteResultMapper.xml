@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hnjing.ws.model.dao.SiteResultMapper">
+
+<!-- Result Map-->
+<resultMap id="SiteResultResultMap" type="com.hnjing.ws.model.entity.SiteResult">
+	<id column="site_id" property="siteId"/>
+	<result column="page" property="page"/>
+	<result column="source" property="source"/>
+	<result column="title" property="title"/>
+	<result column="content" property="content" typeHandler="com.hnjing.utils.MyBlobTypeHandler"/>
+	<result column="status" property="status"/>
+	<result column="comment" property="comment"/>
+	<result column="gmt_created" property="gmtCreated"/>
+</resultMap>
+
+<sql id="sql_siteResult_item">
+	site_id, source, page, title, content, status, comment, gmt_created
+</sql>
+       
+<!-- 查询条件 无WHERE -->
+<sql id="sql_siteResult_query_nowhere">
+	<trim prefix=" " prefixOverrides="AND|OR">
+		<if test="siteResult.siteId != null">AND site_id = #{siteResult.siteId} </if>
+		<if test="siteResult.page != null">AND page like concat(#{siteResult.page}, '%') </if>
+		<if test="siteResult.source != null">AND source = #{siteResult.source} </if>
+		<if test="siteResult.title != null">AND title like concat(#{siteResult.title}, '%') </if>
+		<if test="siteResult.status != null">AND status = #{siteResult.status} </if>
+		<if test="siteResult.comment != null">AND comment = #{siteResult.comment} </if>
+	</trim>
+</sql>
+   
+<!-- 插入 检测结果 -->
+<insert id="addSiteResult" parameterType="com.hnjing.ws.model.entity.SiteResult" >
+ 	INSERT INTO tb_site_result 
+	<trim prefix=" (" suffix=")" suffixOverrides=",">
+		<if test="siteId != null"> site_id,</if>
+		<if test="source != null"> source,</if>
+		<if test="page != null"> page,</if>
+		<if test="title != null"> title,</if>
+		<if test="content != null"> content,</if>
+		<if test="status != null"> status,</if>
+		<if test="comment != null"> comment,</if>
+		gmt_created
+	</trim>	 	
+	<trim prefix="values (" suffix=")" suffixOverrides=",">
+		<if test="siteId != null"> #{siteId},</if>
+		<if test="source != null"> #{source},</if>
+		<if test="page != null"> #{page},</if>
+		<if test="title != null"> #{title},</if>
+		<if test="content != null"> #{content},</if>
+		<if test="status != null"> #{status},</if>
+		<if test="comment != null"> #{comment},</if>
+		now()
+	</trim>
+</insert>
+
+<!-- 根据标识，修改 检测结果 -->  
+<update id="modifySiteResult" parameterType="com.hnjing.ws.model.entity.SiteResult" >
+  	UPDATE tb_site_result SET
+	<trim suffixOverrides=",">
+		<if test="page != null"> page = #{page},</if>
+		<if test="source != null"> source = #{source},</if>
+		<if test="title != null"> title = #{title},</if>
+		<if test="content != null"> content = #{content},</if>
+		<if test="status != null"> status = #{status},</if>
+		<if test="comment != null"> comment = #{comment},</if>
+		gmt_created = now()
+	</trim>
+	WHERE site_id = #{siteId}
+</update>
+ 
+<!-- 删除 检测结果 -->
+<delete id="dropSiteResultBySiteId" parameterType="java.lang.Integer">
+	DELETE FROM tb_site_result WHERE site_id = #{siteId}
+</delete> 
+
+<!-- 根据标识查询 检测结果 -->
+<select id="querySiteResultBySiteId"  resultMap="SiteResultResultMap" parameterType="java.lang.Integer">
+	SELECT 
+	<include refid="sql_siteResult_item"/>
+	FROM tb_site_result WHERE site_id = #{siteId}
+</select>
+
+<!-- 根据属性查询检测结果 -->
+<select id="querySiteResultByProperty"  resultMap="SiteResultResultMap" parameterType="java.util.Map">
+	SELECT 
+	<include refid="sql_siteResult_item"/>
+	FROM tb_site_result 
+	<where>
+		<include refid="sql_siteResult_query_nowhere"/>
+		<if test="siteResult.nostatus != null">AND status != #{siteResult.nostatus} </if>
+	</where>
+</select>
+
+
+<select id="querySiteResultCountByProperty" resultType="java.lang.Integer" parameterType="java.util.Map">
+	SELECT count(1) ct
+	FROM tb_site_result 
+	<where>
+		<include refid="sql_siteResult_query_nowhere"/>
+		<if test="siteResult.nostatus != null">AND status != #{siteResult.nostatus} </if>
+	</where>
+</select>
+
+<!-- 根据检测结果属性与分页信息分页查询检测结果信息 -->
+<select id="querySiteResultForPage"  resultMap="SiteResultResultMap" > 
+	SELECT 
+	<include refid="sql_siteResult_item"/>
+	FROM tb_site_result 
+	<where>
+		<include refid="sql_siteResult_query_nowhere"/>
+		<if test="siteResult.nostatus != null">AND status != #{siteResult.nostatus} </if>
+	</where>
+</select>
+
+<!-- 批量写入检测结果  -->
+<insert id="addResultOnBatch" parameterType="java.util.List">
+    INSERT INTO tb_site_result (site_id, source, page, title, content, status, comment, gmt_created) VALUES 
+    <foreach collection ="list" item="result" separator =",">
+         (#{result.siteId},#{result.source}, #{result.page},#{result.title}, #{result.content}, #{result.status},#{result.comment}, now()) 
+    </foreach >
+</insert>
+
+
+<select id="queryErrorSiteSelf" resultType="java.util.Map">
+select ip, self_site selfSite, site_id id, title from (
+select u.ip, u.self_site, r.site_id, r.title from tb_site_url u 
+RIGHT OUTER JOIN (
+select site_id, title from tb_site_result where status!=200
+) r on u.id=r.site_id 
+) t where self_site=1
+</select>
+
+
+<delete id="clearTable">
+delete from tb_site_result
+</delete>
+
+<delete id="clearTodayBeforeHistroy" parameterType="java.lang.Integer">
+delete from tb_site_result where source = #{source}
+</delete>
+
+</mapper>   

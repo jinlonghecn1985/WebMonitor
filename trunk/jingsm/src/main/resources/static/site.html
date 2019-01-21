@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<title>网站健康检测工具-流程信息部</title>
+	<meta charset="utf-8">
+  	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<!-- ZUI 标准版压缩后的 CSS 文件 -->
+	<link rel="stylesheet" href="./css/zui.min.css" />
+	<!-- ZUI Javascript 依赖 jQuery -->
+	<script src="./lib/jquery/jquery.js"></script>
+	<!-- ZUI 标准版压缩后的 JavaScript 文件 -->
+	<script src="./js/zui.min.js"></script>	
+	<!-- 自定义业务 JavaScript 文件 -->
+	<script src="avril.js"></script>
+<style type="text/css"> 
+.elehidden{display: none;}
+</style> 	
+	<script type="text/javascript">	
+	var searchSource="";
+	var searchWord = '';
+	var pagenum = 1;
+	var pagesize = 15;
+$(document).ready(function(){	
+	$('#searchKeyWord').bind('keypress', function(event) {
+		if (event.keyCode == 13) {
+			doSearchAction2();
+		}
+	});	
+	reloadData();	
+});
+var moddelHtml = "&nbsp;&nbsp;<i onclick=\"modifyPersion2(this);\" class=\"icon icon-asterisk\"></i>&nbsp;&nbsp;<i onclick=\"deletePersion(this);\" class=\"icon icon-minus-sign\"></i>";
+
+function modifyPersion2(th){
+	modifyPersion($(th).parent().parent()[0]);
+}
+function getSourceName(so){
+	if(so==null || so == undefined ){
+		return "--";
+	}else if(so ==1){
+		return "平台";
+	}else if(so ==2){
+		return "SSG";
+	}else if(so ==3){
+		return "农业";
+	}else if(so ==4){
+		return "小仙子";
+	}else{
+		return "未定义";
+	}
+}
+function changeSource(s){
+	if(s=='1'){
+		$('#fromSource').val('1');
+		$('#source1').checked;
+		//$('#fromPage').attr("disabled", "disabled");
+		$('#source1').parent().addClass('btn-primary active');
+		$('#source2').parent().removeClass('btn-primary active');
+	}else{
+		$('#fromSource').val('2');
+		$('#source2').checked;
+		//$('#fromPage').attr("disabled", false);
+		$('#source2').parent().addClass('btn-primary active');
+		$('#source1').parent().removeClass('btn-primary active');
+	}
+}
+
+var deleteUrl = '';
+var deleteUrlSource = '';
+function deletePersion(th){
+	data = $(th).parent().parent()[0];
+	deleteUrl = '';
+	deleteUrl =  $(th).parent().find("input").val();
+	deleteUrlSource = ($(data).children().eq(3).html())=='平台'?'1':'2';
+	$('#checkModel').modal({
+	    keyboard : true,
+	    show     : true
+	});	
+	//showCheckModel('提示', '删除操作将清空下家所有数据且不可恢复,请慎重!', '删除', AVRIL.deletePersionInfo, $(th).parent().find("input").val(), deletePersionBack);
+	//AVRIL.deletePersionInfo(deletePersionBack, $(th).parent().find("input").val());
+}
+
+function doDeletePersion(){
+	AVRIL.deletePersionInfo(deletePersionBack, deleteUrl, deleteUrlSource);
+}
+
+function deletePersionBack(th){
+	$('#checkModel').modal('hide');
+	searchWord = "";
+	reloadData();
+}
+
+function addPersion(){
+	$('#fromType').val('add');
+	$('#fromUrl').attr("disabled", false);
+	$('#fromUrl').val('');	
+	$('#fromPage').val('');
+	$('#fromSource').val('');
+	changeSource('1');
+	showInfoWindow();
+}
+function modifyPersion(th){
+	var tddata = $(th).children();	
+	$('#fromType').val('mod');
+	$('#fromUrl').attr("disabled", "disabled");
+	$('#fromUrl').val(tddata.eq(1).html());
+	$('#fromPage').val(tddata.eq(2).html());
+	$('#fromSource').val(tddata.eq(3).html());
+	changeSource(tddata.eq(3).html()=='平台'?'1':'2');
+	showInfoWindow();
+}
+
+
+function loadPersionListBack(data){	
+	if(data!=undefined && data.page!=undefined){
+		if(data.data!=undefined && data.data.length>0){
+			var ihtml = "";
+			for(var i=0; i<data.data.length; i++){
+				ihtml+=("<tr ondblclick=\"modifyPersion(this);\">"
+						+"<td>"+(data.page.startRow+i)+"<input type=\"hidden\" value=\""+data.data[i].id+"\">"+moddelHtml+"</td>"
+						+"<td>"+(data.data[i].selfSite==1?'<font color=\"00ff00\">是</font>':'否')+"</td>"		
+						+"<td>"+data.data[i].page+"</td>"
+						+"<td>"+"<a target=\"_blank\" href=\""+data.data[i].page+"\">"+data.data[i].demin+"</td>"
+						+"<td>"+getSourceName(data.data[i].source)+"</td>"	
+						+"<td>"+(data.data[i].needCheck==1?'是':'否')+"</td>"	
+						+"<td>"+(data.data[i].ip==undefined?'':("<a href=\"./siteip.html?ip="+data.data[i].ip+"\">"+data.data[i].ip+"</a>"))+"</td>"
+						+"<td>"+(data.data[i].oldIp==undefined?'':data.data[i].oldIp)+"</td>"
+						+"<td>"+data.data[i].dt+"</td>"
+						+"<td>"+(data.data[i].charset==undefined?'':data.data[i].charset)+"</td>"
+						+"<td>"+data.data[i].gmtCreated+"</td>"
+						+"</tr>");
+			}	 		
+			$("#persionTable").html(ihtml);
+			AVRIL.initPageBar(data.page);
+		}
+		return;
+	}
+	AVRIL.initPageBar(null);
+	$("#persionTable").html('<tr><td colspan=\"9\"><font color=\"red\">没有查询到数据。</font></td></tr>');
+	
+}
+
+function doSearchAction2(){
+	pagenum = 1;
+	searchWord = $('#searchKeyWord').val();		
+	reloadData();
+}
+
+
+function doSearchAction(so){
+	pagenum = 1;
+	searchSource=so;	
+	reloadData();
+}
+function reloadData(){	
+	AVRIL.loadSiteUrlList(loadPersionListBack, pagenum, pagesize, searchWord, searchSource);	
+}
+function goPage(pn){
+	pagenum = pn;
+	reloadData();
+}
+
+function showInfoWindow(){
+	$('#infoWindow').modal({
+	    keyboard : true,
+	    show     : true
+	});	
+}
+
+function doDataCheck(){
+	$fromSource = $('#fromSource');
+	if($fromSource.val().length==0){
+		showJLWarning('请选择来源');
+		$fromSource.focus().parent().addClass('has-error');		
+		return;
+	}
+	$fromSource.parent().removeClass('has-error');
+	
+	
+	
+	$fromPage = $('#fromPage');
+	if($fromSource.val()=='2'){		
+		if($fromPage.val().length==0){
+			showJLWarning('请填写落地页');
+			$fromPage.focus().parent().addClass('has-error');		
+			return;
+		}
+		$fromPage.parent().removeClass('has-error');
+	}
+	
+	
+	
+	var obj = {};
+	obj.page = $fromPage.val();
+	obj.source = $fromSource.val();
+	obj.type = $('#fromType').val();
+	searchWord = obj.url;
+	AVRIL.savePersionInfo(savePersionInfoBack, obj);
+}
+
+function savePersionInfoBack(data){
+	$('#infoWindow').modal('hide');
+	reloadData();
+}
+
+
+// function doSecBack(){
+// 	new $.zui.Messager('初始化成功! ', {
+// 		type: 'success',
+// 		placement: 'top-right',
+// 	    close: false // 禁用关闭按钮
+// 	}).show();
+// 	AVRIL.queryConfig();
+// }
+
+// function doInitSystem(){
+// 	AVRIL.initConfig(doSecBack);
+// 	$('#doCheckModel').modal('hide');
+// }
+
+
+</script>
+
+</head>
+
+<body >
+<!-- 头部信息 -->
+<div class="header">
+<ul class="nav nav-secondary">
+		<li><a href="control.html">*系统控制</a></li>	
+	<li><a href="fullweb.html">*全站检测记录</a></li>
+	<li><a href="history.html">*检测历史</a></li>
+		<li><a href="mail.html">邮件历史</a></li>
+		<li class="active"><a href="javascript:void(0);">站点管理</a></li>
+		<li><a href="ip.html">我司IP管理</a></li>	
+		<li><a href="config.html">系统配置</a></li>
+</ul>
+</div>
+<br/>
+
+	<div class="row">
+		<div class="col-xs-0 col-sm-1 col-md-2 col-lg-3"></div>
+	  	<div class="input-group col-xs-12 col-sm-10 col-md-8 col-lg-6">
+			<input type="text" id="searchKeyWord" class="form-control" placeholder="站点名称或落地页">
+			<span class="input-group-addon" onclick="doSearchAction2();"><i class="icon icon-cloud">查询</i></span>
+		</div>
+	</div>
+<div class="row">
+<div class="btn-group" data-toggle="buttons">
+			<label class="btn btn-info active" onclick="doSearchAction('');"> <input type="radio"
+				name="options" id="option1" checked> 全部
+			</label> 
+			<label class="btn btn-success" onclick="doSearchAction('1');"> <input type="radio"
+				name="options" id="option2"> 平台
+			</label> 
+			<label class="btn btn-warning" onclick="doSearchAction('2');"> <input type="radio"
+				name="options" id="option3"> 大搜
+			</label> 
+			<label class="btn btn-info" onclick="doSearchAction('3');"> <input type="radio"
+				name="options" id="option4"> 农业
+			</label> 
+			<label class="btn btn-danger" onclick="doSearchAction('4');"> <input type="radio"
+				name="options" id="option5"> 小仙子
+			</label> 
+</div>
+<div class="btn-group" data-toggle="buttons">
+			<label class="btn btn-primary" onclick="addPersion();"> <input type="radio"
+				name="options" id="option3"> 新增
+			</label> 
+			<label class="btn btn-primary" onclick="addPersion();"> <input type="radio"
+				name="options" id="option3"> 导入
+			</label> 
+</div>
+	
+</div>
+
+<div class="row">
+		
+</div>
+<table class="table table-hover">
+		  <thead>
+		    <tr>
+		      <th></th>
+		      <th>是否我司托管</th>
+		      <th>检测页面</th>
+		      <th>相应域名</th>
+		      <th>来源</th>
+		      <th>是否检测</th>
+		      <th>IP</th>
+		      <th>旧IP</th>
+		      <th>IP变更时间</th>
+		      <th>编码</th>
+		      <th>纳入监管时间</th>
+		    </tr>
+		  </thead>
+	  	<tbody id="persionTable">    
+	  	</tbody>  
+</table>
+<footer style="float:right; ">
+	<ul class="pager"></ul>	
+</footer>
+<input type="hidden" id="cdicName" value="">
+<input type="hidden" id="cdicValue" value="">
+<input type="hidden" id="cdicFlag" value="">
+<input type="hidden" id="cdicNote" value="">
+
+
+<!-- 提示 --> 
+<div id="infoWindow" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">关闭</span></button>
+        <h4 class="modal-title">站点操作窗口</h4>
+      </div>
+      <div class="modal-body">
+      <form class="form-horizontal">
+      	<input type="hidden" id="fromType" value="1"/>
+       <div class="form-group">
+		    <label for="fromPK" class="col-sm-2">来源</label>
+		    <input type="hidden" id="fromSource" value="1" >
+		    <div class="col-sm-10">
+		      <div class="btn-group" data-toggle="buttons">
+				  <label class="btn btn-primary active" onclick="changeSource(1);">
+				    <input type="radio" name="options" id="source1"  checked> 平台
+				  </label>
+				  <label class="btn" onclick="changeSource(2);">
+				    <input type="radio" name="options" id="source2" > 大搜
+				  </label>
+				</div>
+		    </div>
+		</div>
+		  
+        
+		 
+		  <div class="form-group">
+		     <label for="fromPK" class="col-sm-2">落地页</label>
+		    <div class="col-sm-10">
+		      <input type="text" class="form-control" id="fromPage" data-toggle="tooltip" title="落地页（SSG来源填写）" placeholder="落地页（SSG来源填写）" >
+		    </div>
+		  </div>
+		  
+		 
+	  </form>
+      </div>
+      <div class="modal-footer">
+      	<input type="hidden" id="stageIdForDel"></input>
+        <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>
+        <button type="button" class="btn btn-primary" onclick="doDataCheck();">保存</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="checkModel" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">关闭</span></button>
+        <h4 class="modal-title" id="checkTitle">温馨提示</h4>
+      </div>
+      <div id="checkContent" class="modal-body">
+        <p>删除操作将清空下家所有数据且不可恢复,请慎重!</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        <button onclick="doDeletePersion()" type="button" class="btn btn-primary">确定</button>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

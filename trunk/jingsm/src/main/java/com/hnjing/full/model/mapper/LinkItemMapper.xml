@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hnjing.full.model.dao.LinkItemMapper">
+
+<!-- Result Map-->
+<resultMap id="LinkItemResultMap" type="com.hnjing.full.model.entity.LinkItem">
+	<id column="id" property="id"/>
+	<result column="page" property="page"/>
+	<result column="status" property="status"/>
+	<result column="anchor" property="anchor"/>
+	<result column="link" property="link"/>
+</resultMap>
+
+<sql id="sql_linkItem_item">
+	id, page, status, anchor, link
+</sql>
+       
+<!-- 查询条件 无WHERE -->
+<sql id="sql_linkItem_query_nowhere">
+	<trim prefix=" " prefixOverrides="AND|OR">
+		<if test="linkItem.id != null">AND id = #{linkItem.id} </if>
+		<if test="linkItem.page != null">AND page =#{linkItem.page} </if>
+		<if test="linkItem.status != null">AND status = #{linkItem.status} </if>
+		<if test="linkItem.anchor != null">AND anchor like concat(#{linkItem.anchor}, '%') </if>
+		<if test="linkItem.link != null">AND link like concat('%', #{linkItem.link}, '%') </if>
+	</trim>
+</sql>
+   
+<!-- 插入 网页链接信息 -->
+<insert id="addLinkItem" parameterType="com.hnjing.full.model.entity.LinkItem" >
+ 	INSERT INTO tf_link_item 
+	<trim prefix=" (" suffix=")" suffixOverrides=",">
+		<if test="id != null"> id,</if>
+		<if test="page != null"> page,</if>
+		<if test="status != null"> status,</if>
+		<if test="anchor != null"> anchor,</if>
+		<if test="link != null"> link,</if>
+	</trim>	 	
+	<trim prefix="values (" suffix=")" suffixOverrides=",">
+		<if test="id != null"> #{id},</if>
+		<if test="page != null"> #{page},</if>
+		<if test="status != null"> #{status},</if>
+		<if test="anchor != null"> #{anchor},</if>
+		<if test="link != null"> #{link},</if>
+	</trim>
+</insert>
+
+
+<insert id="addLinkItemBatch" parameterType="java.util.List">
+    INSERT INTO tf_link_item (id, page, status, anchor, link) VALUES 
+    <foreach collection ="list" item="result" separator =",">
+         (#{result.id},#{result.page}, #{result.status},#{result.anchor}, #{result.link}) 
+    </foreach >
+</insert>
+
+<!-- 根据标识，修改 网页链接信息 -->  
+<update id="modifyLinkItem" parameterType="com.hnjing.full.model.entity.LinkItem" >
+  	UPDATE tf_link_item SET
+	<trim suffixOverrides=",">
+		<if test="page != null"> page = #{page},</if>
+		<if test="status != null"> status = #{status},</if>
+		<if test="anchor != null"> anchor = #{anchor},</if>
+		<if test="link != null"> link = #{link},</if>
+	</trim>
+	WHERE id = #{id}
+</update>
+ 
+<!-- 删除 网页链接信息 -->
+<delete id="dropLinkItemById" parameterType="java.lang.Integer">
+	DELETE FROM tf_link_item WHERE id = #{id}
+</delete> 
+
+<!-- 根据标识查询 网页链接信息 -->
+<select id="queryLinkItemById"  resultMap="LinkItemResultMap" parameterType="java.lang.Integer">
+	SELECT 
+	<include refid="sql_linkItem_item"/>
+	FROM tf_link_item WHERE id = #{id}
+</select>
+
+<!-- 根据属性查询网页链接信息 -->
+<select id="queryLinkItemByProperty"  resultMap="LinkItemResultMap" parameterType="java.util.Map">
+	SELECT 
+	<include refid="sql_linkItem_item"/>
+	FROM tf_link_item 
+	<where>
+		<include refid="sql_linkItem_query_nowhere"/>
+	</where>
+</select>
+
+<!-- 根据网页链接信息属性与分页信息分页查询网页链接信息信息 -->
+<select id="queryLinkItemForPage"  resultMap="LinkItemResultMap" > 
+	SELECT 
+	<include refid="sql_linkItem_item"/>
+	FROM tf_link_item 
+	<where>
+		<include refid="sql_linkItem_query_nowhere"/>
+	</where>
+</select>
+
+</mapper>   

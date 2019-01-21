@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hnjing.ws.model.dao.SiteStatisticsMapper">
+
+<!-- Result Map-->
+<resultMap id="SiteStatisticsResultMap" type="com.hnjing.ws.model.entity.SiteStatistics">
+	<result column="id" property="id"/>
+	<result column="source" property="source"/>
+	<result column="site_total" property="siteTotal"/>
+	<result column="site_check" property="siteCheck"/>
+	<result column="site_error" property="siteError"/>
+	<result column="site_warn" property="siteWarn"/>
+	<result column="site_slow" property="siteSlow"/>	
+	<result column="begin_time" property="beginTime"/>
+	<result column="end_time" property="endTime"/>
+</resultMap>
+
+<sql id="sql_siteStatistics_item">
+	id, source, site_total, site_check, site_error, site_slow, site_warn, begin_time, end_time
+</sql>
+       
+<!-- 查询条件 无WHERE -->
+<sql id="sql_siteStatistics_query_nowhere">
+	<trim prefix=" " prefixOverrides="AND|OR">
+		<if test="siteStatistics.id != null">AND id = #{siteStatistics.id} </if>
+		<if test="siteStatistics.source != null">AND source = #{siteStatistics.source} </if>
+		<if test="siteStatistics.siteTotal != null">AND site_total = #{siteStatistics.siteTotal} </if>
+		<if test="siteStatistics.siteCheck != null">AND site_check = #{siteStatistics.siteCheck} </if>
+		<if test="siteStatistics.siteError != null">AND site_error = #{siteStatistics.siteError} </if>
+		<if test="siteStatistics.siteSlow != null">AND site_slow = #{siteStatistics.siteSlow} </if>
+		<if test="siteStatistics.siteWarn != null">AND site_warn = #{siteStatistics.siteWarn} </if>
+	</trim>
+</sql>
+   
+<!-- 插入 检测结果统计 -->
+<insert id="addSiteStatistics" parameterType="com.hnjing.ws.model.entity.SiteStatistics" >
+ 	INSERT INTO tb_site_statistics 
+	<trim prefix=" (" suffix=")" suffixOverrides=",">
+		<if test="id != null"> id,</if>
+		<if test="source != null"> source,</if>
+		<if test="siteTotal != null"> site_total,</if>
+		<if test="siteCheck != null"> site_check,</if>
+		<if test="siteError != null"> site_error,</if>
+		<if test="siteSlow != null"> site_slow,</if>
+		<if test="siteWarn != null"> site_warn,</if>
+		begin_time
+	</trim>	 	
+	<trim prefix="values (" suffix=")" suffixOverrides=",">
+		<if test="id != null"> #{id},</if>
+		<if test="source != null"> #{source},</if>
+		<if test="siteTotal != null"> #{siteTotal},</if>
+		<if test="siteCheck != null"> #{siteCheck},</if>
+		<if test="siteError != null"> #{siteError},</if>
+		<if test="siteSlow != null"> #{siteSlow},</if>
+		<if test="siteWarn != null"> #{siteWarn},</if>
+		now()
+	</trim>
+</insert>
+
+<!-- 根据标识，修改 检测结果统计 -->  
+<update id="modifySiteStatistics" parameterType="com.hnjing.ws.model.entity.SiteStatistics" >
+  	UPDATE tb_site_statistics SET
+	<trim suffixOverrides=",">
+		<if test="source != null"> source = #{source},</if>
+		<if test="siteTotal != null"> site_total = #{siteTotal},</if>
+		<if test="siteCheck != null"> site_check = #{siteCheck},</if>
+		<if test="siteError != null"> site_error = #{siteError},</if>
+		<if test="siteSlow != null"> site_slow = #{siteSlow},</if>
+		<if test="siteWarn != null"> site_warn = #{siteWarn},</if>
+		end_time = now()
+	</trim>
+	WHERE id = #{id}
+</update>
+ 
+<!-- 删除 检测结果统计 -->
+<delete id="dropSiteStatisticsById" parameterType="java.lang.String">
+	DELETE FROM tb_site_statistics WHERE id = #{id}
+</delete> 
+
+<!-- 根据标识查询 检测结果统计 -->
+<select id="querySiteStatisticsById"  resultMap="SiteStatisticsResultMap" parameterType="java.lang.String">
+	SELECT 
+	<include refid="sql_siteStatistics_item"/>
+	FROM tb_site_statistics WHERE id = #{id}
+</select>
+
+<!-- 根据属性查询检测结果统计 -->
+<select id="querySiteStatisticsByProperty"  resultMap="SiteStatisticsResultMap" parameterType="java.util.Map">
+	SELECT 
+	<include refid="sql_siteStatistics_item"/>
+	FROM tb_site_statistics 
+	<where>
+		<include refid="sql_siteStatistics_query_nowhere"/>
+	</where>
+</select>
+
+<!-- 根据检测结果统计属性与分页信息分页查询检测结果统计信息 -->
+<select id="querySiteStatisticsForPage"  resultMap="SiteStatisticsResultMap" > 
+	SELECT 
+	<include refid="sql_siteStatistics_item"/>
+	FROM tb_site_statistics 
+	<where>
+		<include refid="sql_siteStatistics_query_nowhere"/>
+	</where>
+</select>
+
+<select id="queryNeedContinueCheckInfo" resultMap="SiteStatisticsResultMap">
+select <include refid="sql_siteStatistics_item"/> from tb_site_statistics where end_time is null ORDER BY begin_time desc limit 1
+</select>
+
+<select id="queryLastSiteStatistics" resultMap="SiteStatisticsResultMap" parameterType="java.lang.Integer">
+	select * from tb_site_statistics where source=#{source} order by end_time desc limit 1
+</select>
+</mapper>   
