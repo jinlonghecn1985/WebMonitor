@@ -3,6 +3,7 @@ package com.hnjing.ws.config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -27,6 +28,9 @@ import com.hnjing.ws.service.SiteResultService;
 @EnableScheduling
 public class SchedulingConfig {
 	private static final Logger logger = LoggerFactory.getLogger(SchedulingConfig.class);
+	
+	@Value("${spring.profiles.active}")
+	private String activeType;
 
 	@Autowired
 	private SiteAccessService siteMonitorService;
@@ -228,7 +232,10 @@ public class SchedulingConfig {
 	@Scheduled(cron = "0 0/4 9-23 * * ?")
 	public void doCheckAllSiteScheduler() {
 		try {
-			fullSiteMonitorService.doOneSiteFullCheck();
+			//正式环境才执行全站检测
+			if("pub".equals(activeType)) {
+				fullSiteMonitorService.doOneSiteFullCheck();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("定时任务执行发生错误：doCheckAllSiteScheduler" + e.getMessage());

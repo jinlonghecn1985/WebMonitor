@@ -57,6 +57,7 @@
   	UPDATE tb_employee_site SET
 	<trim suffixOverrides=",">
 		<if test="empId != null"> emp_id = #{empId},</if>
+		<if test="empId == null"> emp_id = null,</if>
 		<if test="siteId != null"> site_id = #{siteId},</if>
 		<if test="sfName != null"> SF_Name = #{sfName},</if>
 		<if test="other != null"> other = #{other},</if>

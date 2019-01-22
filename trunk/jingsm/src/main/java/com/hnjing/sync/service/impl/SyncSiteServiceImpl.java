@@ -101,15 +101,16 @@ public class SyncSiteServiceImpl implements SyncSiteService{
 	public Object processDataForSource(Integer source) {
 		Map<String, Object> query = new HashMap<String, Object>();
 		query.put("source", source);
-		query.put("isDelete", 0);
-		//query.put("hasEmail", 0);
-		query.put("hasEmplNo", 0);
+		query.put("hasChange", 1);  //数据变更过的
+//		query.put("isDelete", 0);
+//		query.put("hasEmail", 0);
+//		query.put("hasEmplNo", 0);
 //		query.put("today", 0); //不限今天
-		List<DataSync> siteList = dataSyncService.queryDataSyncByProperty(query);	
+//		query.put("sevenday", 0);	//最近7天变更
 		
+		List<DataSync> siteList = dataSyncService.queryDataSyncByProperty(query);
 		if(siteList!=null && siteList.size()>0) {
-			siteUrlService.initNeedCheckZero(source);  //采用每日增量			
-			if(siteList!=null && siteList.size()>0){
+//			siteUrlService.initNeedCheckZero(source);  //采用增量处理后不再调用
 				for (DataSync row : siteList) {
 					//处理员工
 					Employee e = new Employee();
@@ -132,7 +133,7 @@ public class SyncSiteServiceImpl implements SyncSiteService{
 						su.setNeedCheck(0);
 					}else {
 						su.setNeedCheck(1);
-					}					
+					}
 					su.setSource(source);
 					siteUrlService.bindSiteUrl(su);
 					
@@ -142,9 +143,10 @@ public class SyncSiteServiceImpl implements SyncSiteService{
 					sf.setSfName(row.getAccountName());
 					employeeSiteService.bindEmployeeSite(sf);
 				}
-			}	
+				dataSyncService.overUpdateStatusBySource(source); // 批量恢复变更状态
+				logger.info("处理同步数据完成："+siteList.size());
 		}else {
-			logger.debug("processDataForSource 没有适配到数据");
+			logger.info("processDataForSource 没有适配到数据");
 		}
 		return null;
 	}
@@ -159,8 +161,9 @@ public class SyncSiteServiceImpl implements SyncSiteService{
 		int totalCount = 21;
 		dataMap.clear();
 		dataSyncService.initUpdateStatusBySource(source);
+		String url = dictionaryService.queryParamsValue(10);
 		while(pageSize*(pageNo-1)<totalCount) {
-			DataSyncBo dsb = syncSSGData(pageNo, pageSize);
+			DataSyncBo dsb = syncSSGData(pageNo, pageSize, url);
 			pageNo++;
 			if(dsb!=null && dsb.getPage()!=null && dsb.getPage().getTotalCount()!=null) {
 				//totalCount = (dsb.getPage().getTotalCount()/pageSize)+((dsb.getPage().getTotalCount()%pageSize==0?0:1));
@@ -168,14 +171,14 @@ public class SyncSiteServiceImpl implements SyncSiteService{
 				processData(source, dsb.getData());
 			}
 		}
-		dataSyncService.overUpdateStatusBySource(source);
-		return "over";
+		logger.info("同步数据完成："+totalCount);
+		return "同步数据完成："+totalCount;
 	}
 	
 	private DataSync queryData(Integer source, DataSync ds) {
 		if(dataMap.size()==0) {
 			Map<String, Object> query = new HashMap<String, Object>();
-			query.put("source", source);				
+			query.put("source", source);
 			List<DataSync> list = dataSyncService.queryDataSyncByProperty(query);
 			if(list!=null && list.size()>0) {
 				for(DataSync d : list) {
@@ -201,26 +204,28 @@ public class SyncSiteServiceImpl implements SyncSiteService{
 	private Integer processData(Integer source, List<DataSync> dsList) {
 		if(dsList!=null && dsList.size()>0) {
 			List<DataSync> datas = new ArrayList<DataSync>();
-			for(DataSync ds :dsList) {			
+			for(DataSync ds :dsList) {	
+				ds.setSiteUrl(HttpToolUtil.getUrl(ds.getSiteUrl())); //统一处理链接地址
 				//检查是否存在
 				DataSync oldDS = queryData(source, ds);
 				if(oldDS==null) {
 					ds.setSource(source);
-					dataSyncService.addDataSync(ds);
+					ds.setHasChange(1);
+					ds.setIsDelete(0);
+					dataSyncService.addDataSync(ds); //添加
 				}else {
 					if(isDataChanged(oldDS, ds)) {
 						ds.setId(oldDS.getId());
 						ds.setHasChange(1);
 						ds.setIsDelete(0);
-						dataSyncService.modifyDataSync(ds);
-					}else {
-						datas.add(oldDS);
-						logger.debug("无变化");
+						dataSyncService.modifyDataSync(ds); //变化数据						
+					}else {	
+						datas.add(oldDS);						
 					}
 				}				
 			}
 			if(datas.size()>0) {
-				dataSyncService.modifyDataSyncOnBatch(datas);
+				dataSyncService.modifyDataSyncDeleteOnBatch(datas); //还原
 			}
 			return dsList.size();
 		}
@@ -283,20 +288,19 @@ public class SyncSiteServiceImpl implements SyncSiteService{
 	* DataSyncBo    返回类型 
 	* @throws 
 	*/
-	private DataSyncBo syncSSGData(int page, int pageSize) {
-		// 发送请求
-		String url = dictionaryService.queryParamsValue(10);
+	private DataSyncBo syncSSGData(int page, int pageSize, String url) {
+		// 发送请求		
 		Map<String, String> heard = new HashMap<String, String>();
 		heard.put("Content-type", "application/json");
 		DataSyncBo dsb = null;
 		try {
 			HttpClientResult hcr = HttpClientUtil2.sendRequest(HttpClientMethod.GET,
 					url + "?pageNo=" + page + "&pageSize=" + pageSize, null, heard, false, "utf-8");
-			System.out.println(hcr.getCode());
+//			System.out.println(hcr.getCode());
 			if (hcr.getCode() != 200) {
 				throw new CustomException(hcr.getCode(), hcr.getBody());
 			}
-			System.out.println(hcr.getBody());
+//			System.out.println(hcr.getBody());
 			dsb = JsonUtil.json2object(hcr.getBody(), DataSyncBo.class);
 			if (dsb == null || dsb.getData() == null) {
 				return null;

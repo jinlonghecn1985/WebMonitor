@@ -58,14 +58,14 @@ public interface DataSyncMapper {
 	Integer overUpdateStatusBySource(Integer source);
 	
 	/** 
-	* @Title: modifyDataSyncOnBatch 
+	* @Title: modifyDataSyncDeleteOnBatch 
 	* @Description: 批量更新删除状态
 	* @param list
 	* @return  
 	* Integer    返回类型 
 	* @throws 
 	*/
-	Integer modifyDataSyncOnBatch(@Param("list") List<DataSync> list);
+	Integer modifyDataSyncDeleteOnBatch(@Param("list") List<DataSync> list);
 	
 	/**
 	 * @Title: dropDataSyncById

@@ -87,14 +87,14 @@ public interface DataSyncService {
 	 
 
 	/** 
-	* @Title: modifyDataSyncOnBatch 
+	* @Title: modifyDataSyncDeleteOnBatch 
 	* @Description: 批量更新删除状态
 	* @param list
 	* @return  
 	* Integer    返回类型 
 	* @throws 
 	*/
-	Integer modifyDataSyncOnBatch(List<DataSync> list);
+	Integer modifyDataSyncDeleteOnBatch(List<DataSync> list);
 	 
 	
 	 

@@ -158,19 +158,19 @@ public class  DataSyncServiceImpl implements DataSyncService {
 	}
 
 	/*
-	 * @Title: modifyDataSyncOnBatch
+	 * @Title: modifyDataSyncDeleteOnBatch
 	 * @Description: 
 	 * @param @param list
 	 * @param @return    参数  
 	 * @author Jinlong He
 	 * @param list
 	 * @return
-	 * @see com.hnjing.sync.service.DataSyncService#modifyDataSyncOnBatch(java.util.List)
+	 * @see com.hnjing.sync.service.DataSyncService#modifyDataSyncDeleteOnBatch(java.util.List)
 	 */ 
 	@Override
 	@Transactional(readOnly = false)
-	public Integer modifyDataSyncOnBatch(List<DataSync> list) {
-		return dataSyncMapper.modifyDataSyncOnBatch(list);
+	public Integer modifyDataSyncDeleteOnBatch(List<DataSync> list) {
+		return dataSyncMapper.modifyDataSyncDeleteOnBatch(list);
 	}
 
 	

@@ -82,8 +82,8 @@
 		<if test="email != null"> #{email},</if>
 		<if test="emplNo != null"> #{emplNo},</if>
 		<if test="note != null"> #{note},</if>
-		<if test="isDelete != null">#{isDelete} </if>
-		<if test="hasChange != null">#{hasChange} </if>
+		<if test="isDelete != null">#{isDelete}, </if>
+		<if test="hasChange != null">#{hasChange}, </if>
 		now(), now()
 	</trim>
 </insert>
@@ -117,18 +117,18 @@
 </update>
 
 <update id="initUpdateStatusBySource" parameterType="java.lang.Integer">
-	update tb_data_sync set has_change =1, is_delete=1 where source=#{source}
+	update tb_data_sync set is_delete=1 where source=#{source}
 </update>
 
 <update id="overUpdateStatusBySource" parameterType="java.lang.Integer">
-	update tb_data_sync set has_change =0, gmt_modify = now() where has_change=1 and source=#{source}
+	update tb_data_sync set has_change =0 where has_change=1 and source=#{source}
 </update>
 
-<update id="modifyDataSyncOnBatch" parameterType="java.util.List">
+<update id="modifyDataSyncDeleteOnBatch" parameterType="java.util.List">
 	<foreach close="" collection="list" index="index" item="item" open="" separator=";">
 		update tb_data_sync
 		<set>
-			is_delete=0, has_change=0
+			is_delete=0
 		</set>
 		where id = #{item.id}
 	</foreach>
@@ -156,6 +156,7 @@
 		<if test="dataSync.hasEmplNo != null">AND empl_no is not null </if>
 		<if test="dataSync.hasEmail != null">AND email is not null </if>
 		<if test="dataSync.today != null">AND TO_DAYS(now()) = TO_DAYS(gmt_modify) </if>
+		<if test="dataSync.sevenday != null">and date(gmt_modify) &gt; DATE_SUB(CURDATE(), INTERVAL 7 DAY)</if>
 	</where>
 </select>
 
