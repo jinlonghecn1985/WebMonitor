@@ -120,7 +120,6 @@ function showJLError(message){
 		}, false);
 	}
 	
-	
 	// 查询人员交易历史记录
 	AVRIL.queryIPS=function(fn){		
 		myAjax("selfips?pageNo=1&pageSize=100&sort=%7B%22count%22%3A%22desc%22%7D", "get", {}, function(data){
@@ -129,6 +128,14 @@ function showJLError(message){
 			}
 		}, false);	
 	}		
+	
+	
+	//
+	AVRIL.savePersionInfo=function(fn, params){
+		myAjaxJson("/siteurl/"+params.id, "put", params, function(data){
+			if(fn){fn(data);}
+		}, false);
+	}
 	
 	//更新交易状态
 	AVRIL.addIPS=function(fn, ips){
@@ -168,6 +175,21 @@ function showJLError(message){
 			}
 		}, false);
 	}
+	AVRIL.loadSyncList=function(fn, pn, ps, searchWord, searchType){
+		var sou = "";
+		if(searchWord!=undefined && searchWord.length>0){
+			sou = "&emplNo="+searchWord;
+		}
+		if(searchType!=undefined && searchType.length>0){
+			sou += "&source="+searchType;
+		}
+		myAjax("/datasyncs?sort=%7B%22gmtModify%22%3A%22desc%22%7D&pageNo="+pn+"&pageSize="+ps+sou, "get", {}, function(data){			
+			if(fn){
+				fn(data);
+			}
+		}, false);
+	}
+	
 	
 	
 	AVRIL.loadMailList=function(fn, pn, ps){
@@ -190,6 +212,49 @@ function showJLError(message){
 				fn(data);
 			}
 		}, false);
+	}
+	
+	
+	//加载待检网站信息
+	AVRIL.loadKWList=function(fn, pn, ps, searchWord, searchSource){
+		var sw = '';
+		if(searchWord!=undefined && searchWord.length>0){
+			sw = '&keyWord='+searchWord;
+		}
+		if(searchSource!=undefined && searchSource.length>0){
+			sw+=("&status="+searchSource);
+		}
+		myAjax("/sensitivewords?pageNo="+pn+"&pageSize="+ps+"&sort=%7B%22status%22%3A%22asc%22%7D"+sw, "get", {}, function(data){			
+			if(fn){
+				fn(data);
+			}
+		}, false);
+	}
+	
+	AVRIL.deleteKWInfo=function(fn, kwid, kw2){
+		myAjaxJson("/sensitiveword/"+kwid, "delete", {}, function(data){
+			if(fn){fn(data);}
+		}, false);
+	}
+	
+	//更新交易状态
+	AVRIL.saveKWInfo=function(fn, params){
+		if(params.type=='add'){
+			myAjaxJson("/sensitiveword", "post", params, function(data){
+				if(fn){fn(data);}
+			}, false);
+		}else if(params.id!=undefined){
+			myAjaxJson("/sensitiveword/"+params.id, "put", params, function(data){
+				if(fn){fn(data);}
+			}, false);
+		}
+//		if(params.type=)
+//		var params = {};
+//		params.ip = ips;
+//		params.count=0;
+//		myAjaxJson("/selfip", "post", params, function(data){
+//			if(fn){fn(data);}
+//		}, false);
 	}
 	
 	

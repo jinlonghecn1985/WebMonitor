@@ -20,8 +20,8 @@
 <sql id="sql_sensitiveWord_query_nowhere">
 	<trim prefix=" " prefixOverrides="AND|OR">
 		<if test="sensitiveWord.id != null">AND id = #{sensitiveWord.id} </if>
-		<if test="sensitiveWord.keyWord != null">AND key_word like concat(#{sensitiveWord.keyWord}, '%') </if>
-		<if test="sensitiveWord.whiteWords != null">AND white_words like concat(#{sensitiveWord.whiteWords}, '%') </if>
+		<if test="sensitiveWord.keyWord != null">AND key_word like concat('%', #{sensitiveWord.keyWord}, '%') </if>
+		<if test="sensitiveWord.whiteWords != null">AND white_words like concat('%', #{sensitiveWord.whiteWords}, '%') </if>
 		<if test="sensitiveWord.status != null">AND status = #{sensitiveWord.status} </if>
 	</trim>
 </sql>
@@ -79,6 +79,7 @@
 	FROM tb_sensitive_word 
 	<where>
 		<include refid="sql_sensitiveWord_query_nowhere"/>
+		<if test="sensitiveWord.keyWordonly != null">AND key_word = #{sensitiveWord.keyWordonly} </if>
 	</where>
 </select>
 

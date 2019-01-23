@@ -2,6 +2,9 @@ package com.hnjing.cw.controller;
 
 import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.hnjing.config.validation.BeanValidator;
 import com.hnjing.config.web.exception.NotFoundException;
+import com.hnjing.config.web.exception.ParameterException;
 import com.hnjing.cw.model.entity.SensitiveWord;
 import com.hnjing.cw.service.SensitiveWordService;
 import com.hnjing.utils.ClassUtil;
@@ -45,6 +49,16 @@ public class SensitiveWordController{
 	@RequestMapping(value = "/sensitiveword", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
 	public Object addSensitiveWord(HttpServletResponse response,
 			@ApiParam(value = "sensitiveWord") @RequestBody SensitiveWord sensitiveWord) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
+		if(sensitiveWord==null || sensitiveWord.getKeyWord()==null || sensitiveWord.getKeyWord().length()==0) {
+			throw new ParameterException("keyWord", "敏感词不能为空");
+		}
+		
+		Map<String, Object> query = new HashMap<String, Object>();
+		query.put("keyWordonly", sensitiveWord.getKeyWord());
+		List<SensitiveWord> list = sensitiveWordService.querySensitiveWordByProperty(query);
+		if(list!=null && list.size()>0) {
+			return list.get(0);
+		}
 		sensitiveWord.setId(null);
 		sensitiveWordService.addSensitiveWord(sensitiveWord);
 		return sensitiveWord;
@@ -62,6 +76,7 @@ public class SensitiveWordController{
 		if(null == tempSensitiveWord){
 			throw new NotFoundException("敏感词");
 		}
+		sensitiveWord.setKeyWord(null);//敏感词本身不允许修订
 		return sensitiveWordService.modifySensitiveWord(sensitiveWord);
 	}
 

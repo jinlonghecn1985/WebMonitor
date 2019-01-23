@@ -91,6 +91,7 @@
 		<if test="source != null"> source = #{source},</if>
 		<if test="needCheck != null"> need_check = #{needCheck},</if>
 		<if test="charset != null"> charset = #{charset},</if>
+		<if test="charset == null"> charset = null,</if>
 		<if test="ip != null"> ip = #{ip},</if>
 		<if test="oldIp != null"> old_ip = #{oldIp},</if>
 		<if test="ipChecked != null"> ip_checked = #{ipChecked},</if>

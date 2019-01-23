@@ -64,6 +64,9 @@ public class SiteUrlController{
 		if(null == tempSiteUrl){
 			throw new NotFoundException("待检测网站信息");
 		}
+		if(siteUrl.getCharset()!=null && siteUrl.getCharset().length()==0) {
+			siteUrl.setCharset(null);
+		}
 		return siteUrlService.modifySiteUrl(siteUrl);
 	}
 

@@ -28,7 +28,7 @@ $(document).ready(function(){
 	});	
 	reloadData();	
 });
-var moddelHtml = "&nbsp;&nbsp;<i onclick=\"modifyPersion2(this);\" class=\"icon icon-asterisk\"></i>&nbsp;&nbsp;<i onclick=\"deletePersion(this);\" class=\"icon icon-minus-sign\"></i>";
+var moddelHtml = "&nbsp;&nbsp;<i onclick=\"modifyPersion2(this);\" class=\"icon icon-cog\"></i>";
 
 function modifyPersion2(th){
 	modifyPersion($(th).parent().parent()[0]);
@@ -39,7 +39,7 @@ function getSourceName(so){
 	}else if(so ==1){
 		return "平台";
 	}else if(so ==2){
-		return "SSG";
+		return "大搜";
 	}else if(so ==3){
 		return "农业";
 	}else if(so ==4){
@@ -100,12 +100,15 @@ function addPersion(){
 }
 function modifyPersion(th){
 	var tddata = $(th).children();	
-	$('#fromType').val('mod');
-	$('#fromUrl').attr("disabled", "disabled");
-	$('#fromUrl').val(tddata.eq(1).html());
+	console.log("ID:"+tddata.eq(0).children("input").val());	
+	$('#fromID').val(tddata.eq(0).children("input").val());
+// 	$('#fromType').val('mod');
+// 	$('#fromUrl').attr("disabled", "disabled");
+// 	$('#fromUrl').val(tddata.eq(1).html());
 	$('#fromPage').val(tddata.eq(2).html());
-	$('#fromSource').val(tddata.eq(3).html());
-	changeSource(tddata.eq(3).html()=='平台'?'1':'2');
+	$('#fromCode').val(tddata.eq(9).html());
+// 	$('#fromSource').val(tddata.eq(3).html());
+// 	changeSource(tddata.eq(3).html()=='平台'?'1':'2');
 	showInfoWindow();
 }
 
@@ -119,9 +122,9 @@ function loadPersionListBack(data){
 						+"<td>"+(data.page.startRow+i)+"<input type=\"hidden\" value=\""+data.data[i].id+"\">"+moddelHtml+"</td>"
 						+"<td>"+(data.data[i].selfSite==1?'<font color=\"00ff00\">是</font>':'否')+"</td>"		
 						+"<td>"+data.data[i].page+"</td>"
-						+"<td>"+"<a target=\"_blank\" href=\""+data.data[i].page+"\">"+data.data[i].demin+"</td>"
+						+"<td>"+"<a target=\"_blank\" href=\""+data.data[i].page+"\">"+(data.data[i].customer==undefined?"跳转网站":data.data[i].customer)+"</td>"
 						+"<td>"+getSourceName(data.data[i].source)+"</td>"	
-						+"<td>"+(data.data[i].needCheck==1?'是':'否')+"</td>"	
+						+"<td>"+(data.data[i].needCheck==0?'是':'否')+"</td>"	
 						+"<td>"+(data.data[i].ip==undefined?'':("<a href=\"./siteip.html?ip="+data.data[i].ip+"\">"+data.data[i].ip+"</a>"))+"</td>"
 						+"<td>"+(data.data[i].oldIp==undefined?'':data.data[i].oldIp)+"</td>"
 						+"<td>"+data.data[i].dt+"</td>"
@@ -131,8 +134,8 @@ function loadPersionListBack(data){
 			}	 		
 			$("#persionTable").html(ihtml);
 			AVRIL.initPageBar(data.page);
-		}
-		return;
+			return;
+		}		
 	}
 	AVRIL.initPageBar(null);
 	$("#persionTable").html('<tr><td colspan=\"9\"><font color=\"red\">没有查询到数据。</font></td></tr>');
@@ -167,33 +170,35 @@ function showInfoWindow(){
 }
 
 function doDataCheck(){
-	$fromSource = $('#fromSource');
-	if($fromSource.val().length==0){
-		showJLWarning('请选择来源');
-		$fromSource.focus().parent().addClass('has-error');		
-		return;
-	}
-	$fromSource.parent().removeClass('has-error');
+// 	$fromSource = $('#fromSource');
+// 	if($fromSource.val().length==0){
+// 		showJLWarning('请选择来源');
+// 		$fromSource.focus().parent().addClass('has-error');		
+// 		return;
+// 	}
+// 	$fromSource.parent().removeClass('has-error');
 	
 	
 	
-	$fromPage = $('#fromPage');
-	if($fromSource.val()=='2'){		
-		if($fromPage.val().length==0){
-			showJLWarning('请填写落地页');
-			$fromPage.focus().parent().addClass('has-error');		
-			return;
-		}
-		$fromPage.parent().removeClass('has-error');
-	}
-	
-	
+// 	$fromPage = $('#fromPage');
+// 	if($fromSource.val()=='2'){		
+// 		if($fromPage.val().length==0){
+// 			showJLWarning('请填写页面或域名');
+// 			$fromPage.focus().parent().addClass('has-error');		
+// 			return;
+// 		}
+// 		$fromPage.parent().removeClass('has-error');
+// 	}
 	
 	var obj = {};
-	obj.page = $fromPage.val();
-	obj.source = $fromSource.val();
-	obj.type = $('#fromType').val();
-	searchWord = obj.url;
+// 	obj.page = $fromPage.val();
+// 	obj.source = $fromSource.val();
+// 	obj.type = $('#fromType').val();
+	obj.id = $('#fromID').val();
+	if($('#fromCode').val()!=undefined){	
+		obj.charset=$('#fromCode').val();
+	}	
+	searchWord = $("#fromPage").val();
 	AVRIL.savePersionInfo(savePersionInfoBack, obj);
 }
 
@@ -231,8 +236,10 @@ function savePersionInfoBack(data){
 	<li><a href="history.html">*检测历史</a></li>
 		<li><a href="mail.html">邮件历史</a></li>
 		<li class="active"><a href="javascript:void(0);">站点管理</a></li>
+		<li><a href="keywords.html">敏感词管理</a></li>
 		<li><a href="ip.html">我司IP管理</a></li>	
 		<li><a href="config.html">系统配置</a></li>
+		<li><a href="sync.html">同步清单</a></li>
 </ul>
 </div>
 <br/>
@@ -262,14 +269,14 @@ function savePersionInfoBack(data){
 				name="options" id="option5"> 小仙子
 			</label> 
 </div>
-<div class="btn-group" data-toggle="buttons">
-			<label class="btn btn-primary" onclick="addPersion();"> <input type="radio"
-				name="options" id="option3"> 新增
-			</label> 
-			<label class="btn btn-primary" onclick="addPersion();"> <input type="radio"
-				name="options" id="option3"> 导入
-			</label> 
-</div>
+<!-- <div class="btn-group" data-toggle="buttons"> -->
+<!-- 			<label class="btn btn-primary" onclick="addPersion();"> <input type="radio" -->
+<!-- 				name="options" id="option3"> 新增 -->
+<!-- 			</label>  -->
+<!-- 			<label class="btn btn-primary" onclick="addPersion2();"> <input type="radio" -->
+<!-- 				name="options" id="option3"> 导入 -->
+<!-- 			</label>  -->
+<!-- </div> -->
 	
 </div>
 
@@ -282,7 +289,7 @@ function savePersionInfoBack(data){
 		      <th></th>
 		      <th>是否我司托管</th>
 		      <th>检测页面</th>
-		      <th>相应域名</th>
+		      <th>客户名称</th>
 		      <th>来源</th>
 		      <th>是否检测</th>
 		      <th>IP</th>
@@ -298,10 +305,6 @@ function savePersionInfoBack(data){
 <footer style="float:right; ">
 	<ul class="pager"></ul>	
 </footer>
-<input type="hidden" id="cdicName" value="">
-<input type="hidden" id="cdicValue" value="">
-<input type="hidden" id="cdicFlag" value="">
-<input type="hidden" id="cdicNote" value="">
 
 
 <!-- 提示 --> 
@@ -310,32 +313,38 @@ function savePersionInfoBack(data){
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">关闭</span></button>
-        <h4 class="modal-title">站点操作窗口</h4>
+        <h4 class="modal-title">站点编码配置窗口</h4>
       </div>
       <div class="modal-body">
       <form class="form-horizontal">
       	<input type="hidden" id="fromType" value="1"/>
-       <div class="form-group">
-		    <label for="fromPK" class="col-sm-2">来源</label>
-		    <input type="hidden" id="fromSource" value="1" >
-		    <div class="col-sm-10">
-		      <div class="btn-group" data-toggle="buttons">
-				  <label class="btn btn-primary active" onclick="changeSource(1);">
-				    <input type="radio" name="options" id="source1"  checked> 平台
-				  </label>
-				  <label class="btn" onclick="changeSource(2);">
-				    <input type="radio" name="options" id="source2" > 大搜
-				  </label>
-				</div>
-		    </div>
-		</div>
-		  
-        
+      	<input type="hidden" id="fromID" value="0"/>
+<!--        <div class="form-group"> -->
+<!-- 		    <label for="fromPK" class="col-sm-2">来源</label> -->
+<!-- 		    <input type="hidden" id="fromSource" value="1" > -->
+<!-- 		    <div class="col-sm-10"> -->
+<!-- 		      <div class="btn-group" data-toggle="buttons"> -->
+<!-- 				  <label class="btn btn-primary active" onclick="changeSource(1);"> -->
+<!-- 				    <input type="radio" name="options" id="source1"  checked> 平台 -->
+<!-- 				  </label> -->
+<!-- 				  <label class="btn" onclick="changeSource(2);"> -->
+<!-- 				    <input type="radio" name="options" id="source2" > 大搜 -->
+<!-- 				  </label> -->
+<!-- 				</div> -->
+<!-- 		    </div> -->
+<!-- 		</div> -->
 		 
 		  <div class="form-group">
-		     <label for="fromPK" class="col-sm-2">落地页</label>
+		     <label for="fromPK" class="col-sm-2">页面</label>
 		    <div class="col-sm-10">
-		      <input type="text" class="form-control" id="fromPage" data-toggle="tooltip" title="落地页（SSG来源填写）" placeholder="落地页（SSG来源填写）" >
+		      <input type="text" class="form-control" id="fromPage" data-toggle="tooltip" title="落地页或域名" placeholder="落地页或域名" disabled>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		     <label for="fromPK" class="col-sm-2">编码</label>
+		    <div class="col-sm-10">
+		      <input type="text" class="form-control" id="fromCode" data-toggle="tooltip" title="页面编码" placeholder="网站编码，技术人员填写" >
+		      <font color="red">注：*****非专业人员请慎重修订编码信息*****<br/>1:系统默认采用utf-8编码；<br/>2:当utf-8编码解析内容错误时，直接按gbk编码解析。</font>
 		    </div>
 		  </div>
 		  

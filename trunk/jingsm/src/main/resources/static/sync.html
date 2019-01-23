@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<title>网站健康检测工具-流程信息部</title>
+	<meta charset="utf-8">
+  	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<!-- ZUI 标准版压缩后的 CSS 文件 -->
+	<link rel="stylesheet" href="./css/zui.min.css" />
+	<!-- ZUI Javascript 依赖 jQuery -->
+	<script src="./lib/jquery/jquery.js"></script>
+	<!-- ZUI 标准版压缩后的 JavaScript 文件 -->
+	<script src="./js/zui.min.js"></script>	
+	<!-- 自定义业务 JavaScript 文件 -->
+	<script src="avril.js"></script>
+<style type="text/css"> 
+.elehidden{display: none;}
+</style> 	
+	<script type="text/javascript">	
+	var searchWord = '';
+	var searchType = '';
+	var pagenum = 1;
+	var pagesize = 15;
+$(document).ready(function(){	
+	$('#searchKeyWord').bind('keypress', function(event) {
+		if (event.keyCode == 13) {
+			doSearchAction2();
+		}
+	});	
+	reloadData();	
+});
+
+function getSourceName(so){
+	if(so==null || so == undefined ){
+		return "--";
+	}else if(so ==1){
+		return "平台";
+	}else if(so ==2){
+		return "大搜";
+	}else{
+		return "未定义";
+	}
+}
+
+function loadPersionListBack(data){	
+	if(data!=undefined && data.page!=undefined){
+		if(data.data!=undefined && data.data.length>0){
+			var ihtml = "";
+			for(var i=0; i<data.data.length; i++){
+				ihtml+=("<tr>"
+						+"<td>"+(data.page.startRow+i)+"<input type=\"hidden\" value=\""+data.data[i].id+"\"></td>"
+						+"<td>"+getSourceName(data.data[i].source)+"</td>"	
+						+"<td>"+(data.data[i].organ1==undefined?"":data.data[i].organ1)+"</td>"	
+						+"<td>"+(data.data[i].organ2==undefined?"":data.data[i].organ2)+"</td>"	
+						+"<td>"+(data.data[i].organ3==undefined?"":data.data[i].organ3)+"</td>"	
+						+"<td>"+(data.data[i].emplNo==undefined?"":data.data[i].emplNo)+"</td>"
+						+"<td>"+(data.data[i].emplName==undefined?"":data.data[i].emplName)+"</td>"
+						+"<td>"+(data.data[i].email==undefined?"":data.data[i].email)+"</td>"
+						+"<td>"+data.data[i].companyName+"</td>"
+						+"<td>"+data.data[i].accountName+"</td>"
+						+"<td>"+(data.data[i].isDelete==0?"正常":"删除")+"</td>"
+						+"<td>"+"<a target=\"_blank\" href=\""+data.data[i].siteUrl+"\">"+data.data[i].siteUrl+"</td>"						
+						+"<td>"+data.data[i].gmtCreated+"</td>"
+						+"<td>"+data.data[i].gmtModify+"</td>"
+						+"</tr>");
+			}	 		
+			$("#persionTable").html(ihtml);
+			AVRIL.initPageBar(data.page);
+			return;
+		}		
+	}
+	AVRIL.initPageBar(null);
+	$("#persionTable").html('<tr><td colspan=\"14\"><font color=\"red\">没有查询到数据。</font></td></tr>');
+	
+}
+
+function doSearchAction2(){
+	pagenum = 1;
+	searchWord = $('#searchKeyWord').val();		
+	reloadData();
+}
+
+function doSearchAction(ty){
+	searchType=ty;
+	pagenum = 1;
+	reloadData();
+}
+
+
+function reloadData(){	
+	AVRIL.loadSyncList(loadPersionListBack, pagenum, pagesize, searchWord, searchType);	
+}
+function goPage(pn){
+	pagenum = pn;
+	reloadData();
+}
+</script>
+
+</head>
+
+<body >
+<!-- 头部信息 -->
+<div class="header">
+<ul class="nav nav-secondary">
+		<li><a href="control.html">*系统控制</a></li>	
+	<li><a href="fullweb.html">*全站检测记录</a></li>
+	<li><a href="history.html">*检测历史</a></li>
+		<li><a href="mail.html">邮件历史</a></li>
+		<li><a href="site.html">站点管理</a></li>
+		<li><a href="keywords.html">敏感词管理</a></li>
+		<li><a href="ip.html">我司IP管理</a></li>	
+		<li><a href="config.html">系统配置</a></li>
+		<li class="active"><a href="javascript:void(0);">同步清单</a></li>
+</ul>
+</div>
+<br/>
+
+	<div class="row">
+		<div class="col-xs-0 col-sm-1 col-md-2 col-lg-3"></div>
+	  	<div class="input-group col-xs-12 col-sm-10 col-md-8 col-lg-6">
+			<input type="text" id="searchKeyWord" class="form-control" placeholder="客户公司名称、客服名称、SF名称">
+			<span class="input-group-addon" onclick="doSearchAction2();"><i class="icon icon-cloud">查询</i></span>
+		</div>
+	</div>
+<div class="row">
+<div class="btn-group" data-toggle="buttons">
+			<label class="btn btn-info active" onclick="doSearchAction('');"> <input type="radio"
+				name="options" id="option1" checked> 全部
+			</label> 
+			<label class="btn btn-success" onclick="doSearchAction('1');"> <input type="radio"
+				name="options" id="option2"> 平台
+			</label> 
+			<label class="btn btn-warning" onclick="doSearchAction('2');"> <input type="radio"
+				name="options" id="option3"> 大搜
+			</label> 
+</div>	
+</div>
+
+<div class="row">
+		
+</div>
+<table class="table table-hover">
+		  <thead>
+		    <tr>
+		      <th></th>
+		      <th>来源</th>
+		      <th>一级部门</th>
+		      <th>二级部门</th>
+		      <th>三级部门</th>		      
+		      <th>员工工号</th>
+		      <th>员工姓名</th>
+		      <th>邮箱地址</th>
+		      <th>客户公司名称</th>
+		      <th>SF帐号</th>
+		      <th>状态</th>
+		      <th>页面地址</th>
+		      <th>创建时间</th>
+		      <th>修订时间</th>
+		    </tr>
+		  </thead>
+	  	<tbody id="persionTable">    
+	  	</tbody>  
+</table>
+<footer style="float:right; ">
+	<ul class="pager"></ul>	
+</footer>
+
+</body>
+</html>
