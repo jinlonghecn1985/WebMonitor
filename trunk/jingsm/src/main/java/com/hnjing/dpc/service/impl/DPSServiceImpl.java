@@ -31,6 +31,7 @@ import com.hnjing.dpc.service.bo.SiteAllInfo;
 import com.hnjing.utils.DateUtil;
 import com.hnjing.utils.JsonUtil;
 import com.hnjing.utils.MailUtil;
+import com.hnjing.ws.model.entity.Dictionary;
 import com.hnjing.ws.model.entity.SiteHistory;
 import com.hnjing.ws.model.entity.SiteResult;
 import com.hnjing.ws.model.entity.SiteStatistics;
@@ -97,7 +98,7 @@ public class DPSServiceImpl implements DPSService{
 	
 	/*
 	 * @Title: processAllErrorMail
-	 * @Description: TODO
+	 * @Description: 
 	 * @param @return    参数  
 	 * @author Jinlong He
 	 * @return
@@ -105,10 +106,18 @@ public class DPSServiceImpl implements DPSService{
 	 */ 
 	@Override
 	public Object processAllErrorMail() {
-		processErrorMail(4);
-		processErrorMail(3);
-//		processErrorMail(2);  //暂时不发SSG全量
-		processErrorMail(1);
+		Dictionary dic = dictionaryService.queryDictionaryByDicId("mail_source");
+		if(dic!=null && dic.getDicValue()!=null) {
+			String[] ss = dic.getDicValue().replaceAll("，", ",").split(",");
+			for(String s : ss) {
+				try {
+					int sou = Integer.parseInt(s);
+					processErrorMail(sou);
+				}catch (NumberFormatException e) {
+					logger.error("mail_source:"+dic.getDicValue());
+				}
+			}			
+		}
 		return null;
 	}
 	

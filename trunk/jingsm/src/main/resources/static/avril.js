@@ -452,8 +452,7 @@ function showJLError(message){
 		}, false);
 	}
 	
-	AVRIL.doControlFunction=function(fn, path, param){
-		var token = '12306F2882EF4D3ABE2C0881A2C8D893';
+	AVRIL.doControlFunction=function(fn, path, param, token){
 		if(param!=undefined){
 			token += "?source="+param;
 		}

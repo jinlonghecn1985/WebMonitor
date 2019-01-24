@@ -18,11 +18,28 @@
 }
 </style>
 <script type="text/javascript">
+	var runCode = '';
+	var runParam = '';
 	function doAction(codes, param){
-		AVRIL.doControlFunction(doActionBack, codes, param);
+		runCode = codes;
+		runParam = param;
+		showInfoWindow();
+		
+	}
+	
+	function showInfoWindow(){
+		$('#infoWindow').modal({
+		    keyboard : true,
+		    show     : true
+		});	
+	}
+	
+	function doSaveAction(){
+		AVRIL.doControlFunction(doActionBack, runCode, runParam, $('#fromToken').val());
 	}
 	
 	function doActionBack(data){
+		$('#infoWindow').modal('hide');
 		    new $.zui.Messager('提示：'+data, {
 		    	fade: false,
 		    	type: 'success',
@@ -162,6 +179,31 @@
 		</div>
 
 	</div>
-
+<!-- 提示 --> 
+<div id="infoWindow" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">关闭</span></button>
+        <h4 class="modal-title">操作授权</h4>
+      </div>
+      <div class="modal-body">
+      <form class="form-horizontal">
+		  <div class="form-group">
+		     <label for="fromPK" class="col-sm-2">授权码</label>
+		    <div class="col-sm-10">
+		      <input type="text" class="form-control" id="fromToken" data-toggle="tooltip" title="授权码获取请联系管理员" placeholder="请填授权码,授权码获取请联系管理员">
+		    </div>
+		  </div>
+	  </form>
+      </div>
+      <div class="modal-footer">
+      	<input type="hidden" id="stageIdForDel"></input>
+        <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>
+        <button type="button" class="btn btn-primary" onclick="doSaveAction();">保存</button>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 </html>

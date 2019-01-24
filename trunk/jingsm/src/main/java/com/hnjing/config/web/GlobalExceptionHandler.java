@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import com.alibaba.fastjson.JSONException;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.hnjing.config.web.exception.AuthorityException;
 import com.hnjing.config.web.exception.CustomException;
 import com.hnjing.config.web.exception.ForeignKeyException;
 import com.hnjing.config.web.exception.NotFoundException;
@@ -314,6 +315,16 @@ public class GlobalExceptionHandler {
 		} catch (Exception e2) {
 			returnMap.put("errors", JsonUtil.json2object(e.getMessage()));
 		}
+		return returnMap;
+	}	
+	
+	@ExceptionHandler(AuthorityException.class)
+	public Map<String, Object> authorityException(AuthorityException e, HttpServletResponse response) {
+	    logger.error("授权错误", e);
+		Map<String, Object> returnMap = Maps.newHashMap();
+		response.setStatus(HttpCodeEnum.HTTP_NO_PERMISSION.getCode());
+		returnMap.put("code", HttpCodeEnum.HTTP_NO_PERMISSION.getCode());
+		returnMap.put("message", "授权错误");
 		return returnMap;
 	}	
 }
