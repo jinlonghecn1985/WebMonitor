@@ -33,7 +33,7 @@ import io.swagger.annotations.ApiParam;
  * @date: 2018年11月17日 11时28分
  */
 @RestController
-@Api(description="待检测网站信息")
+@Api(description="系统控制-待检测网站信息")
 public class SiteUrlController{
 
 	@Autowired

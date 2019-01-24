@@ -31,7 +31,7 @@ import io.swagger.annotations.ApiParam;
  * @date: 2018年11月17日 11时28分
  */
 @RestController
-@Api(description="表tb_dictionary")
+@Api(description="系统控制-系统参数配置")
 public class DictionaryController{
 
 	@Autowired

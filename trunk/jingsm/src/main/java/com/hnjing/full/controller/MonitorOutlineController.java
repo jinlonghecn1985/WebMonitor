@@ -35,7 +35,7 @@ import io.swagger.annotations.ApiParam;
  * @date: 2019年01月07日 10时31分
  */
 @RestController
-@Api(description="全站检测概要")
+@Api(description="全站检测-检测整体详情")
 public class MonitorOutlineController{
 
 	@Autowired

@@ -31,7 +31,7 @@ import io.swagger.annotations.ApiParam;
  * @date: 2018年12月03日 10时54分
  */
 @RestController
-@Api(description="员工十分信息")
+@Api(description="网站状态-员工网站SF关联信息")
 public class EmployeeSiteController{
 
 	@Autowired

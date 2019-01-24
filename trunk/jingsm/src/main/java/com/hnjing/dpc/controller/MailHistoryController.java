@@ -31,7 +31,7 @@ import io.swagger.annotations.ApiParam;
  * @date: 2018年12月03日 10时54分
  */
 @RestController
-@Api(description="邮件发送记录")
+@Api(description="系统控制-邮件发送记录")
 public class MailHistoryController{
 
 	@Autowired

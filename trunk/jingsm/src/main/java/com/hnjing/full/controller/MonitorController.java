@@ -37,7 +37,7 @@ import io.swagger.annotations.ApiParam;
  * @date: 2019年1月10日 上午10:19:25
  */
 @RestController
-@Api(description="全站检测接口")
+@Api(description="全站检测-检测提交接口")
 public class MonitorController {
 	@Autowired
 	private FullSiteMonitorService fullSiteMonitorService;

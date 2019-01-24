@@ -31,7 +31,7 @@ import io.swagger.annotations.ApiParam;
  * @date: 2019年01月07日 10时31分
  */
 @RestController
-@Api(description="表tf_child_info")
+@Api(description="全站检测-子链信息")
 public class ChildInfoController{
 
 	@Autowired

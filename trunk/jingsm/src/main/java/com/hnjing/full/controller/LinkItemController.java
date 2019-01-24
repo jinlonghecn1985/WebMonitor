@@ -31,7 +31,7 @@ import io.swagger.annotations.ApiParam;
  * @date: 2019年01月08日 09时59分
  */
 @RestController
-@Api(description="网页链接信息")
+@Api(description="全站检测-网页外链信息")
 public class LinkItemController{
 
 	@Autowired

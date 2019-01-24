@@ -36,7 +36,7 @@ import io.swagger.annotations.ApiParam;
  * @date: 2018年12月15日 17时00分
  */
 @RestController
-@Api(description="敏感词记录")
+@Api(description="网站状态-首页敏感词记录管理(日更新)")
 public class SensitiveRecordController{
 
 	@Autowired

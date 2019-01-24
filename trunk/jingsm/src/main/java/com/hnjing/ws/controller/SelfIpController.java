@@ -31,7 +31,7 @@ import io.swagger.annotations.ApiParam;
  * @date: 2018年11月17日 11时28分
  */
 @RestController
-@Api(description="我司IP信息")
+@Api(description="系统控制-我司IP信息")
 public class SelfIpController{
 
 	@Autowired

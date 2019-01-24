@@ -35,7 +35,7 @@ import io.swagger.annotations.Api;
  * @date: 2019年1月23日 上午11:37:55
  */
 @RestController
-@Api(description = "文件上传")
+@Api(description = "系统控制-文件上传")
 public class UploadController {
 	private static final Logger logger = LoggerFactory.getLogger(UploadController.class);
 

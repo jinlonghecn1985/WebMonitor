@@ -32,7 +32,7 @@ import io.swagger.annotations.ApiParam;
  * @date: 2018年11月17日 11时28分
  */
 @RestController
-@Api(description="异常网站历史记录")
+@Api(description="网站状态-访问异常历史记录")
 public class SiteHistoryController{
 
 	@Autowired

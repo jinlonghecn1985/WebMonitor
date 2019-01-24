@@ -31,7 +31,7 @@ import io.swagger.annotations.ApiParam;
  * @date: 2018年12月26日 17时21分
  */
 @RestController
-@Api(description="数据中心")
+@Api(description="系统控制-同步数据")
 public class DataSyncController{
 
 	@Autowired

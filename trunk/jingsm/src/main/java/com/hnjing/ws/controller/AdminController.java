@@ -46,7 +46,7 @@ import io.swagger.annotations.ApiParam;
  * @date: 2018年11月17日 下午6:08:11
  */
 @RestController
-@Api(description="控制管理接口")
+@Api(description="系统控制-控制接口")
 public class AdminController {
 	
 	@Autowired
