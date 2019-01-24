@@ -52,7 +52,7 @@ function loadPersionListBack(data){
 // 						+"<td>"+(data.data[i].siteCheck)+"</td>"
 // 						+"<td>"+(data.data[i].siteError==undefined?'0':("<a href=\"records.html?id="+data.data[i].id+"\">"+data.data[i].siteError)+"</a>")+"</td>"
 						+"<td>"+(data.data[i].status==0?'<font color=\"red\">疑似词</font>':'<font color=\"greed\"">白名单</font>')+"</td>"	
-						+"<td>"+(data.data[i].page)+"</td>"
+						+"<td>"+"<a data-toggle=\"tooltip\" title=\"点击打开目标网站\" target=\"_blank\" href=\""+data.data[i].page+"\">"+data.data[i].page+"</td>"
 						+"<td>"+(data.data[i].keyWord)+"</td>"						
 						+"<td>"+(data.data[i].keyWords.replace(data.data[i].keyWord,"<font color=\"red\">"+data.data[i].keyWord+"</font>"))+"</td>"
 						+"<td>"+(data.data[i].gmtCreated)+"</td>"
@@ -93,9 +93,9 @@ function exportFunction(){
 <!-- 头部信息 -->
 <div class="header">
 <ul class="nav nav-secondary">
-	<li><a href="control.html">*系统控制</a></li>	
-	<li><a href="fullweb.html">*全站检测记录</a></li>
-	<li><a href="history.html">*检测历史</a></li>
+	<li><a data-toggle="tooltip" title="一级菜单，进入后可以查看系统控制类的链接" href="control.html">*系统控制</a></li>	
+	<li><a data-toggle="tooltip" title="一级菜单，进入后可以查看到全站检测等链接" href="fullweb.html">*全站检测记录</a></li>
+	<li><a data-toggle="tooltip" title="一级菜单，进入后可以查看网站状态检测结果的链接" href="history.html">*检测历史</a></li>
 	<li  class="active"><a href="javascript:void(0);">最新极限词</a></li>
 	<li><a href="demin.html">单站检测</a></li>
 	<li><a href="deminmuti.html">多站检测</a></li>
@@ -123,7 +123,7 @@ function exportFunction(){
 		</div>
 </div>
 
-<table class="table table-hover">
+<table class="table table-striped">
 		  <thead>
 		    <tr>
 		      <th></th>

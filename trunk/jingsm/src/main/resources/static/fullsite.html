@@ -90,9 +90,9 @@ function doSearchAction2(){
 <!-- 头部信息 -->
 <div class="header">
 <ul class="nav nav-secondary">	
-	<li><a href="control.html">*系统控制</a></li>	
-	<li><a href="fullweb.html">*全站检测记录</a></li>
-	<li><a href="history.html">*检测历史</a></li>
+	<li><a data-toggle="tooltip" title="一级菜单，进入后可以查看系统控制类的链接" href="control.html">*系统控制</a></li>	
+	<li><a data-toggle="tooltip" title="一级菜单，进入后可以查看到全站检测等链接" href="fullweb.html">*全站检测记录</a></li>
+	<li><a data-toggle="tooltip" title="一级菜单，进入后可以查看网站状态检测结果的链接" href="history.html">*检测历史</a></li>
 	<li class="active"><a href="javascript:void(0);">全站检测</a></li>
 	<li><a href="fulldetail.html">内页详情</a></li>
 	<li><a href="fullkeyword.html">敏感词</a></li>
@@ -119,7 +119,7 @@ function doSearchAction2(){
 
 <br/>
 <div> 
-<table class="table table-hover" id="pageTable">
+<table class="table table-striped" id="pageTable">
 		  <thead>
 		    <tr>
 		      <th></th>

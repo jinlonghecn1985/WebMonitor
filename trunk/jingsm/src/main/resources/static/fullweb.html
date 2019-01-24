@@ -50,11 +50,11 @@ function loadPersionListBack(data){
 						+"<td>"+"<a data-toggle=\"tooltip\" title=\"点击打开相应页面\" target=\"_blank\" href=\""+data.data[i].page+"\">"+data.data[i].page+"</td>"						
 						+"<td>"+(data.data[i].checkLevel)+"</td>"
 						+"<td>"+"<a data-toggle=\"tooltip\" title=\"点击查看内页详情\" href=\"fulldetail.html?id="+data.data[i].id+"\">"+(data.data[i].siteId==undefined?'':data.data[i].siteId)+"</a></td>"
-						+"<td>"+"<a data-toggle=\"tooltip\" title=\"点击查看异常子链详情\" href=\"fulldetail.html?id="+data.data[i].id+"\">"+(data.data[i].errorPage)+"</a></td>"
-						+"<td>"+(data.data[i].innerPage)+"</td>"							
-						+"<td>"+"<a data-toggle=\"tooltip\" title=\"点击查看外链详情\" href=\"fulloutlink.html?id="+data.data[i].id+"\">"+(data.data[i].outerPage)+"</a></td>"
-						+"<td>"+data.data[i].keyWord+"</td>"
-						+"<td>"+"<a data-toggle=\"tooltip\" title=\"点击查看敏感词详情\" href=\"fullkeyword.html?id="+data.data[i].id+"\">"+(data.data[i].illegalWord)+"</a></td>"
+						+"<td>"+(data.data[i].errorPage==0?0:("<a data-toggle=\"tooltip\" title=\"点击查看异常子链详情\" href=\"fulldetail.html?id="+data.data[i].id+"\">"+data.data[i].errorPage))+"</a></td>"
+						+"<td>"+(data.data[i].innerPage==0?0:("<a data-toggle=\"tooltip\" title=\"点击查看子链详情\" href=\"fulldetail.html?id="+data.data[i].id+"\">"+data.data[i].innerPage))+"</td>"							
+						+"<td>"+(data.data[i].outerPage==0?0:("<a data-toggle=\"tooltip\" title=\"点击查看外链详情\" href=\"fulloutlink.html?id="+data.data[i].id+"\">"+data.data[i].outerPage))+"</a></td>"
+						+"<td>"+(data.data[i].keyWord==0?0:("<a data-toggle=\"tooltip\" title=\"点击查看敏感词详情\" href=\"fullkeyword.html?id="+data.data[i].id+"\">"+data.data[i].keyWord))+"</td>"
+						+"<td>"+(data.data[i].illegalWord==0?0:("<a data-toggle=\"tooltip\" title=\"点击查看敏感词详情\" href=\"fullkeyword.html?id="+data.data[i].id+"\">"+data.data[i].illegalWord))+"</a></td>"
 						+"<td>"+data.data[i].gmtCreated+"</td>"
 						+"</tr>");
 			}	 		
@@ -99,9 +99,9 @@ function exportFunction(){
 <!-- 头部信息 -->
 <div class="header">
 <ul class="nav nav-secondary">
-	<li><a href="control.html">*系统控制</a></li>	
-	<li class="active"><a href="javascript:void(0);">*全站检测列表</a></li>
-	<li><a href="history.html">*检测历史</a></li>	
+	<li><a data-toggle="tooltip" title="一级菜单，进入后可以查看系统控制类的链接" href="control.html">*系统控制</a></li>	
+	<li class="active"><a data-toggle="tooltip" title="一级菜单，进入后可以查看到全站检测等链接" href="javascript:void(0);">*全站检测列表</a></li>
+	<li><a data-toggle="tooltip" title="一级菜单，进入后可以查看网站状态检测结果的链接" href="history.html">*检测历史</a></li>	
 	<li><a href="fullsite.html">全站检测</a></li>
 	<li><a href="fulldetail.html">内页详情</a></li>
 	<li><a href="fullkeyword.html">敏感词</a></li>
@@ -145,7 +145,7 @@ function exportFunction(){
 			</label> 
 		</div>
 	</div>
-<table class="table table-hover">
+<table class="table table-striped">
 		  <thead>
 		    <tr>
 		      <th></th>

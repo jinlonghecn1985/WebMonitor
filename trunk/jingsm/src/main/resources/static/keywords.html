@@ -97,7 +97,7 @@
 			if (data.data != undefined && data.data.length > 0) {
 				var ihtml = "";
 				for (var i = 0; i < data.data.length; i++) {
-					ihtml += ("<tr ondblclick=\"modifyPersion(this);\">"
+					ihtml += ("<tr data-toggle=\"tooltip\" title=\"双击修订敏感词\" ondblclick=\"modifyPersion(this);\">"
 							+ "<td>"
 							+ (data.page.startRow + i)
 							+ "<input type=\"hidden\" value=\""+data.data[i].id+"\">"
@@ -196,9 +196,9 @@
 	<!-- 头部信息 -->
 	<div class="header">
 		<ul class="nav nav-secondary">
-			<li><a href="control.html">*系统控制</a></li>
-			<li><a href="fullweb.html">*全站检测记录</a></li>
-			<li><a href="history.html">*检测历史</a></li>
+			<li><a data-toggle="tooltip" title="一级菜单，进入后可以查看系统控制类的链接" href="control.html">*系统控制</a></li>
+			<li><a data-toggle="tooltip" title="一级菜单，进入后可以查看到全站检测等链接" href="fullweb.html">*全站检测记录</a></li>
+			<li><a data-toggle="tooltip" title="一级菜单，进入后可以查看网站状态检测结果的链接" href="history.html">*检测历史</a></li>
 			<li><a href="mail.html">邮件历史</a></li>
 			<li><a href="site.html">站点管理</a></li>
 			<li class="active"><a href="javascript:void(0);">敏感词管理</a></li>
@@ -238,7 +238,7 @@
 	</div>
 
 	<div class="row"></div>
-	<table class="table table-hover">
+	<table class="table table-striped">
 		<thead>
 			<tr>
 				<th></th>

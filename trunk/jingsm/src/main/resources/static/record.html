@@ -40,9 +40,9 @@ function loadPersionListBack(data){
 					ipss +="托管";
 				}
 				if(data.data[i].siteUrl.ip!=null){
-					ipss +=("<a href=\"./siteip.html?ip="+data.data[i].siteUrl.ip+"\">"+data.data[i].siteUrl.ip+"</a>");
+					ipss +=("<a  data-toggle=\"tooltip\" title=\"点击查看IP下域名分布情况\" href=\"./siteip.html?ip="+data.data[i].siteUrl.ip+"\">"+data.data[i].siteUrl.ip+"</a>");
 				}else{
-					ipss +=("<a href=\"./siteip.html\">null</a>");
+					ipss +=("null");
 				}
 				ipss+="】";
 				ihtml+=("<div class=\"item\">"
@@ -54,7 +54,7 @@ function loadPersionListBack(data){
 						+(data.data[i].siteResult.status==200?'<span class=\"label label-success\">正常</span>':'<span class=\"label label-warning\">异常</span>')						
 						+"</dd>"											
 						+"      <h4>"+(data.page.startRow+i)+"&nbsp;&nbsp;"+(data.data[i].siteResult.title==''?'<font color=\"red\">NULL</font>':data.data[i].siteResult.title)+"</h4>"
-						+"      "+ipss+"<a target=\"_blank\" href=\""+data.data[i].siteResult.page+"\">"+(data.data[i].siteResult.page==undefined?'':data.data[i].siteResult.page)+"</a>"
+						+"      "+ipss+"<a target=\"_blank\" data-toggle=\"tooltip\" title=\"点击打开目标网站\"   href=\""+data.data[i].siteResult.page+"\">"+(data.data[i].siteResult.page==undefined?'':data.data[i].siteResult.page)+"</a>"
 						+"    </div>"
 						+"    <div class=\"item-content\">"+data.data[i].siteResult.content+"</div>"
 						+"    <div class=\"item-footer\">"
@@ -108,9 +108,9 @@ function goPage(pn){
 <!-- 头部信息 -->
 <div class="header">
 <ul class="nav nav-secondary">
-	<li><a href="control.html">*系统控制</a></li>	
-	<li><a href="fullweb.html">*全站检测记录</a></li>
-	<li><a href="history.html">*检测历史</a></li>
+	<li><a data-toggle="tooltip" title="一级菜单，进入后可以查看系统控制类的链接" href="control.html">*系统控制</a></li>	
+	<li><a data-toggle="tooltip" title="一级菜单，进入后可以查看到全站检测等链接" href="fullweb.html">*全站检测记录</a></li>
+	<li><a data-toggle="tooltip" title="一级菜单，进入后可以查看网站状态检测结果的链接" href="history.html">*检测历史</a></li>
 	<li><a href="keyword.html">最新极限词</a></li>
 	<li><a href="demin.html">单站检测</a></li>
 	<li><a href="deminmuti.html">多站检测</a></li>

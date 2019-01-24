@@ -118,14 +118,14 @@ function loadPersionListBack(data){
 		if(data.data!=undefined && data.data.length>0){
 			var ihtml = "";
 			for(var i=0; i<data.data.length; i++){
-				ihtml+=("<tr ondblclick=\"modifyPersion(this);\">"
+				ihtml+=("<tr data-toggle=\"tooltip\" title=\"双击修订网站编码\" ondblclick=\"modifyPersion(this);\">"
 						+"<td>"+(data.page.startRow+i)+"<input type=\"hidden\" value=\""+data.data[i].id+"\">"+moddelHtml+"</td>"
 						+"<td>"+(data.data[i].selfSite==1?'<font color=\"00ff00\">是</font>':'否')+"</td>"		
 						+"<td>"+data.data[i].page+"</td>"
-						+"<td>"+"<a target=\"_blank\" href=\""+data.data[i].page+"\">"+(data.data[i].customer==undefined?"跳转网站":data.data[i].customer)+"</td>"
+						+"<td>"+"<a data-toggle=\"tooltip\" title=\"点击打开目标网站\" target=\"_blank\" href=\""+data.data[i].page+"\">"+(data.data[i].customer==undefined?"跳转网站":data.data[i].customer)+"</td>"
 						+"<td>"+getSourceName(data.data[i].source)+"</td>"	
 						+"<td>"+(data.data[i].needCheck==0?'是':'否')+"</td>"	
-						+"<td>"+(data.data[i].ip==undefined?'':("<a href=\"./siteip.html?ip="+data.data[i].ip+"\">"+data.data[i].ip+"</a>"))+"</td>"
+						+"<td>"+(data.data[i].ip==undefined?'':("<a data-toggle=\"tooltip\" title=\"点击查看IP下网站分布信息\" href=\"./siteip.html?ip="+data.data[i].ip+"\">"+data.data[i].ip+"</a>"))+"</td>"
 						+"<td>"+(data.data[i].oldIp==undefined?'':data.data[i].oldIp)+"</td>"
 						+"<td>"+data.data[i].dt+"</td>"
 						+"<td>"+(data.data[i].charset==undefined?'':data.data[i].charset)+"</td>"
@@ -231,9 +231,9 @@ function savePersionInfoBack(data){
 <!-- 头部信息 -->
 <div class="header">
 <ul class="nav nav-secondary">
-		<li><a href="control.html">*系统控制</a></li>	
-	<li><a href="fullweb.html">*全站检测记录</a></li>
-	<li><a href="history.html">*检测历史</a></li>
+		<li><a data-toggle="tooltip" title="一级菜单，进入后可以查看系统控制类的链接" href="control.html">*系统控制</a></li>	
+	<li><a data-toggle="tooltip" title="一级菜单，进入后可以查看到全站检测等链接" href="fullweb.html">*全站检测记录</a></li>
+	<li><a data-toggle="tooltip" title="一级菜单，进入后可以查看网站状态检测结果的链接" href="history.html">*检测历史</a></li>
 		<li><a href="mail.html">邮件历史</a></li>
 		<li class="active"><a href="javascript:void(0);">站点管理</a></li>
 		<li><a href="keywords.html">敏感词管理</a></li>
@@ -283,7 +283,7 @@ function savePersionInfoBack(data){
 <div class="row">
 		
 </div>
-<table class="table table-hover">
+<table class="table table-striped">
 		  <thead>
 		    <tr>
 		      <th></th>

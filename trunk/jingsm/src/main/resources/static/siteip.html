@@ -40,7 +40,7 @@ function loadPersionListBack(data){
 				ihtml+=("<tr>"
 						+"<td>"+(data.page.startRow+i)+"<input type=\"hidden\" value=\""+data.data[i].id+"\"></td>"
 						+"<td>"+(data.data[i].selfSite==1?'<font color=\"00ff00\">是</font>':'否')+"</td>"		
-						+"<td>"+"<a target=\"_blank\" href=\""+data.data[i].page+"\">"+data.data[i].page+"</td>"
+						+"<td>"+"<a data-toggle=\"tooltip\" title=\"点击打开目标网站\" target=\"_blank\" href=\""+data.data[i].page+"\">"+data.data[i].page+"</td>"
 						+"<td>"+(data.data[i].demin==undefined?'':data.data[i].demin)+"</td>"
 						+"<td>"+(data.data[i].source==1?'平台':'大搜')+"</td>"	
 						+"<td>"+(data.data[i].needCheck==1?'是':'否')+"</td>"	
@@ -82,9 +82,9 @@ function goPage(pn){
 <!-- 头部信息 -->
 <div class="header">
 <ul class="nav nav-secondary">
-	<li><a href="control.html">*系统控制</a></li>	
-	<li><a href="fullweb.html">*全站检测记录</a></li>
-	<li><a href="history.html">*检测历史</a></li>
+	<li><a data-toggle="tooltip" title="一级菜单，进入后可以查看系统控制类的链接" href="control.html">*系统控制</a></li>	
+	<li><a data-toggle="tooltip" title="一级菜单，进入后可以查看到全站检测等链接" href="fullweb.html">*全站检测记录</a></li>
+	<li><a data-toggle="tooltip" title="一级菜单，进入后可以查看网站状态检测结果的链接" href="history.html">*检测历史</a></li>
 	<li><a href="keyword.html">最新极限词</a></li>
 	<li><a href="demin.html">单站检测</a></li>
 	<li><a href="deminmuti.html">多站检测</a></li>
@@ -103,7 +103,7 @@ function goPage(pn){
 <div class="row">
 	<button class="btn btn-primary" onclick="addPersion();" type="button">新增</button>
 </div>
-<table class="table table-hover">
+<table class="table table-striped">
 		  <thead>
 		    <tr>
 		      <th></th>

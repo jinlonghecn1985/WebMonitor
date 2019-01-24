@@ -60,7 +60,7 @@ function loadPersionListBack(data){
 						+(data.data[i].siteHistory.status==200?'<span class=\"label label-success\">正常</span>':'<span class=\"label label-warning\">异常</span>')						
 						+"</dd>"											
 						+"      <h4>"+(data.page.startRow+i)+"&nbsp;&nbsp;"+(data.data[i].siteHistory.title==''?'<font color=\"red\">NULL</font>':data.data[i].siteHistory.title)+"</h4>"
-						+"      "+ipss+"<a target=\"_blank\" href=\""+data.data[i].siteHistory.page+"\">"+(data.data[i].siteHistory.page==undefined?'':data.data[i].siteHistory.page)+"</a>"
+						+"      "+ipss+"<a data-toggle=\"tooltip\" title=\"点击打开目标网站\" target=\"_blank\" href=\""+data.data[i].siteHistory.page+"\">"+(data.data[i].siteHistory.page==undefined?'':data.data[i].siteHistory.page)+"</a>"
 						+"    </div>"
 						+"    <div class=\"item-content\">"+data.data[i].siteHistory.content+"</div>"
 						+"    <div class=\"item-footer\">"
@@ -131,9 +131,9 @@ function goPage(pn){
 <!-- 头部信息 -->
 <div class="header">
 <ul class="nav nav-secondary">
-	<li><a href="control.html">*系统控制</a></li>	
-	<li><a href="fullweb.html">*全站检测记录</a></li>
-	<li><a href="history.html">*检测历史</a></li>
+	<li><a data-toggle="tooltip" title="一级菜单，进入后可以查看系统控制类的链接" href="control.html">*系统控制</a></li>	
+	<li><a data-toggle="tooltip" title="一级菜单，进入后可以查看到全站检测等链接" href="fullweb.html">*全站检测记录</a></li>
+	<li><a data-toggle="tooltip" title="一级菜单，进入后可以查看网站状态检测结果的链接" href="history.html">*检测历史</a></li>
 	<li><a href="keyword.html">最新极限词</a></li>
 	<li><a href="demin.html">单站检测</a></li>
 	<li><a href="deminmuti.html">多站检测</a></li>
@@ -178,7 +178,7 @@ function goPage(pn){
 </ul>
 <div class="tab-content">
   <div class="tab-pane active" id="tabContent1">
-  	<table class="table table-hover">
+  	<table class="table table-striped">
 		  <thead>
 		    <tr>
 		      <th></th>
