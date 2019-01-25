@@ -293,7 +293,7 @@ public class HttpClientUtil {
 						//System.out.println("gbk:"+lm+t);
 					}
 					if(lm) {						
-						c = StringEscapeUtils.unescapeHtml3(new String(b)).toLowerCase().replaceAll("\r|\n", "");	//十进制	Unicode				
+						c = StringEscapeUtils.unescapeHtml3(new String(b)).toLowerCase().replaceAll("\r|\n", "");	//十进制	Unicode
 						t = StringUtil.getStringFromContent(c, "<title>", "</title>");
 						if(t!=null) {
 							t=t.replaceAll("\\\\", "");
@@ -306,14 +306,14 @@ public class HttpClientUtil {
 						//System.out.println("Unicode"+lm+t);
 					}
 					
-					if(lm) {
-						c = (new String(b, "iso-8859-1")).toLowerCase().replaceAll("\r|\n", "");
-						t = StringUtil.getStringFromContent(c, "<title>", "</title>");
-						lm = isMessyCode(t);
-					}
-					System.out.println(t);
-					System.out.println(c);
-					System.out.println("utf:"+c);
+//					if(lm) {
+//						c = (new String(b, "iso-8859-1")).toLowerCase().replaceAll("\r|\n", "");
+//						t = StringUtil.getStringFromContent(c, "<title>", "</title>");
+//						lm = isMessyCode(t);
+//					}
+//					System.out.println(t);
+//					System.out.println(c);
+//					System.out.println("utf:"+c);
 					if(!lm) {
 						ret = new HttpClientResult(t);
 						if(t==null || t.length()==0) {

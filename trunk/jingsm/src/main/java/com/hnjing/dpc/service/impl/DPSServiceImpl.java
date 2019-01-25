@@ -106,7 +106,7 @@ public class DPSServiceImpl implements DPSService{
 	 */ 
 	@Override
 	public Object processAllErrorMail() {
-		Dictionary dic = dictionaryService.queryDictionaryByDicId("mail_source");
+		Dictionary dic = dictionaryService.queryDictionary("system","mail_source");
 		if(dic!=null && dic.getDicValue()!=null) {
 			String[] ss = dic.getDicValue().replaceAll("，", ",").split(",");
 			for(String s : ss) {
