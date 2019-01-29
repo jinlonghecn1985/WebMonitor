@@ -42,5 +42,8 @@ public interface SensitiveService {
 	* @throws 
 	*/	
 	List<SensitiveRecord> checkText(String content);
+	
+	
+	Integer clearSensitive();
 
 }

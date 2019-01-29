@@ -179,6 +179,7 @@ public class WebCrawlerThread extends Thread {
 	* @throws 
 	*/
 	private void processSensitiveData(ChildInfo ci) {
+		sensitiveService.clearSensitive();
 		List<SensitiveRecord> slist = sensitiveService.checkText(ci.getContent());
 		if(slist!=null && slist.size()>0) {
 			//有敏感词

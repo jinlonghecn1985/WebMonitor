@@ -105,6 +105,14 @@ public class HttpClientUtil2 {
 //		logger.info("url "+url);
 		// 创建请求对象
 		HttpRequestBase request = hcu.getRequest(url, httpMethod);
+		if(true) {
+			request.addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:62.0) Gecko/20100101 Firefox/62.0");
+			request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+			request.addHeader("Accept-Language", "zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2");
+			request.addHeader("Accept-Encoding", "gzip, deflate");
+			request.addHeader("Connection", "keep-alive");
+			request.addHeader("Upgrade-Insecure-Requests", "1");
+		}
 		// 设置header信息
 		if (headers != null && headers.size() > 0) {
 			for (String key : headers.keySet()) {
@@ -160,6 +168,14 @@ public class HttpClientUtil2 {
 			ret.setCode(404);
 			return ret;
 		}
+		if(true) {
+			request.addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:62.0) Gecko/20100101 Firefox/62.0");
+			request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+			request.addHeader("Accept-Language", "zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2");
+			request.addHeader("Accept-Encoding", "gzip, deflate");
+			request.addHeader("Connection", "keep-alive");
+			request.addHeader("Upgrade-Insecure-Requests", "1");
+		}
 		// 设置header信息
 		if (headers != null && headers.size() > 0) {
 			for (String key : headers.keySet()) {
@@ -206,6 +222,7 @@ public class HttpClientUtil2 {
 			if (entity != null) {
 				// 按指定编码转换结果实体为String类型
 				ret = new HttpClientResult(EntityUtils.toString(entity, encoding)); // 设置内容
+//				logger.info(ret.getBody());
 			}
 			ret.setCode(response.getStatusLine().getStatusCode()); // 设置状态
 			EntityUtils.consume(entity);

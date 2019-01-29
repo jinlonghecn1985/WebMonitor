@@ -139,7 +139,7 @@ public class SensitiveServiceImpl implements SensitiveService {
 		List<SensitiveRecord> ret = new ArrayList<SensitiveRecord>();
 //		Map<String, String> keys = new HashMap<String, String>();
 		
-		if(sensitiveWordList==null) {
+		if(sensitiveWordList==null || sensitiveWordList.size()==0) {
 			Map<String, Object> query = new HashMap<String, Object>();
 			query.put("status", 0);
 			sensitiveWordList = sensitiveWordService.querySensitiveWordByProperty(query );
@@ -184,6 +184,22 @@ public class SensitiveServiceImpl implements SensitiveService {
 		}
 		
 		return ret;        
+	}
+
+	/*
+	 * @Title: clearSensitive
+	 * @Description: TODO
+	 * @param @return    参数  
+	 * @author Jinlong He
+	 * @return
+	 * @see com.hnjing.cw.service.SensitiveService#clearSensitive()
+	 */ 
+	@Override
+	public Integer clearSensitive() {
+		if(sensitiveWordList!=null) {
+			sensitiveWordList.clear();		
+		}
+		return 0;
 	}
 	
 
