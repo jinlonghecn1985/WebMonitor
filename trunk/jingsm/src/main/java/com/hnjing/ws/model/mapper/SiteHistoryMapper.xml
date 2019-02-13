@@ -123,7 +123,7 @@
 <insert id="recordNomalSite" parameterType="java.lang.Integer">
 insert into tb_site_history (site_id, page, title, content, status, comment, gmt_created, ip, self_site)
 select r.*, u.ip, u.self_site from (
-select site_id, page, title, content, status, comment, gmt_created from tb_site_result where status=200 and comment>0 and source=#{source} 
+select site_id, page, title, content, status, comment, gmt_created from tb_site_result where status=200 and comment &gt; 0 and source=#{source} 
 ) r LEFT OUTER JOIN tb_site_url u on r.site_id = u.id
 </insert>
 

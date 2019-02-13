@@ -1,31 +1,76 @@
-
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-cn">
 <head>
 <title>网站健康检测工具-流程信息部</title>
-   	<meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>index.html</title>
-    <style>
-    	ul li{ line-height:150%; }
-    	a:hover {
-    		text-decoration:underline;
-    		color:orange;
-    	}
-    	a { text-decoration:none;}
-    </style>
+	<meta charset="utf-8">
+  	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<!-- ZUI 标准版压缩后的 CSS 文件 -->
+	<link rel="stylesheet" href="./css/zui.min.css" />
+	<!-- ZUI Javascript 依赖 jQuery -->
+	<script src="./lib/jquery/jquery.js"></script>
+	<!-- ZUI 标准版压缩后的 JavaScript 文件 -->
+	<script src="./js/zui.min.js"></script>	
+	<!-- 自定义业务 JavaScript 文件 -->
+	<script src="avril.js"></script>
+<style type="text/css"> 
+.elehidden{display: none;}
+</style> 	
+<script type="text/javascript">
+
+</script>
 </head>
 
-<body>
-	<h2>welcome:</h2>
-	<ul>
-	  <li><a href="swagger-ui.html">系统接口-开发用.html</a></li>
-	  <li><a href="v2/api-docs">接口json-开发用</a></li>
-	  <li><a href="history.html">监测历史</a></li>
-	  <li><a href="fullweb.html">全站检测</a></li>
-	  <li><a href="control.html">系统控制-管理用</a></li>
-	</ul>
+<body >
+<br/><br/><br/><br/>
+<div style="font-size:24px;text-align:center;">亲爱滴小伙伴，请选择你要的服务。</div><br/>
+<div id="accordion" style="text-align:center">
+  <p>
+    <a href="#collapseExample1" data-toggle="collapse" data-parent="#accordion" class="btn btn-link collapsed" style="font-size:24px;font-weight:300;"><i class="icon-cubes"></i>&nbsp;我是开发人员，要查看并调用检测工具接口API</a>
+  </p>
+  <div class="collapse" id="collapseExample1">
+    <div class="bg-warning with-padding">
+      <p>慎重操作！慎重操作！慎重操作！</p>
+      <p>接口操作直接影响系统数据，最严重会引起系统崩溃。非专业人员请勿操作！</p>
+      <p><a href="/swagger-ui.html">点我跳转</a></p>
+    </div>
+  </div>
+  <p>
+    <a href="#collapseExample2" data-toggle="collapse" data-parent="#accordion" class="btn btn-link collapsed" style="font-size:24px;font-weight:300;"><i class="icon-download-alt"></i>&nbsp;我是开发管理人员，要获取接口文档导入其它工具</a>
+  </p>
+  <div class="collapse" id="collapseExample2">
+    <div class="bg-primary with-padding">
+      <p>接口描述文档（JSON格式）</p>
+      <p><a href="/v2/api-docs" target="_blank">点我跳转</a></p>
+    </div>
+  </div>
+  <p>
+    <a href="#collapseExample3" data-toggle="collapse" data-parent="#accordion" class="btn btn-link" style="font-size:24px;font-weight:300;"><i class="icon-check-circle-o"></i>&nbsp;我是网站客服、运维人员，关注网站是否能打开及其历史</a>
+  </p>
+  <div class="collapse" id="collapseExample3">
+    <div class="bg-success with-padding">
+      <p>包括单站检测，多站检测，检测历史记录、检测详情、首页敏感词情况-每日更新</p>
+      <p><a href="/indexwm.html">点我跳转</a></p>
+    </div>
+  </div>
+  <p>
+    <a href="#collapseExample4" data-toggle="collapse" data-parent="#accordion" class="btn btn-link collapsed" style="font-size:24px;font-weight:300;"><i class="icon-zoom-in"></i>&nbsp;我是网站监察、客服，关注网站文本内容涉敏以及全站监测</a>
+  </p>
+  <div class="collapse" id="collapseExample4">
+    <div class="bg-info with-padding">
+      <p>包括全站检测查询、提交，检测历史记录，内页详情，敏感词详情，外链清单</p>
+      <p><a href="/indexfw.html">点我跳转</a></p>
+    </div>
+  </div>
+  <p>
+    <a href="#collapseExample5" data-toggle="collapse" data-parent="#accordion" class="btn btn-link collapsed" style="font-size:24px;font-weight:300;"><i class="icon-wrench"></i>&nbsp;我是监测工具运维人员，关注监测工具运行配置及状态</a>
+  </p>
+  <div class="collapse" id="collapseExample5">
+    <div class="bg-danger with-padding">
+    	<p>慎重操作！慎重操作！慎重操作！</p>
+      <p>包括系统配置、检测站点管理、敏感词管理、我司IP管理、系统控制、邮件历史、SSG同步清单</p>
+      <p><a href="/indexct.html">点我跳转</a></p>
+    </div>
+  </div>
+</div>
 </body>
 </html>

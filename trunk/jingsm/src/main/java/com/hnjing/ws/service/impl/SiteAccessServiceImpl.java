@@ -98,9 +98,9 @@ public class SiteAccessServiceImpl implements SiteAccessService {
 		
 		Map<String, Object> query = new HashMap<String, Object>();
 		query.put("source", source);
-		if(source!=null && (source==1 || source==2)) {
+//		if(source!=null && (source==1 || source==2 || source==3)) {
 			query.put("needCheck", 0); //只检测待检数据
-		}		
+//		}		
 		
 		List<SiteUrl> urlList = siteUrlService.queryWaitCheckSiteUrlByProperty(query);		//余下待检测
 		if(urlList!=null && urlList.size()>0) {
