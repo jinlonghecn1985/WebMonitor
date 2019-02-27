@@ -24,15 +24,25 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 public class StringUtil extends org.apache.commons.lang3.StringUtils {
 
 	public static String getStringFromContent(String content, String start, String end) {
-		if(content==null) return "";
-		// Pattern pa = Pattern.compile("<title>.*?</title>", Pattern.CANON_EQ);也可以
-		Pattern pa = Pattern.compile(start+".*?"+end);// 源码中标题正则表达式
-		Matcher ma = pa.matcher(content);
-		if(ma.find()) {
-			String title = ma.group();
-			return title.substring(7, title.length()-8);
-		}
-		return "";
+		content = content.replaceAll("\r\n","\n");
+		start = start.replaceAll("\r\n","\n");
+		end = end.replaceAll("\r\n","\n");
+		Pattern pattern = Pattern.compile(start,Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(content);
+		boolean rs = matcher.find();
+		//没有找到
+		if(!rs)
+			return "";
+		int startIndex = matcher.end();
+		
+		pattern = Pattern.compile(end,Pattern.DOTALL);
+		matcher = pattern.matcher(content);
+		rs = matcher.find(startIndex);
+		//没有找到
+		if(!rs)
+			return "";
+		int endIndex = matcher.start();
+		return content.substring(startIndex,endIndex);
 	}
 	 
 	/**

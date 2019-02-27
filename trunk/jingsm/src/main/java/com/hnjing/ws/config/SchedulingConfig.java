@@ -22,7 +22,7 @@ import com.hnjing.ws.service.SiteResultService;
  * @ClassName: SchedulingConfig
  * @Description: 定时任务配置类     秒 分 时 日 月 周
  * @author: Jinlong He
- * @date: 2017年6月8日 下午3:38:15
+ * @date: 2017年10月8日 下午3:38:15
  */
 @Configuration
 @EnableScheduling

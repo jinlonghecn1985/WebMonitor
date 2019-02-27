@@ -3,6 +3,7 @@ package com.hnjing.ws.service;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import com.hnjing.ws.model.entity.SiteHistory;
 
@@ -75,5 +76,18 @@ public interface SiteHistoryService {
 	* @throws 
 	*/
 	Integer bakCheckDate(Integer source);
+	
+	
+	List<Map<String, String>> queryHistoryInfoByStatisticsID(String statisticsID);
+
+	/** 
+	* @Title: exportByStatisticsID 
+	* @Description: 
+	* @param statisticsID
+	* @return  
+	* HSSFWorkbook    返回类型 
+	* @throws 
+	*/
+	HSSFWorkbook exportByStatisticsID(String statisticsID);
 	 
 }

@@ -135,4 +135,16 @@ select site_id, page, title, content, status, comment, gmt_created from tb_site_
 ) r LEFT OUTER JOIN tb_site_url u on r.site_id = u.id
 </insert>
 
+<select id="queryHistoryInfoByStatisticsID" resultType="java.util.HashMap" parameterType="java.lang.String">
+select u.customer, l.SF_Name, l.emp_id, e.EMPL_NO, e.REAL_NAME, e.email ,t.site_id, 
+t.page, t.title, t.content, concat('', t.status) status, t.ip, concat('', t.self_site) self_site, date_format(t.gmt_created ,'%Y-%m-%d %H:%i:%s') gmt_created from (
+SELECT * FROM tb_site_history 
+where	 status != 200
+and gmt_created &gt;= (select begin_time from tb_site_statistics where id=#{statisticsID})
+and gmt_created &lt;= (select end_time from tb_site_statistics where id=#{statisticsID})
+) t LEFT OUTER JOIN (select * from tb_site_url where source=2) u on t.site_id=u.id
+LEFT OUTER JOIN tb_employee_site l on t.site_id=l.site_id
+LEFT OUTER JOIN tb_employee e on l.emp_id=e.id
+</select>
+
 </mapper>   

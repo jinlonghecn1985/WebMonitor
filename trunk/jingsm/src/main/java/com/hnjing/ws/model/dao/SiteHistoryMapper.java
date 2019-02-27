@@ -86,6 +86,8 @@ public interface SiteHistoryMapper {
 	* @throws 
 	*/
 	Integer recordErrorSite(@Param("source") Integer source);
+	
+	List<Map<String, String>> queryHistoryInfoByStatisticsID(@Param("statisticsID") String statisticsID);
 
 	
 	 

@@ -101,8 +101,8 @@ public class SyncSiteServiceImpl implements SyncSiteService{
 	public Object processDataForSource(Integer source) {
 		Map<String, Object> query = new HashMap<String, Object>();
 		query.put("source", source);
-		query.put("hasChange", 1);  //数据变更过的
-//		query.put("isDelete", 0);
+//		query.put("hasChange", 1);  //数据变更过的
+		query.put("isDelete", 0);
 //		query.put("hasEmail", 0);
 //		query.put("hasEmplNo", 0);
 //		query.put("today", 0); //不限今天
@@ -110,7 +110,7 @@ public class SyncSiteServiceImpl implements SyncSiteService{
 		
 		List<DataSync> siteList = dataSyncService.queryDataSyncByProperty(query);
 		if(siteList!=null && siteList.size()>0) {
-//			siteUrlService.initNeedCheckZero(source);  //采用增量处理后不再调用
+			siteUrlService.initNeedCheckZero(source);  //采用增量处理后不再调用
 				for (DataSync row : siteList) {
 					//处理员工
 					Employee e = new Employee();
@@ -220,6 +220,8 @@ public class SyncSiteServiceImpl implements SyncSiteService{
 						ds.setIsDelete(0);
 						dataSyncService.modifyDataSync(ds); //变化数据						
 					}else {	
+//						oldDS.setIsDelete(0);
+//						oldDS.setHasChange(1);
 						datas.add(oldDS);						
 					}
 				}				

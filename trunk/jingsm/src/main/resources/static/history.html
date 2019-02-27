@@ -44,13 +44,15 @@ function getSourceName(so){
 	}
 }
 
+
+
 function loadPersionListBack(data){
 	if(data!=undefined && data.page!=undefined){
 		if(data.data!=undefined && data.data.length>0){
 			var ihtml = "";
 			for(var i=0; i<data.data.length; i++){
 				ihtml+=("<tr ondblclick=\"modifyPersion(this);\">"
-						+"<td>"+(data.page.startRow+i)+"<input type=\"hidden\" value=\""+data.data[i].id+"\"></td>"
+						+"<td>"+(data.page.startRow+i)+"<input type=\"hidden\" value=\""+data.data[i].id+"\">&nbsp;<a data-toggle=\"tooltip\" title=\"点击下载异常数据\" target=\"_blank\" href=\"/sitehistorys/export?statisticsID="+data.data[i].id+"\">下载</a></td>"
 						+"<td>"+(getSourceName(data.data[i].source))+"</td>"	
 						+"<td>"+data.data[i].siteTotal+"</td>"
 						+"<td>"+(data.data[i].siteCheck)+"</td>"
@@ -115,15 +117,15 @@ function goPage(pn){
 <table class="table table-striped">
 		  <thead>
 		    <tr>
-		      <th width="60px"></th>
-		      <th width="80px">检测来源<br/>&nbsp;</th>
-		      <th >待检测网站总量<br/>(来源下域名、页面总量)</th>
-		      <th width="180px">检测网站总量<br/>(参与本次检测的域名、页面总量)</th>
-		      <th width="180px">疑似异常网站总量<br/>(检测疑似异常的网站)</th>
-		      <th width="180px">待核实网站总量<br/>(平台限待处理网站，大搜限我司托管网站)</th>
-		      <th width="180px">加载速度慢网站总量<br/>(加载页面超过3秒)</th>
-		      <th width="120px">检测开始时间<br/>&nbsp;</th>
-		      <th width="120px">检测结束时间<br/>&nbsp;</th>
+		      <th width="80px"></th>
+		      <th width="80px">检测来源</th>
+		      <th data-toggle="tooltip" title="">待检测总量</th>
+		      <th data-toggle="tooltip" title="参与本次检测的域名、页面总量" width="180px">检测总量</th>
+		      <th data-toggle="tooltip" title="检测疑似异常的网站" width="180px">疑似异常</th>
+		      <th data-toggle="tooltip" title="平台指待运维人员关注并处理，大搜指托管在我司的网站" width="180px">告警网站</th>
+		      <th data-toggle="tooltip" title="加载页面超过6秒" width="180px">加载慢</th>
+		      <th width="120px">检测开始时间</th>
+		      <th width="120px">检测结束时间</th>
 		    </tr>
 		  </thead>
 	  	<tbody id="persionTable">    

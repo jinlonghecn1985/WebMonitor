@@ -63,7 +63,7 @@ public class WebCrawlerThread extends Thread {
 	
 	private static Pattern homePagePattern = Pattern.compile("(https?://)?[^/\\s]*"); //网页比如：http://www.zifangsky.cn
 	
-	private static final int MAX_CHECK_PAGE = 300; //单站最大检测网页数
+	private static final int MAX_CHECK_PAGE = 800; //单站最大检测网页数
 	private static final int MAX_CHECK_CYCLE = 7; //单站最多检测深度
 	private int current_count = 0; //当前检测网页次数
 	private int current_cycle = 0; //当前检测网页深度

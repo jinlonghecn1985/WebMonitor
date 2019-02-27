@@ -1,11 +1,14 @@
 package com.hnjing.ws.controller;
 
 import java.beans.IntrospectionException;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,9 +19,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.hnjing.config.validation.BeanValidator;
 import com.hnjing.config.web.exception.NotFoundException;
+import com.hnjing.config.web.exception.ParameterException;
 import com.hnjing.utils.ClassUtil;
+import com.hnjing.utils.HttpTool;
 import com.hnjing.ws.model.entity.SiteHistory;
+import com.hnjing.ws.model.entity.SiteStatistics;
 import com.hnjing.ws.service.SiteHistoryService;
+import com.hnjing.ws.service.SiteStatisticsService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -40,6 +47,9 @@ public class SiteHistoryController{
 	
 	@Autowired
 	private SiteHistoryService siteHistoryService;
+	
+	@Autowired
+	private SiteStatisticsService siteStatisticsService;
 
 	
 	@ApiOperation(value = "新增 添加异常网站历史记录信息", notes = "添加异常网站历史记录信息")
@@ -110,6 +120,27 @@ public class SiteHistoryController{
 			query.put("id", id);
 		}
 		return siteHistoryService.querySiteHistoryForPage(pagenum, pagesize, sort, query);
+	}
+	
+	@ApiOperation(value = "导出数据", notes = "导出数据")
+	@RequestMapping(value = "/sitehistorys/export", method = RequestMethod.GET)
+	public void exportDataList(HttpServletResponse response,
+			@RequestParam(value = "statisticsID", required = true) String statisticsID) throws IntrospectionException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException {	
+		if(statisticsID==null || statisticsID.length()==0) {
+			throw new ParameterException("statisticsID", "找不到必传参数 ！");
+		}
+		SiteStatistics tempSiteStatistics = siteStatisticsService.querySiteStatisticsById(statisticsID);
+		if(null == tempSiteStatistics){
+			throw new NotFoundException("检测结果统计");
+		}
+		
+		String fileName = "error_site_"+System.currentTimeMillis()+".xls";
+		HSSFWorkbook wb = siteHistoryService.exportByStatisticsID(statisticsID);
+		HttpTool.setResponseHeader(response, fileName);
+		OutputStream os = response.getOutputStream();
+		wb.write(os);
+		os.flush();
+		os.close();
 	}
 
 }

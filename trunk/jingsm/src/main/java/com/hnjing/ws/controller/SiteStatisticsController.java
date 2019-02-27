@@ -101,5 +101,8 @@ public class SiteStatisticsController{
 			@RequestParam(value = "sort", required = false) String sort, SiteStatistics siteStatistics) {				
 		return siteStatisticsService.querySiteStatisticsForPage(pagenum, pagesize, sort, siteStatistics);
 	}
+	
+	
+	
 
 }

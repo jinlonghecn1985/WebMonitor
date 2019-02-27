@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.hnjing.utils.Constant;
+import com.hnjing.utils.file.office.ExcelWriteUtil;
 import com.hnjing.utils.paginator.domain.PageBounds;
 import com.hnjing.utils.paginator.domain.PageList;
 import com.hnjing.utils.paginator.domain.PageService;
@@ -159,6 +161,57 @@ public class  SiteHistoryServiceImpl implements SiteHistoryService {
 		Integer ret = siteHistoryMapper.recordNomalSite(source);
 		Integer ret2 = siteHistoryMapper.recordErrorSite(source);		
 		return (ret==null?0:ret)+(ret2==null?0:ret2);
+	}
+
+	/*
+	 * @Title: queryHistoryInfoByStatisticsID
+	 * @Description: TODO
+	 * @param @param statisticsID
+	 * @param @return    参数  
+	 * @author Jinlong He
+	 * @param statisticsID
+	 * @return
+	 * @see com.hnjing.ws.service.SiteHistoryService#queryHistoryInfoByStatisticsID(java.lang.String)
+	 */ 
+	@Override
+	public List<Map<String, String>> queryHistoryInfoByStatisticsID(String statisticsID) {
+		return siteHistoryMapper.queryHistoryInfoByStatisticsID(statisticsID);
+	}
+
+	/*
+	 * @Title: exportByStatisticsID
+	 * @Description: TODO
+	 * @param @param statisticsID
+	 * @param @return    参数  
+	 * @author Jinlong He
+	 * @param statisticsID
+	 * @return
+	 * @see com.hnjing.ws.service.SiteHistoryService#exportByStatisticsID(java.lang.String)
+	 */ 
+	@Override
+	public HSSFWorkbook exportByStatisticsID(String statisticsID) {
+		String[] title = {"客户名称", "SF帐号", "客服", "客服姓名", "客服邮件", "域名", "标题", "内容", "异常代码",  "域名IP", "是否我司", "检测时间"};
+		String[][] data = null;
+		List<Map<String, String>> info = queryHistoryInfoByStatisticsID(statisticsID);
+		if(info!=null && info.size()>0) {
+			data = new String[info.size()][12];
+			for(int j=0; j<info.size(); j++) {
+				data[j][0] = info.get(j).get("customer");
+				data[j][1] = info.get(j).get("SF_Name");
+				data[j][2] = info.get(j).get("EMPL_NO");			
+				data[j][3] = info.get(j).get("REAL_NAME");
+				data[j][4] = info.get(j).get("email");	
+				data[j][5] = info.get(j).get("page");		
+				data[j][6] = info.get(j).get("title");
+//				data[j][7] = info.get(j).get("content");
+				data[j][7] = "";
+				data[j][8] = ""+info.get(j).get("status");
+				data[j][9] = info.get(j).get("ip");				
+				data[j][10] = "1".equals(info.get(j).get("self_site"))?"是":"否";
+				data[j][11] = info.get(j).get("gmt_created")!=null?info.get(j).get("gmt_created"):"";
+			}
+		}
+		return ExcelWriteUtil.getHSSFWorkbook("检测异常网站详情", title, data, null);
 	}
 
 
