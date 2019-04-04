@@ -73,12 +73,6 @@ function checkMutiSiteBack(data){
 	$("#persionTable").html('<tr><td colspan=\"7\"><font color=\"red\">没有查询到数据。</font></td></tr>');
 }
 
-function doSearchAction2(){
-	showJLWarning("提交检测中，请稍候...");
-	$('#searchKeyWord').val("http://www.csbaofu.com,http://www.hnykfs.com,http://www.csjbmx.com,http://www.brother-audio.com/,http://cdfening.com,http://www.hnshuoyu.com,http://www.jiakea.com,http://www.symbol-zz.com,http://www.hndzgf.com,http://www.zzxymbj.com,http://www.fhnan.com,http://www.hnhfdwl.com,http://www.hnhongcai168.com,http://www.hhfybl.com/,http://www.52ygmm.com,http://www.hntongbang.com,http://www.fxsysc.com,http://www.hn-gg.com,http://xy9ku.com,http://www.systsp.com,http://www.hnhdgy.com,http://www.0745dn.com,http://www.hhjfbj.com,http://www.maisansan.com,http://www.csrysl.com,http://www.msjjt.com,http://www.mingyangbs.com,http://www.gweidao.com,http://www.yulianit.net,http://www.shixundjj.com,http://www.huanyi520.com,http://www.czwenyi.com,http://www.hnherlion.com,http://www.hysgys.com,http://www.caiyouad.com,http://www.kuangzhen.com.cn,http://mingri.ai,http://www.0734af.com,http://www.tongtiandiguo.com,http://www.yymima.com,http://www.ydjsjjc.com/,http://www.essxx.com");	
-	searchWord = $('#searchKeyWord').val();	
-	reloadData();
-}
 
 function doSiteCheck(f){
 // 	cfalg = f;
@@ -120,7 +114,6 @@ function checkMutiByOneSiteBack(data, f){
 	  	<div class="input-group col-xs-12 col-sm-10 col-md-8 col-lg-6">
 			<input type="text" id="searchKeyWord" class="form-control" value="" placeholder="站点名称或落地页，多个网址间以逗号分隔。">
 			<span class="input-group-addon" onclick="doSearchAction();"><i class="icon icon-cloud">检测</i></span>
-			<span class="input-group-addon" onclick="doSearchAction2();"><i class="icon icon-cloud">小仙子检测</i></span>
 		</div>
 	</div>
 	<h4><input  type="text" id="errorSite" style="width:0px;" value=""/> <span class="label label-badge label-primary" id="siteCount">请先输入网址，多个网址间以逗号分隔。</span><button class="btn btn-link" id="btcopy" data-clipboard-action="copy" data-clipboard-target="#errorSite" >复制异常网站</button></h4>

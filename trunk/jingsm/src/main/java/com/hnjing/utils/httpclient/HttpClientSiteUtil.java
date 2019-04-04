@@ -29,6 +29,9 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.hnjing.ws.model.entity.SiteResult;
+import com.hnjing.ws.service.impl.util.SiteCheckUtil;
+
 /**
  * @ClassName: HttpClientSiteUtil
  * @Description: 网站检测专用定制
@@ -47,6 +50,13 @@ public class HttpClientSiteUtil {
 
 	private static HttpClient client = HttpClients.createDefault();
 
+//	public static void main(String[] arg) {
+//		String url = "http://www.nxsymm.cn";
+//		HttpClientResult rs = HttpClientSiteUtil.getDeminTitle(url, "");
+//		System.out.println(rs.getCode()+":"+rs.getBody());
+//	}
+	
+	
 	/** 
 	* @Title: getDeminTitle 
 	* @Description: 检测域名并返回网站标题

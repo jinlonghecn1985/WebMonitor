@@ -14,6 +14,7 @@ import com.hnjing.dpc.service.DPSService;
 import com.hnjing.full.service.FullSiteMonitorService;
 import com.hnjing.sync.service.SyncSiteService;
 import com.hnjing.ws.service.SiteAccessService;
+import com.hnjing.ws.service.SiteHistoryService;
 import com.hnjing.ws.service.SiteResultService;
 
 
@@ -49,6 +50,9 @@ public class SchedulingConfig {
 	
 	@Autowired
 	private SensitiveService sensitiveService;
+	
+	@Autowired
+	private SiteHistoryService siteHistoryService;
 	
 	@Autowired
 	private FullSiteMonitorService fullSiteMonitorService;
@@ -123,10 +127,10 @@ public class SchedulingConfig {
 	
 	/** 
 	* @Title: doCheckSiteSSGScheduler 
-	* @Description: 定时任务-每日9点10分开始检测SSG网站
+	* @Description: 定时任务-每日3点40分开始检测SSG网站
 	* @throws 
 	*/
-	@Scheduled(cron = "0 40 3 * * ?")
+	@Scheduled(cron = "0 0 4 * * ?")
 	public void doCheckSiteSSGScheduler() {
 		try {
 			siteMonitorService.checkSiteStatus(2);
@@ -134,29 +138,8 @@ public class SchedulingConfig {
 			e.printStackTrace();
 			logger.error("定时任务执行发生错误：doCheckSiteSSGScheduler" + e.getMessage());
 		}
-	}
+	}	
 	
-	//小仙子网站检测
-	@Scheduled(cron = "0 30 7 * * ?")
-	public void doCheckSiteSSG4Scheduler() {
-		try {
-			siteMonitorService.checkSiteStatus(4);
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error("定时任务执行发生错误：doCheckSiteSSG4Scheduler" + e.getMessage());
-		}
-	}
-	
-	//农业试点网站检测
-	@Scheduled(cron = "0 0 8 * * ?")
-	public void doCheckSiteSSG3Scheduler() {
-		try {
-			siteMonitorService.checkSiteStatus(3);
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error("定时任务执行发生错误：doCheckSiteSSG3Scheduler" + e.getMessage());
-		}
-	}
 	
 	/** 
 	* @Title: doSyncSSGDataScheduler 
@@ -164,7 +147,7 @@ public class SchedulingConfig {
 	* void    返回类型 
 	* @throws 
 	*/
-	@Scheduled(cron = "0 10 19 * * ?")
+	@Scheduled(cron = "0 40 10,22 * * ?")
 	public void doSyncSSGDataScheduler() {
 		try {
 			syncSiteService.syncDataForSource(2);
@@ -180,7 +163,7 @@ public class SchedulingConfig {
 	* void    返回类型 
 	* @throws 
 	*/
-	@Scheduled(cron = "0 30 20 * * ?")
+	@Scheduled(cron = "0 00 23 * * ?")
 	public void doProcessDataForSource() {
 		try {
 			syncSiteService.processDataForSource(2);
@@ -206,6 +189,22 @@ public class SchedulingConfig {
 		}
 	}
 	
+	/** 
+	* @Title: recheckTodayAllErrorSiteScheduler 
+	* @Description: 重新检测当日异常网站,并回写检测结果 
+	* void    返回类型 
+	* @throws 
+	*/
+	@Scheduled(cron = "0 0,30 7 * * ?")
+	public void recheckTodayAllErrorSiteScheduler() {
+		try {
+			dpsService.recheckHistory();
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("定时任务执行发生错误：recheckTodayAllErrorSiteScheduler" + e.getMessage());
+		}
+	}
+	
 	
 	/** 
 	* @Title: doProcessAllErrorMailScheduler 
@@ -213,7 +212,7 @@ public class SchedulingConfig {
 	* void    返回类型 
 	* @throws 
 	*/
-	@Scheduled(cron = "0 10 8 * * ?")
+	@Scheduled(cron = "0 20 8 * * ?")
 	public void doProcessAllErrorMailScheduler() {
 		try {
 			dpsService.processAllErrorMail();
@@ -229,18 +228,18 @@ public class SchedulingConfig {
 	* void    返回类型 
 	* @throws 
 	*/
-	@Scheduled(cron = "0 0/4 9-23 * * ?")
-	public void doCheckAllSiteScheduler() {
-		try {
-			//正式环境才执行全站检测
-			if("pub".equals(activeType)) {
-				fullSiteMonitorService.doOneSiteFullCheck();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error("定时任务执行发生错误：doCheckAllSiteScheduler" + e.getMessage());
-		}
-	}
+//	@Scheduled(cron = "0 0/4 9-23 * * ?")
+//	public void doCheckAllSiteScheduler() {
+//		try {
+//			//正式环境才执行全站检测
+//			if("pub".equals(activeType)) {
+//				fullSiteMonitorService.doOneSiteFullCheck();
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			logger.error("定时任务执行发生错误：doCheckAllSiteScheduler" + e.getMessage());
+//		}
+//	}
 	
 	/** 
 	* @Title: doclearAllSite30Scheduler 
@@ -248,15 +247,16 @@ public class SchedulingConfig {
 	* void    返回类型 
 	* @throws 
 	*/
-	@Scheduled(cron = "0 5 0 * * ?")
-	public void doclearAllSite30Scheduler() {
-		try {
-			fullSiteMonitorService.deleteDataBeforeDays(30);
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error("定时任务执行发生错误：doclearAllSite30Scheduler" + e.getMessage());
-		}
-	}
+//	@Scheduled(cron = "0 5 0 * * ?")
+//	public void doclearAllSite30Scheduler() {
+//		try {
+//			siteHistoryService.deleteDataBeforeDays(30);
+//			fullSiteMonitorService.deleteDataBeforeDays(30);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			logger.error("定时任务执行发生错误：doclearAllSite30Scheduler" + e.getMessage());
+//		}
+//	}
 	
 	
 		

@@ -153,10 +153,11 @@ public class DPSServiceImpl implements DPSService{
 		}
 		//查询 + 复查
 		List<SiteHistory> ret = reCheckErrorSite(siteHistoryService.querySiteHistoryByProperty(siteHistory));
+//		ret = reCheckErrorSite(ret);
 		if(ret==null || ret.size()==0) {
 			return null;
 		}
-		if(ret.size()>50) {
+		if(ret.size()>80) {
 			try {
 				mailUtil.sendSimpleMail("hejinlong@hnjing.com", "【重要】 网站访问异常"+DateUtil.getDate()+"_"+ret.size(), 
 						"<div>Dear：</div><div>&nbsp;&nbsp;&nbsp;&nbsp; 您好！检测无法打开的托管网站超量，请及时处理(检测时间："+endTime+")！</div><br/>"
@@ -170,10 +171,10 @@ public class DPSServiceImpl implements DPSService{
 			return null;
 		}
 		
-		if(source.intValue()==1) {
-			processPTErrorMail(endTime, ret);
-		}else if(source.intValue()==3 || source.intValue()==4) {
-			processSSGErrorMail(endTime, ret);			
+		if(source.intValue()==2) {
+			processSSGErrorMail(endTime, ret);	
+		}else{
+			processPTErrorMail(endTime, ret);					
 		}
 		return null;
 	}
@@ -212,19 +213,32 @@ public class DPSServiceImpl implements DPSService{
 		Map<String, EmployeeSiteInfo> esMap = new HashMap<String, EmployeeSiteInfo>(); //数据存储				
 		for(SiteHistory sh : hisList) {
 			EmployeeSite es = employeeSiteService.queryEmployeeSiteBySiteId(sh.getSiteId());
-			if(es!=null && !esMap.containsKey(""+es.getEmpId())) {
+			if(es==null || es.getEmpId()==null) {
+				if(!esMap.containsKey("--")) {
+					esMap.put("--", new EmployeeSiteInfo());
+				}
+			}else if(es!=null && !esMap.containsKey(""+es.getEmpId())) {
 				//人员是否存在
-				System.out.println("ADD:"+es.getEmpId());
 				EmployeeSiteInfo esi = new EmployeeSiteInfo();
 				esi.setEmployee(employeeService.queryEmployeeById(es.getEmpId()));
 				esMap.put(""+es.getEmpId(), esi);
 			}
-			esMap.get(""+es.getEmpId()).setSiteAllInfo(new SiteAllInfo(sh, siteUrlService.querySiteUrlById(es.getSiteId()), es));			
+			if(es==null || es.getEmpId()==null) {
+				try {
+					esMap.get("--").setSiteAllInfo(new SiteAllInfo(sh, siteUrlService.querySiteUrlById(es.getSiteId()), null));
+				}catch(Exception e) {
+					logger.error(e.getMessage());
+				}
+			}else {
+				esMap.get(""+es.getEmpId()).setSiteAllInfo(new SiteAllInfo(sh, siteUrlService.querySiteUrlById(es.getSiteId()), es));
+			}
 		}
 		for(String key: esMap.keySet()) {
-			//解决小仙子重复发送的问题
-			if(esMap.get(key).getEmployee()!=null && esMap.get(key).getEmployee().getEmail()!=null && !esMap.get(key).getEmployee().getEmail().toLowerCase().equals("jwcc@hnjing.com")) {
-				mailSSGPersion(endTime, esMap.get(key));
+			if(!"--".equals(key)) {
+				//解决小仙子重复发送的问题
+				if(esMap.get(key).getEmployee()!=null && esMap.get(key).getEmployee().getEmail()!=null && !esMap.get(key).getEmployee().getEmail().toLowerCase().equals("jwcc@hnjing.com")) {
+					mailSSGPersion(endTime, esMap.get(key));
+				}
 			}
 		}
 
@@ -250,7 +264,7 @@ public class DPSServiceImpl implements DPSService{
 		.append(getTableTitle("序号"))
 		.append(getTableTitle("客服名称(工号)"))
 		.append(getTableTitle("客户名称"))
-		.append(getTableTitle("帐号"))
+		.append(getTableTitle("百度帐号"))
 		.append(getTableTitle("是否在我司"))
 		.append(getTableTitle("IP"))
 		.append(getTableTitle("异常原因"))
@@ -347,7 +361,7 @@ public class DPSServiceImpl implements DPSService{
 		.append(getTableTitle("序号"))
 		.append(getTableTitle("客服名称(工号)"))
 		.append(getTableTitle("客户名称"))
-		.append(getTableTitle("帐号"))
+		.append(getTableTitle("百度帐号"))
 		.append(getTableTitle("是否在我司"))
 		.append(getTableTitle("IP"))
 		.append(getTableTitle("异常原因"))
@@ -363,7 +377,7 @@ public class DPSServiceImpl implements DPSService{
 //				}
 				sb.append("<tr>")
 				.append(getTableTD(++i+""))
-				.append(getTableTD(esi.getEmployee().getRealName()+"("+esi.getEmployee().getEmplNo()+")"))
+				.append(getTableTD(esi.getEmployee()==null?"":(esi.getEmployee().getRealName()+"("+esi.getEmployee().getEmplNo()+")")))
 				.append(getTableTD(in.getSiteUrl().getCustomer()))
 				.append(getTableTD(in.getEmployeeSite().getSfName()))
 				.append(getTableTD(in.getSiteUrl().getSelfSite()==1?"是":"否"))
@@ -408,6 +422,67 @@ public class DPSServiceImpl implements DPSService{
 	*/
 	private String getTableTitle(String titleName) {
 		return "<th style=\"border-width: 1px;	padding: 8px;border-style: solid;border-color: #666666;	background-color: #dedede;\">"+titleName+"</th>";
+	}
+
+
+
+	/*
+	 * @Title: recheckHistory
+	 * @Description: 
+	 * @param @return    参数  
+	 * @author Jinlong He
+	 * @return
+	 * @see com.hnjing.dpc.service.DPSService#recheckHistory()
+	 */ 
+	@Override
+	public Object recheckHistory() {
+		Map<String, Object> query = new HashMap<String, Object>();
+		query.put("nostatus", 200);
+		query.put("today", 200);
+		int c200 =0;
+		List<SiteHistory> siteList = siteHistoryService.querySiteHistoryByProperty(query);
+		if(siteList!=null && siteList.size()>0) {
+			logger.info("DRI:"+ siteList.size());
+			for(SiteHistory his : siteList) {
+				SiteResult sr = SiteCheckUtil.doCheckSite(his.getPage());
+				if(sr!=null && sr.getStatus()!=null && sr.getStatus().intValue()==200) {
+					siteHistoryService.dropSiteHistoryBySiteId(his.getSiteId());
+					c200++;
+				}
+			}
+		}
+		//重新统计数据
+		query.clear();
+		query.put("today", 200);
+		List<SiteStatistics> checkList = siteStatisticsService.querySiteStatisticsByProperty(query);
+		if(checkList!=null && checkList.size()>0) {
+			logger.info("today:"+checkList.size());
+			for(SiteStatistics ss : checkList) {
+				List<Map<String, Object>> errorInfo = siteHistoryService.queryHistoryCountByStatisticsID(ss.getId());
+				int ei = 0;
+				int eo = 0;
+				if(errorInfo!=null && errorInfo.size()>0) {
+					for(Map<String, Object> map : errorInfo) {
+						String key =(String)map.get("selfSite");
+						int count =  ((Long)map.get("count")).intValue();
+						if("1".equals(key)) {
+							ei  = count;
+						}else if("0".equals(key)) {
+							eo = count;
+						}
+					}					
+				}
+				SiteStatistics s = new SiteStatistics();
+				s.setId(ss.getId());
+				s.setSiteError(ei+eo);
+				s.setSiteWarn(ei);
+				siteStatisticsService.modifySiteStatistics(s);
+				logger.info(ss.getId()+" o:"+eo+" i:"+ei);
+			}			
+		}
+		
+		logger.info("DRI C:"+ c200);
+		return c200;
 	}
 	
 

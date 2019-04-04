@@ -27,6 +27,7 @@
 		<if test="siteResult.title != null">AND title like concat(#{siteResult.title}, '%') </if>
 		<if test="siteResult.status != null">AND status = #{siteResult.status} </if>
 		<if test="siteResult.comment != null">AND comment = #{siteResult.comment} </if>
+		<if test="siteResult.content != null"> AND content like concat('%', #{siteResult.content}, '%')</if>
 	</trim>
 </sql>
    

@@ -178,12 +178,12 @@ function showJLError(message){
 	AVRIL.loadSyncList=function(fn, pn, ps, searchWord, searchType){
 		var sou = "";
 		if(searchWord!=undefined && searchWord.length>0){
-			sou = "&emplNo="+searchWord;
+			sou += "&emplNo="+searchWord;
 		}
 		if(searchType!=undefined && searchType.length>0){
-			sou += "&source="+searchType;
+			sou += "&isDelete="+searchType;
 		}
-		myAjax("/datasyncs?sort=%7B%22gmtModify%22%3A%22desc%22%7D&pageNo="+pn+"&pageSize="+ps+sou, "get", {}, function(data){			
+		myAjax("/datasyncs?sort=%7B%22gmtModify%22%3A%22desc%22%7D&pageNo="+pn+"&pageSize="+ps+sou, "get", {}, function(data){
 			if(fn){
 				fn(data);
 			}
@@ -192,8 +192,12 @@ function showJLError(message){
 	
 	
 	
-	AVRIL.loadMailList=function(fn, pn, ps){
-		myAjax("/mailhistorys?sort=%7B%22gmtCreate%22%3A%22desc%22%7D&pageNo="+pn+"&pageSize="+ps, "get", {}, function(data){			
+	AVRIL.loadMailList=function(fn, pn, ps, mail){
+		var so = '';
+		if(mail!=undefined && mail.length>0){
+			so = "&sendTo="+mail;
+		}
+		myAjax("/mailhistorys?sort=%7B%22gmtCreate%22%3A%22desc%22%7D&pageNo="+pn+"&pageSize="+ps+so, "get", {}, function(data){			
 			if(fn){
 				fn(data);
 			}

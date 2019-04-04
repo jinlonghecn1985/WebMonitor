@@ -65,7 +65,11 @@ public class MailUtil {
 		mailHistory.setSendTo(mailto);
 		mailHistory.setTitile(title);
 		mailHistory.setContent(mailMsg); //mailMsg.length()>16000?mailMsg.substring(0, 16000):mailMsg);  //超长内容
-		mailHistoryService.addMailHistory(mailHistory );
+		try {
+			mailHistoryService.addMailHistory(mailHistory );
+		}catch(Exception ex) {
+			//数据长度超过
+		}
 		AsyncResult<Integer> rsyncResult = null;
 		if ("dev".equals(ispass)) {	
 			mailto = "hejinlong@hnjing.com";
@@ -78,8 +82,10 @@ public class MailUtil {
 				mailto= mailto.replaceAll("，", ";");
 				mailto= mailto.replaceAll(",", ";");
 				if(mailto.contains(";")) {
-					//多接收人
-					helper.setTo(mailto.split(";"));
+					//多接收人			
+					helper.setTo(mailto.substring(0, mailto.indexOf(";"))); //主发送
+					//抄送
+					helper.setCc(mailto.substring(mailto.indexOf(";")+1).split(";"));
 				}else {
 					helper.setTo(mailto);//单接收人
 				}

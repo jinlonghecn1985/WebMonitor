@@ -91,6 +91,7 @@
 	FROM tb_site_statistics 
 	<where>
 		<include refid="sql_siteStatistics_query_nowhere"/>
+		<if test="siteStatistics.today != null">AND to_days(begin_time) = to_days(now()) </if>		
 	</where>
 </select>
 

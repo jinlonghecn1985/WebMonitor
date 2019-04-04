@@ -25,4 +25,13 @@ public interface DPSService {
 	
 	Object processAllErrorMail();
 	
+	/** 
+	* @Title: recheckHistory 
+	* @Description: 重检当日检测结果，并返写统计数据
+	* @return  
+	* Object    返回类型 
+	* @throws 
+	*/
+	Object recheckHistory();
+	
 }

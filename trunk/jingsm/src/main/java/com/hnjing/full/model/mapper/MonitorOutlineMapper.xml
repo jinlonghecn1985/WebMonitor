@@ -155,7 +155,7 @@ select page, charset from tb_site_url where source=1 and need_check=0
 
 
 <select id="queryDataBeforeDay"  resultMap="MonitorOutlineResultMap"  parameterType="java.lang.Integer">
-SELECT * FROM tf_monitor_outline where DATE_SUB(CURDATE(), INTERVAL #{days} DAY) > date(gmt_created)
+SELECT * FROM tf_monitor_outline where TO_DAYS(NOW())-TO_DAYS(gmt_created)　&gt; #{days} 
 </select>
 
 </mapper>   

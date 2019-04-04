@@ -20,7 +20,7 @@
 <sql id="sql_mailHistory_query_nowhere">
 	<trim prefix=" " prefixOverrides="AND|OR">
 		<if test="mailHistory.id != null">AND id = #{mailHistory.id} </if>
-		<if test="mailHistory.sendTo != null">AND send_to like concat(#{mailHistory.sendTo}, '%') </if>
+		<if test="mailHistory.sendTo != null">AND send_to like concat('%', #{mailHistory.sendTo}, '%') </if>
 		<if test="mailHistory.titile != null">AND titile like concat(#{mailHistory.titile}, '%') </if>
 		<if test="mailHistory.errorCount != null">AND error_count = #{mailHistory.errorCount} </if>
 	</trim>

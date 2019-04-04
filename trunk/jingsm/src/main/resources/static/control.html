@@ -57,7 +57,7 @@
 	<div class="cards">
 		
 		<div class="col-xs-6 col-md-3 col-sm-4 col-lg-2">
-			<a class="card" href="javascript:void(0);" onclick="doAction('pt', null)"> <img
+			<a class="card" href="javascript:void(0);" onclick="doAction('source', 1)"> <img
 				src="./images/checkpt.png" alt="">
 				<div class="caption">系统自动每日检测，不建议手工检测</div>
 				<div class="card-heading">
@@ -78,7 +78,7 @@
 		
 		
 		<div class="col-xs-6 col-md-3 col-sm-4 col-lg-2">
-			<a class="card" href="javascript:void(0);" onclick="doAction('ssg', null)"> <img
+			<a class="card" href="javascript:void(0);" onclick="doAction('source', 2)"> <img
 				src="./images/checkssg.png" alt="">
 				<div class="caption">系统自动检测，不建议手工检测</div>
 				<div class="card-heading">
@@ -98,41 +98,33 @@
 		</div>
 		
 		<div class="col-xs-6 col-md-3 col-sm-4 col-lg-2">
-			<a class="card" href="javascript:void(0);" onclick="doAction('source', 4)"> <img
-				src="./images/checkxxz.png" alt="">
-				<div class="caption">系统自动检测，不建议手工检测</div>
-				<div class="card-heading">
-					<strong>小仙子网站检测</strong>
-				</div>
-				<div class="card-content text-muted">预期检测时长5分钟</div>
-			</a>
-		</div>
-		<div class="col-xs-6 col-md-3 col-sm-4 col-lg-2">
-			<a class="card" href="javascript:void(0);"  onclick="doAction('mail', 4)"> <img src="./images/mailxxz.png" alt="" />
-				<div class="caption">检测结果发送邮件</div>
-				<div class="card-heading">
-					<strong>小仙子检测结果邮件发送</strong>
-				</div>
-				<div class="card-content text-muted">通知前复检异常站点</div>
-			</a>
-		</div>
-		<div class="col-xs-6 col-md-3 col-sm-4 col-lg-2">
-			<a class="card" href="javascript:void(0);" onclick="doAction('source', 3)"> <img
+			<a class="card" href="javascript:void(0);" onclick="doAction('sync', 2)"> <img
 				src="./images/checkly.png" alt="">
-				<div class="caption">系统自动检测，不建议手工检测</div>
+				<div class="caption">同步SSG网站数据</div>
 				<div class="card-heading">
-					<strong>农业网站检测</strong>
+					<strong>同步SSG网站数据</strong>
 				</div>
-				<div class="card-content text-muted">预期检测时长10分钟</div>
+				<div class="card-content text-muted">仅同步数据，不合并到检测源</div>
 			</a>
 		</div>
 		<div class="col-xs-6 col-md-3 col-sm-4 col-lg-2">
-			<a class="card" href="javascript:void(0);"  onclick="doAction('mail', 3)"> <img src="./images/mailly.png" alt="" />
-				<div class="caption">检测结果发送邮件</div>
+			<a class="card" href="javascript:void(0);"  onclick="doAction('process', 2)"> <img src="./images/checkly.png" alt="" />
+				<div class="caption">处理同步到的SSG网站数据</div>
 				<div class="card-heading">
-					<strong>农业检测结果邮件发送</strong>
+					<strong>处理同步到的SSG网站数据</strong>
 				</div>
-				<div class="card-content text-muted">通知前复检异常站点</div>
+				<div class="card-content text-muted">不同步，仅处理已同步的数据到检测源</div>
+			</a>
+		</div>
+		
+		<div class="col-xs-6 col-md-3 col-sm-4 col-lg-2">
+			<a class="card" href="javascript:void(0);" onclick="doAction('recheck', null)"> <img
+				src="./images/checkxxz.png" alt="">
+				<div class="caption">手工触发当日检测异常网站，检测结果回填</div>
+				<div class="card-heading">
+					<strong>当日异常复检</strong>
+				</div>
+				<div class="card-content text-muted">预期检测时长依总量而定</div>
 			</a>
 		</div>
 		<div class="col-xs-6 col-md-3 col-sm-4 col-lg-2">

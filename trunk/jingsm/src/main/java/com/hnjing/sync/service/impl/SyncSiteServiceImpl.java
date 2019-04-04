@@ -123,7 +123,9 @@ public class SyncSiteServiceImpl implements SyncSiteService{
 						e.setRealName("小仙子");
 					}
 					e.setOrgName(isNull(row.getOrgan1()) + "_" + isNull(row.getOrgan2()) + "_" + isNull(row.getOrgan3()));
-					e = employeeService.bindEmployeeByNO(e);
+					if(e.getEmplNo()!=null) {
+						e = employeeService.bindEmployeeByNO(e);
+					}				
 
 					//处理站点
 					SiteUrl su = new SiteUrl();

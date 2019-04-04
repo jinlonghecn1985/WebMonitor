@@ -18,7 +18,13 @@
 	<script type="text/javascript">		
 	var pagenum = 1;
 	var pagesize = 15;
+	var searchWord = '';
 $(document).ready(function(){ 
+	$('#searchKeyWord').bind('keypress', function(event) {
+		if (event.keyCode == 13) {
+			doSearchAction2();
+		}
+	});	
 	reloadData();	
 });
 
@@ -53,10 +59,16 @@ function loadPersionListBack(data){
 
 
 function reloadData(){	
-	AVRIL.loadMailList(loadPersionListBack, pagenum, pagesize);	
+	AVRIL.loadMailList(loadPersionListBack, pagenum, pagesize, searchWord);	
 }
 function goPage(pn){
 	pagenum = pn;
+	reloadData();
+}
+
+function doSearchAction2(){
+	pagenum = 1;
+	searchWord = $('#searchKeyWord').val();		
 	reloadData();
 }
 
@@ -65,6 +77,14 @@ function goPage(pn){
 </head>
 
 <body  style="overflow: scroll;overflow-x:hidden">
+<div class="row">
+		<div class="col-xs-0 col-sm-1 col-md-2 col-lg-3"></div>
+	  	<div class="input-group col-xs-12 col-sm-10 col-md-8 col-lg-6">
+			<input type="text" id="searchKeyWord" class="form-control" placeholder="接收者邮箱">
+			<span class="input-group-addon" onclick="doSearchAction2();"><i class="icon icon-cloud">查询</i></span>
+		</div>
+	</div>
+<br/>
 <footer style="float:right; ">
 	<ul class="pager"></ul>	
 </footer>

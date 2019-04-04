@@ -81,7 +81,7 @@ public interface SiteHistoryService {
 	List<Map<String, String>> queryHistoryInfoByStatisticsID(String statisticsID);
 
 	/** 
-	* @Title: exportByStatisticsID 
+	* @Title: exportByStatisticsID
 	* @Description: 
 	* @param statisticsID
 	* @return  
@@ -89,5 +89,16 @@ public interface SiteHistoryService {
 	* @throws 
 	*/
 	HSSFWorkbook exportByStatisticsID(String statisticsID);
+	
+	List<Map<String, Object>> queryHistoryCountByStatisticsID(String statisticsID);
+
+	/** 
+	* @Title: deleteDataBeforeDays 
+	* @Description: 清除多少天之前的数据
+	* @param days 
+	* void    返回类型 
+	* @throws 
+	*/
+	Integer deleteDataBeforeDays(int days);
 	 
 }

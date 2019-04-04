@@ -190,7 +190,7 @@ public class  SiteHistoryServiceImpl implements SiteHistoryService {
 	 */ 
 	@Override
 	public HSSFWorkbook exportByStatisticsID(String statisticsID) {
-		String[] title = {"客户名称", "SF帐号", "客服", "客服姓名", "客服邮件", "域名", "标题", "内容", "异常代码",  "域名IP", "是否我司", "检测时间"};
+		String[] title = {"客户名称", "百度帐号", "客服", "客服姓名", "客服邮件", "域名", "标题", "内容", "异常代码",  "域名IP", "是否我司", "检测时间"};
 		String[][] data = null;
 		List<Map<String, String>> info = queryHistoryInfoByStatisticsID(statisticsID);
 		if(info!=null && info.size()>0) {
@@ -212,6 +212,37 @@ public class  SiteHistoryServiceImpl implements SiteHistoryService {
 			}
 		}
 		return ExcelWriteUtil.getHSSFWorkbook("检测异常网站详情", title, data, null);
+	}
+
+	/*
+	 * @Title: queryHistoryCountByStatisticsID
+	 * @Description: TODO
+	 * @param @param statisticsID
+	 * @param @return    参数  
+	 * @author Jinlong He
+	 * @param statisticsID
+	 * @return
+	 * @see com.hnjing.ws.service.SiteHistoryService#queryHistoryCountByStatisticsID(java.lang.String)
+	 */ 
+	@Override
+	public List<Map<String, Object>> queryHistoryCountByStatisticsID(String statisticsID) {
+		return siteHistoryMapper.queryHistoryCountByStatisticsID(statisticsID);
+	}
+
+	/*
+	 * @Title: deleteDataBeforeDays
+	 * @Description: TODO
+	 * @param @param days
+	 * @param @return    参数  
+	 * @author Jinlong He
+	 * @param days
+	 * @return
+	 * @see com.hnjing.ws.service.SiteHistoryService#deleteDataBeforeDays(int)
+	 */ 
+	@Override
+	@Transactional(readOnly = false)
+	public Integer deleteDataBeforeDays(int days) {
+		return siteHistoryMapper.deleteDataBeforeDays(days);
 	}
 
 

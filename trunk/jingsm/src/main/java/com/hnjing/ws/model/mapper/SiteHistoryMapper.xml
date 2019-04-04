@@ -80,8 +80,12 @@
  
 <!-- 删除 异常网站历史记录 -->
 <delete id="dropSiteHistoryBySiteId" parameterType="java.lang.Integer">
-	DELETE FROM tb_site_history WHERE site_id = #{siteId}
-</delete> 
+	DELETE FROM tb_site_history WHERE site_id = #{siteId} and to_days(gmt_created) = to_days(now())
+</delete>
+<!-- 清除一个月前的数据 -->
+<delete id="dropSiteHistoryMonthBefore">
+delete  from tb_site_history where date(gmt_created) &lt; DATE_SUB(CURDATE(), INTERVAL 1 MONTH) 
+</delete>
 
 <!-- 根据标识查询 异常网站历史记录 -->
 <select id="querySiteHistoryBySiteId"  resultMap="SiteHistoryResultMap" parameterType="java.lang.Integer">
@@ -101,8 +105,11 @@
 		<if test="siteHistory.id">and gmt_created &gt;= (select begin_time from tb_site_statistics where id=#{siteHistory.id})
 		and gmt_created &lt;= (select end_time from tb_site_statistics where id=#{siteHistory.id})
 		</if>
+		<if test="siteHistory.today != null">AND to_days(gmt_created) = to_days(now()) </if>
 	</where>
 </select>
+
+
 
 <!-- 根据异常网站历史记录属性与分页信息分页查询异常网站历史记录信息 -->
 <select id="querySiteHistoryForPage"  resultMap="SiteHistoryResultMap" > 
@@ -146,5 +153,16 @@ and gmt_created &lt;= (select end_time from tb_site_statistics where id=#{statis
 LEFT OUTER JOIN tb_employee_site l on t.site_id=l.site_id
 LEFT OUTER JOIN tb_employee e on l.emp_id=e.id
 </select>
+
+<select id="queryHistoryCountByStatisticsID" resultType="java.util.HashMap" parameterType="java.lang.String">
+select concat('', self_site) selfSite, count(1) count from tb_site_history where status!=200 
+and gmt_created &gt;= (select begin_time from tb_site_statistics where id=#{statisticsID})
+and gmt_created &lt;= (select end_time from tb_site_statistics where id=#{statisticsID})
+GROUP BY self_site
+</select>
+
+<delete id="deleteDataBeforeDays"  parameterType="java.lang.Integer">
+DELETE FROM tb_site_history where TO_DAYS(NOW())-TO_DAYS(gmt_created) &gt; #{days}
+</delete>
 
 </mapper>   

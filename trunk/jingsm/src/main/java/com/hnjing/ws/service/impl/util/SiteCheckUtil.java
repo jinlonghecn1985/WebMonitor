@@ -25,6 +25,7 @@ import com.hnjing.ws.model.entity.SiteUrl;
  */
 public class SiteCheckUtil {
 	
+
 	public static SiteResult doCheckSite(String page) {
 		SiteUrl site = new SiteUrl();
 		site.setPage(page);
@@ -35,7 +36,7 @@ public class SiteCheckUtil {
 		if(site==null || site.getPage()==null || site.getPage().length()==0) {
 			return null;
 		}
-		HttpClientResult re = HttpClientSiteUtil.getDeminTitle(site.getPage(), site.getCharset());	//正常检测		
+		HttpClientResult re = HttpClientSiteUtil.getDeminTitle(site.getPage(), site.getCharset());	//正常检测	
 		SiteResult result = new SiteResult();
 		result.setSiteId(site.getId());		
 		result.setPage(site.getPage());

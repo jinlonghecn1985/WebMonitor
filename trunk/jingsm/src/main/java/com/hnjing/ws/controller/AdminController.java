@@ -114,6 +114,16 @@ public class AdminController {
 		return ul;
 //		return siteMonitorService.checkMutiSite(url);
 	}
+	
+	@ApiOperation(value = "重新检测当日异常网站,并回写检测结果", notes = "重新检测当日异常网站,并回写检测结果")
+	@RequestMapping(value = "/check/recheck/{token:.+}", method = RequestMethod.GET)
+	public Object recheckTodayAllErrorSite(HttpServletResponse response,
+			@PathVariable String token) {
+		if(token!=null && checkAuth(token)) {
+			return dpsService.recheckHistory();
+		}
+		throw new AuthorityException("授权码错误！");
+	}
 
 	@ApiOperation(value = "检测网站-平台", notes = "检测网站")
 	@RequestMapping(value = "/check/pt/{token:.+}", method = RequestMethod.GET)

@@ -89,6 +89,16 @@ public interface SiteHistoryMapper {
 	
 	List<Map<String, String>> queryHistoryInfoByStatisticsID(@Param("statisticsID") String statisticsID);
 
-	
+	List<Map<String, Object>> queryHistoryCountByStatisticsID(@Param("statisticsID") String statisticsID);
+
+	/** 
+	* @Title: deleteDataBeforeDays 
+	* @Description: 清除指定日期以前的数据
+	* @param days
+	* @return  
+	* Integer    返回类型 
+	* @throws 
+	*/
+	Integer deleteDataBeforeDays(int days);
 	 
 }

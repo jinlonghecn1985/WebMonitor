@@ -39,7 +39,7 @@
 		<if test="dataSync.companyName != null">AND company_name = #{dataSync.companyName} </if>
 		<if test="dataSync.siteUrl != null">AND site_url = #{dataSync.siteUrl} </if>
 		<if test="dataSync.email != null">AND email = #{dataSync.email} </if>
-		<if test="dataSync.emplNo != null">AND ( empl_name like concat('%', #{dataSync.emplNo}, '%') or account_name like concat('%', #{dataSync.emplNo}, '%') or company_name like concat('%', #{dataSync.emplNo}, '%')) </if>
+		<if test="dataSync.emplNo != null">AND (site_url like concat('%', #{dataSync.emplNo}, '%') or empl_name like concat('%', #{dataSync.emplNo}, '%') or account_name like concat('%', #{dataSync.emplNo}, '%') or company_name like concat('%', #{dataSync.emplNo}, '%')) </if>
 		<if test="dataSync.note != null">AND note like concat(#{dataSync.note}, '%') </if>		
 		<if test="dataSync.isDelete != null">AND is_delete = #{dataSync.isDelete} </if>
 		<if test="dataSync.hasChange != null">AND has_change = #{dataSync.hasChange} </if>
